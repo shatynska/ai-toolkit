@@ -9,7 +9,7 @@ So the first skill in the library should be the one that governs the rest: a `cr
 ## What Changes
 
 - Add `skills/create-skill/SKILL.md`, covering:
-  - **Frontmatter contract** — `name` and `description` required; `allowed-tools`, `license`, `compatibility`, and `version` allowed at the top level because the Agent Skills schema defines them; anything outside that schema nested under `metadata`; `allowed-tools` omitted unless the skill wraps a single command.
+  - **Frontmatter contract** — `name` and `description` required; `allowed-tools`, `license`, and `compatibility` allowed at the top level because the Agent Skills schema defines them (per `skill-creator`'s shipped validation script — notably `version` is not schema-defined, despite appearing in some hand-written examples); anything outside that schema nested under `metadata`; `allowed-tools` omitted unless the skill wraps a single command.
   - **The directory-name rule** — a skill's directory name is its invocation name, and `name` in frontmatter must match it. A mismatch is a defect that resolves silently at load time, so it has to be caught at authoring time.
   - **Description standard** — third person, written to counter under-triggering rather than to sound measured, naming adjacent phrasings a user might actually type, and distinguishable from every other skill in the library.
   - **Structure selection** — a flat `SKILL.md` by default; bundled `references/`, `scripts/`, and `assets/` when instructions outgrow one readable document.

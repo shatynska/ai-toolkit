@@ -6,7 +6,7 @@ Every `SKILL.md` SHALL begin with YAML frontmatter declaring `name` and `descrip
 
 Fields defined by the Agent Skills schema MAY be declared at the top level when needed. Fields not defined by that schema SHALL be nested under `metadata` rather than invented as new top-level keys.
 
-Because the schema is versioned outside this repository, the authoring standard SHALL record the schema-defined field list as a dated snapshot naming where it was read, rather than asserting a closed enumeration. At the time of writing that list is `allowed-tools`, `license`, `compatibility`, and `version`.
+Because the schema is versioned outside this repository, the authoring standard SHALL record the schema-defined field list as a dated snapshot naming where it was read, rather than asserting a closed enumeration. As of 2026-07-27, verified against the validation script shipped with the official `skill-creator` plugin, that list is `allowed-tools`, `license`, and `compatibility`; `version` is not schema-defined despite appearing in some hand-written examples.
 
 `allowed-tools` SHALL be omitted unless the skill is a thin wrapper around a single command, in which case it SHALL be scoped to that command.
 
@@ -17,12 +17,12 @@ Because the schema is versioned outside this repository, the authoring standard 
 
 #### Scenario: Schema-defined field at top level
 
-- **WHEN** a skill needs to record a version or state a dependency on an external CLI
-- **THEN** `version` or `compatibility` is declared at the top level, because both are schema-defined fields
+- **WHEN** a skill needs to state a dependency on an external CLI or record a licensing term
+- **THEN** `compatibility` or `license` is declared at the top level, because both are schema-defined fields
 
 #### Scenario: Non-schema field placement
 
-- **WHEN** a skill needs to record a field the schema does not define, such as an authoring date
+- **WHEN** a skill needs to record a field the schema does not define, such as an authoring date or a version number
 - **THEN** the field is nested under `metadata` rather than added as a new top-level key
 
 #### Scenario: Tool restriction is omitted by default
