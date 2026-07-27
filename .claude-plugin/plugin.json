@@ -1,0 +1,8 @@
+{
+  "name": "ai-toolkit",
+  "description": "Reusable agent assets — skills, subagents, and rule fragments.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Helen Shatynska"
+  }
+}

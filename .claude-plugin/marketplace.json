@@ -1,0 +1,15 @@
+{
+  "name": "ai-toolkit",
+  "owner": {
+    "name": "Helen Shatynska"
+  },
+  "plugins": [
+    {
+      "name": "ai-toolkit",
+      "source": "./",
+      "description": "Reusable agent assets — skills, subagents, and rule fragments.",
+      "category": "productivity",
+      "tags": ["toolkit", "skills", "agents", "rules"]
+    }
+  ]
+}
