@@ -57,7 +57,8 @@ only thing keeping the vocabulary coherent.
 
 This file states conventions, not authoring standards. How to write a
 skill well — the frontmatter contract, description criteria, review
-checkpoints — lives with the skill that enforces it, not here.
+checkpoints — lives with the skill that enforces it, not here: see
+`skills/create-skill/SKILL.md`.
 
 ## The library vs. this repository's own tooling
 

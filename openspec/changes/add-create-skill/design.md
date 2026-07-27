@@ -102,4 +102,4 @@ No migration; this adds a new asset. Rollback is deleting `skills/create-skill/`
 
 ## Open Questions
 
-- Should the trigger check's two prompts be recorded inside the skill they test, so the check is repeatable after a later edit? Recording them costs a few lines and makes re-verification mechanical; it also puts test fixtures in a file whose job is instructions. Leaning toward recording them, deferred until the first skill is written against the standard.
+None outstanding. The one open question — whether the trigger check's two prompts should be recorded inside the skill they test — is resolved: yes. `create-skill`'s own dogfooding run (tasks 4.2–4.3) recorded its positive and negative prompts in a `## Recorded trigger check` section, and the few lines it cost were worth making re-verification mechanical after a future description edit.
