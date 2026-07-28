@@ -227,17 +227,33 @@ agent compete for it. `agent-authoring` requires the same composition for
 its own trigger check, stated identically so the two capabilities cannot
 drift.
 
-The evaluator's scope is **this library** — not other installed plugins.
+**The evaluator also holds every skill and command committed to this
+repository under `.claude/`** — read them the same globbed way, from
+`.claude/skills/*/SKILL.md` and `.claude/commands/**/*.md`. Derive them
+rather than working from a list: they're installed and updated by an
+external tool, so a fixed enumeration written here goes quietly wrong the
+first time an upgrade adds or renames one. They aren't library assets and
+don't ship in the plugin, but they're tracked, reproducible from a clone,
+and loaded in every session that works here — so they aren't the
+machine-local state the exclusion below is written against, and they compete
+for prompts that library assets may not. Leaving them out can produce a
+check that passes while testing nothing, which is what happens whenever a
+new asset's plausible competitors are all repository tooling.
+
+The evaluator's scope is **this repository** — not other installed plugins.
 Which plugins happen to be installed is machine-local state this repository
 doesn't control, so a check whose result varied with it would stop being a
-statement about this library. `plugin-dev` ships both a skill
+statement about this repository. `plugin-dev` ships both a skill
 (`agent-development`) and an agent (`agent-creator`) that trigger on
 overlapping "create/add an agent" phrasings — the evaluator is not widened
-to hold them. The residual risk — a trigger check passing here and
-misfiring in a project that installs `plugin-dev` — is accepted and named,
-not closed; mitigate it by stating in the description what distinguishes
-this skill regardless of what else is installed (that it operates on this
-repository's library).
+to hold them. The boundary is `committed to this repository`, which is the
+line the machine-local rationale already draws; it's stated rather than left
+to be inferred, because the reason for the widenings above — matching the
+decision the harness actually makes — doesn't stop on its own. The residual
+risk — a trigger check passing here and misfiring in a project that installs
+`plugin-dev` — is accepted and named, not closed; mitigate it by stating in
+the description what distinguishes this skill regardless of what else is
+installed (that it operates on this repository's library).
 
 A check run inside the authoring context is not evidence: the skill is
 already sitting in that context, so it "fires" whether or not the
@@ -252,10 +268,12 @@ narrow it and re-run. A skill is not reported complete until both hold.
 After a trigger check passes, record its **fixtures** — the positive and
 negative prompts, and the routing expected of each — in a `## Trigger check
 fixtures` section in this file. Record the negative prompt's expected
-routing by naming the asset that should serve it, where one should, rather
-than only asserting that it reaches nothing; that is what turns a route
-between two assets into a standing regression test instead of a claim made
-once.
+routing by naming the asset the evaluator holds that should serve it, where
+one should, rather than only asserting that it reaches nothing; that is what
+turns a route between two assets into a standing regression test instead of
+a claim made once. That destination may be an asset committed under
+`.claude/` rather than a library asset — the evaluator holds both, and a
+prompt routes where it routes.
 
 **Never record the outcome or the run date.** A description edit
 invalidates the trigger check, so a stored result is only ever valid
@@ -276,12 +294,22 @@ a snapshot of current behaviour and cost it the ability to detect the same
 drift later.
 
 **A description edit invalidates the recorded trigger check**, which must
-then be re-run and the fixtures updated. **Adding a new asset to the
-library invalidates the recorded checks of every existing asset it
-competes with for the same prompts** — a recorded check is only valid
-against the library that existed when it ran, and this library is flat with
-no index, so every asset competes with every other for the same dispatch
-decision. A recorded negative prompt asserting "activates nothing" is a
+then be re-run and the fixtures updated. This holds for a `name` or
+`description` change to **any asset the evaluator holds**, not only to the
+skill whose fixtures they are — including the `.claude/` assets, whose
+descriptions an `openspec` upgrade can rewrite with no edit made in this
+repository to signal that a re-run is owed. **A change to the evaluator's
+composition invalidates every check recorded against the previous one**,
+too: widening or narrowing what the evaluator holds is neither an asset edit
+nor a library addition, so no other rule here reaches it, yet it changes
+what every recorded check ran against — which is the whole of what these
+rules protect.
+
+**Adding a new asset to the library invalidates the recorded checks of every
+existing asset it competes with for the same prompts** — a recorded check is
+only valid against the library that existed when it ran, and this library is
+flat with no index, so every asset competes with every other for the same
+dispatch decision. A recorded negative prompt asserting "activates nothing" is a
 claim a later addition can silently falsify; when it does, that check is
 re-run and updated as part of the same change that added the new asset.
 `agent-authoring` carries the identical rule for an agent's cold-run

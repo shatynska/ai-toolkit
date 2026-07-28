@@ -263,14 +263,29 @@ only one type cannot test whether a prompt lands on the correct asset.
 - **Negative** — an adjacent prompt just outside its scope, chosen so it
   could plausibly misfire. Must not.
 
-The evaluator's scope is **this library** — not other installed plugins.
+**The evaluator also holds every skill and command committed to this
+repository under `.claude/`** — derived the same globbed way, from
+`.claude/skills/*/SKILL.md` and `.claude/commands/**/*.md`, rather than from
+a list written here that an upgrade would silently falsify. They aren't
+library assets and don't ship in the plugin, but they're tracked,
+reproducible from a clone, and loaded in every session that works here — so
+they aren't the machine-local state the exclusion below is written against,
+and they compete for prompts library assets may not. Leaving them out
+produces a check that passes while testing nothing whenever a new agent's
+plausible competitors are all repository tooling, which is the common case
+for an agent that operates on this repository's own workflows.
+`skill-authoring` states this identically.
+
+The evaluator's scope is **this repository** — not other installed plugins.
 Which plugins happen to be installed is machine-local state this repository
 doesn't control, and a check whose result varies with it stops being a
-statement about this library. `plugin-dev` ships both a skill
+statement about this repository. `plugin-dev` ships both a skill
 (`agent-development`) and an agent (`agent-creator`) for authoring agents,
 triggering on overlapping phrasings — the evaluator is not widened to see
-them. Instead, the description should state what distinguishes this skill
-regardless of what else is installed: that it authors into *this
+them. The boundary is `committed to this repository` — the same line the
+machine-local rationale already draws, stated rather than inferred from the
+widenings above. Instead, the description should state what distinguishes
+this skill regardless of what else is installed: that it authors into *this
 repository's* `agents/`. That's a residual risk, named rather than closed.
 
 Report both outcomes. A positive-prompt failure means the description is
@@ -316,6 +331,16 @@ sufficient on its own.
   assets it competes with for the same prompts** — a recorded check is only
   valid against the library that existed when it ran, and a later addition
   can silently falsify a prompt recorded as "activates nothing."
+- **A `name` or `description` change to any asset the evaluator holds
+  invalidates the checks recorded against it** — not only to the agent whose
+  fixtures they are. This includes the `.claude/` assets, which an `openspec`
+  upgrade can rewrite with no edit made in this repository to signal that a
+  re-run is owed. Nothing detects it; the rule is stated so a session that
+  notices can act on it.
+- **A change to the evaluator's composition invalidates every check recorded
+  against the previous one** — widening or narrowing what the evaluator holds
+  is neither an asset edit nor a library addition, so no rule above reaches
+  it, yet it changes what every recorded check ran against.
 
 ## Fixtures, not results
 
