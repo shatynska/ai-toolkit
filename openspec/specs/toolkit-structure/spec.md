@@ -49,7 +49,7 @@ A skill's `SKILL.md` MUST reside directly inside the skill's own directory, whic
 
 `rules/` SHALL hold reusable memory fragments intended to be `@import`ed into a consuming project's `CLAUDE.md` or `AGENTS.md`.
 
-A placeholder document standing in for an unpopulated directory MUST NOT be discoverable as an asset. Since every file directly inside `agents/` is read as an agent definition, a placeholder there SHALL take a form discovery ignores.
+A placeholder document standing in for an unpopulated directory MUST NOT be discoverable as an asset. Since every `.md` file directly inside `agents/` is read as an agent definition — including one whose name begins with a dot — a placeholder there SHALL take a non-`.md` extension, which is the form discovery ignores.
 
 #### Scenario: Placing a new skill
 
@@ -80,6 +80,11 @@ A placeholder document standing in for an unpopulated directory MUST NOT be disc
 
 - **WHEN** the plugin carrying an `agents/` placeholder is installed
 - **THEN** no agent originating from that placeholder is exposed, and no parse failure is reported for it
+
+#### Scenario: A non-`.md` file beside an agent is not an asset
+
+- **WHEN** a file that is not a `.md` document sits directly inside `agents/` beside an agent definition
+- **THEN** it is neither discovered as an agent nor reported as a parse failure, because the extension rather than the depth is what discovery selects on
 
 ### Requirement: Skills are discovered without manifest enumeration
 
@@ -208,5 +213,3 @@ The repository SHALL ignore operating-system cruft, editor directories, and mach
 
 - **WHEN** the repository defines skills or commands under `.claude/`
 - **THEN** those files remain tracked so the repo's own behavior is reproducible from a clone
-</content>
-</invoke>
