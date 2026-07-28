@@ -218,7 +218,11 @@ The workflow SHALL verify that a new skill triggers, using at least one prompt t
 
 The check SHALL be run by an evaluator holding the candidate prompt and the `name` and `description` of every skill **and every agent** in the library, and not holding the conversation in which the skill was authored. Both asset types are included because the harness selects across skills and agents in a single dispatch decision; an evaluator holding only skills cannot test whether a prompt lands on the correct asset when a skill and an agent compete for it.
 
-The evaluator's scope SHALL be this library. Assets belonging to other installed plugins SHALL NOT be held by it, because which plugins are installed is machine-local and not under this repository's control, so a check that varied with it would stop being a statement about this library. The boundary is stated rather than inferred, because the reason for widening across asset types — matching the decision the harness actually makes — does not stop at the library on its own. A description SHOULD nevertheless state what distinguishes the skill from published assets that share its canonical trigger, where those are known. `agent-authoring` states this boundary identically.
+The evaluator SHALL also hold every skill and command committed to this repository under `.claude/`. These are not library assets and do not ship in the plugin, but they are tracked, reproducible from a clone, and loaded in every session that works in this repository — so they are not the machine-local state the exclusion below is written against, and they compete for prompts that library assets may not. Excluding them can produce a check that passes while testing nothing, when a new asset's plausible competitors are all repository tooling.
+
+A change to the `name` or `description` of any asset the evaluator holds SHALL invalidate the recorded checks that depend on it, whether that asset is a library asset or one committed under `.claude/`. The `.claude/` assets are installed and updated by an external tool rather than authored here, so a recorded check naming one of them can be falsified by an upgrade that no edit in this repository accompanies — a case the existing invalidation rules, which fire on library additions and on edits made here, do not otherwise reach.
+
+The evaluator's scope SHALL be this repository. Assets belonging to other installed plugins SHALL NOT be held by it, because which plugins are installed is machine-local and not under this repository's control, so a check that varied with it would stop being a statement about this repository. The boundary is `committed to this repository` — the same line the machine-local rationale already draws. The boundary is stated rather than inferred, because the reason for widening across asset types — matching the decision the harness actually makes — does not stop on its own. A description SHOULD nevertheless state what distinguishes the skill from published assets that share its canonical trigger, where those are known. `agent-authoring` states this boundary identically.
 
 A check performed inside the authoring context SHALL NOT be treated as evidence, because the skill is already loaded there and would activate regardless of what its description says.
 
@@ -248,6 +252,16 @@ A failure on the positive prompt SHALL be treated as a description too narrow, a
 
 - **WHEN** a candidate prompt is plausibly served by either a skill or an agent in the library
 - **THEN** the evaluator holds both assets' descriptions and reports which one it would select, so the routing between them is tested rather than assumed
+
+#### Scenario: Repository tooling competes for the same prompt
+
+- **WHEN** a new asset's plausible competitors are skills or commands committed under `.claude/` rather than assets in the library
+- **THEN** the evaluator holds those descriptions alongside the library's, so the check tests the routing that is actually in question rather than passing against assets that could not have taken the prompt
+
+#### Scenario: An upgrade rewrites an asset the evaluator holds
+
+- **WHEN** an external tool updates a skill or command committed under `.claude/` and its description changes
+- **THEN** the recorded checks whose expected routing names that asset are re-run, because the evaluator they were recorded against no longer exists
 
 #### Scenario: A third-party asset shares the canonical trigger
 
@@ -280,7 +294,11 @@ Reporting an outcome and recording one are distinct obligations, and this requir
 
 A description edit SHALL invalidate a skill's recorded trigger check, which SHALL then be re-run. `agent-authoring` states the same rule for an agent, together with the body edit that invalidates its cold-run check; a skill has only the one surface.
 
-The expected routing for the negative prompt SHALL name the asset in the library that should serve it, where one should, rather than only asserting that it reaches nothing. This is what makes a route between two assets a standing regression test instead of a claim made once.
+A change to the `name` or `description` of any asset the evaluator holds SHALL invalidate the recorded checks that depend on it, whether that asset is a library asset or one committed under `.claude/`. *Triggering is verified before a skill is complete* states the same rule where the evaluator's composition is defined; it is restated here because this is the requirement a reader consults to learn what invalidates a check, and a rule reachable from only one of the two is a rule that will be missed from the other.
+
+A change to the **set** of assets the evaluator holds SHALL likewise invalidate every recorded check run against the previous composition. Widening the evaluator is not an edit to any asset, so neither the rule above nor *Adding an asset invalidates competing recorded checks* reaches it — yet it changes what every recorded check runs against, which is the whole of what those rules protect.
+
+The expected routing for the negative prompt SHALL name the asset the evaluator holds that should serve it, where one should, rather than only asserting that it reaches nothing. This is what makes a route between two assets a standing regression test instead of a claim made once. The destination may be an asset committed under `.claude/` rather than a library asset, since the evaluator holds both and a prompt routes where it routes.
 
 The routing recorded SHALL be the correct destination as confirmed by a passing run, not whatever a run happened to produce. A run showing the prompt landing on the wrong asset is a description defect to be fixed and the check re-run; recording the observed routing in that case would turn the fixture into a snapshot of current behaviour and destroy its ability to detect the same drift later.
 
@@ -293,8 +311,18 @@ Fixtures stay in `SKILL.md` because a skill's body loads on demand into an exist
 
 #### Scenario: Negative prompt names its expected destination
 
-- **WHEN** a skill's negative prompt is one that a different asset in the library should serve
+- **WHEN** a skill's negative prompt is one that a different asset the evaluator holds should serve
 - **THEN** the fixture records that asset by name, so a later run can detect the prompt drifting to a third asset
+
+#### Scenario: Expected routing names repository tooling
+
+- **WHEN** a skill's negative prompt is one that a skill or command committed under `.claude/` should serve
+- **THEN** that asset is recorded as the expected routing, because the evaluator holds it and a fixture asserting the prompt reaches nothing would be false
+
+#### Scenario: Widening the evaluator invalidates recorded checks
+
+- **WHEN** the set of assets the evaluator holds is changed, without any asset's own `name` or `description` being edited
+- **THEN** every recorded check run against the previous composition is re-run, because each was a claim about a routing decision made among a different set of candidates
 
 #### Scenario: Outcome is reported without being recorded
 
