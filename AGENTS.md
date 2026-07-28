@@ -58,7 +58,10 @@ only thing keeping the vocabulary coherent.
 This file states conventions, not authoring standards. How to write a
 skill well — the frontmatter contract, description criteria, review
 checkpoints — lives with the skill that enforces it, not here: see
-`skills/create-skill/SKILL.md`.
+`skills/create-skill/SKILL.md`. The equivalent standard for an agent —
+the reconciled frontmatter contract, the system-prompt requirements for a
+fresh-context subprocess, and the trigger and cold-run checks — lives at
+`skills/create-agent/SKILL.md`.
 
 ## The library vs. this repository's own tooling
 

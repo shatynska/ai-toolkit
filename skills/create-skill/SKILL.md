@@ -1,6 +1,6 @@
 ---
 name: create-skill
-description: This skill should be used when the user wants to "create a skill", "add a skill", "write a new skill", "draft a SKILL.md", "turn this into a skill", or asks how to author a skill for the ai-toolkit library. It walks the frontmatter contract, the description standard that counters under-triggering, structure selection, the required human checkpoints, and the trigger check that must pass before a new skill is reported finished. It authors only into this repository's own skills/ directory, never into the project it happens to be invoked from. It is not for general "help me build something" requests, and it is not the authoring standard for agents (agents/) or rules (rules/) — see AGENTS.md for those.
+description: This skill should be used when the user wants to "create a skill", "add a skill", "write a new skill", "draft a SKILL.md", "turn this into a skill", or asks how to author a skill for the ai-toolkit library. It walks the frontmatter contract, the description standard that counters under-triggering, structure selection, the required human checkpoints, and the trigger check that must pass before a new skill is reported finished. It authors only into this repository's own skills/ directory, never into the project it happens to be invoked from. It is not for general "help me build something" requests, and it is not the authoring standard for agents (agents/) — see create-agent for that — or for rules (rules/), which has no authoring standard.
 metadata:
   tags: [authoring, hitl]
 ---
@@ -28,7 +28,10 @@ opening the Intent checkpoint, check whether the need is better served by
 something else:
 
 - **A deterministic sequence invoked by name** → a slash command, not a skill.
-- **Work that needs its own context or isolation** → a subagent.
+- **Work that needs its own context or isolation** → a subagent — route to
+  `create-agent` by name, so the referral lands on a standard that exists
+  rather than a recommendation with nowhere to go. `agent-authoring`
+  requires the reciprocal route, making the two skills a two-way router.
 - **A short standing instruction** ("always do X", "never do Y") → a rule
   fragment in `rules/`, or a line in project memory.
 - **Genuinely needs description-triggered, on-demand procedural knowledge** → a
@@ -46,9 +49,9 @@ Confirm all of the following before any file is written:
   name (see *Directory name and invocation*, below).
 - **Name availability** — list the directories under `skills/` in this
   repository and confirm the proposed name doesn't collide.
-- **Tags** — list the `metadata.tags` already in use across `skills/*/SKILL.md`
-  and choose from that vocabulary; a new tag needs a stated reason (see
-  *Choosing tags*).
+- **Tags** — list the `metadata.tags` already in use across `skills/` and
+  `agents/` and choose from that vocabulary; a new tag needs a stated reason
+  (see *Choosing tags*).
 - **Purpose** — one or two sentences.
 - **Triggering conditions** — the phrasings a user would plausibly type.
 - **Target** — confirm this authors into `ai-toolkit`'s own `skills/`. If
@@ -118,7 +121,15 @@ nothing later in the pipeline will catch it.
 The description is written to counter under-triggering, not to sound measured:
 
 1. **Third person.** `This skill should be used when…`, never `Use this skill
-   when you…`.
+   when you…`. This rule governs skills. `agent-authoring` permits an
+   agent's description to open `Use this agent when [conditions]`, because
+   every published source for agents prescribes that opener and it
+   addresses the dispatcher rather than the user. Both rules exclude the
+   same failure — a description addressed to a human, as in `…when you
+   want to…` — and the divergence is in the permitted opener alone; a
+   reader of this standard should not carry the third-person rule over to
+   an agent's description and read the two capabilities as contradicting
+   each other.
 2. **State the action and the trigger conditions.** "Helps with skills" is
    rejected — no concrete action, no condition under which it fires.
 3. **Deliberately over-eager coverage.** Name adjacent phrasings a user might
@@ -126,9 +137,13 @@ The description is written to counter under-triggering, not to sound measured:
    "create a skill", also name "add a skill", "write a new skill", "turn this
    into a skill".
 4. **Library-wide disambiguation.** State what distinguishes this skill from
-   every other skill in the library — not just the obviously related ones. The
-   layout is flat and there is no index, so every skill competes with every
-   other skill for the same trigger decision.
+   every other **asset** in the library — every skill and every agent, not
+   skills alone. The harness selects across both asset types in a single
+   dispatch decision, so a description disambiguated only against skills
+   can satisfy this standard and then fail its own trigger check against an
+   agent it was never required to distinguish itself from. The layout is
+   flat and there is no index, so every asset competes with every other
+   asset for the same trigger decision.
 
 | Bad | Why | Better |
 |---|---|---|
@@ -162,8 +177,12 @@ comfortably readable in one pass.*
 ## Choosing tags
 
 Before proposing a new tag, list the `metadata.tags` already used across
-`skills/*/SKILL.md` and prefer an existing one over a synonym. A new tag needs
-a stated reason. Tags are lowercase kebab-case.
+`skills/` **and** `agents/` and prefer an existing one over a synonym. The
+vocabulary spans both directories because `toolkit-structure` makes tags the
+single classification carried by every asset regardless of type, and
+`AGENTS.md` already scopes the synonym check to the repository rather than
+to one directory. A new tag needs a stated reason. Tags are lowercase
+kebab-case.
 
 ## Where the skill is written
 
@@ -198,16 +217,78 @@ new skill:
 
 **How the check runs.** Put each prompt to a fresh-context evaluator — an
 agent given the candidate prompt and the `name` and `description` of every
-skill currently in the library (read them from `skills/*/SKILL.md`), and
-nothing from the conversation the skill was authored in. Ask which skill, if
-any, it would invoke. A check run inside the authoring context is not
-evidence: the skill is already sitting in that context, so it "fires" whether
-or not the description is any good — the exact failure this step exists to
-catch.
+skill **and every agent** currently in the library (read skills from
+`skills/*/SKILL.md` and agents from `agents/*.md`), and nothing from the
+conversation the skill was authored in. Ask which asset, if any, it would
+invoke. Both asset types are held because the harness selects across skills
+and agents in a single dispatch decision — an evaluator holding only skills
+cannot test whether a prompt lands on the correct asset when a skill and an
+agent compete for it. `agent-authoring` requires the same composition for
+its own trigger check, stated identically so the two capabilities cannot
+drift.
+
+The evaluator's scope is **this library** — not other installed plugins.
+Which plugins happen to be installed is machine-local state this repository
+doesn't control, so a check whose result varied with it would stop being a
+statement about this library. `plugin-dev` ships both a skill
+(`agent-development`) and an agent (`agent-creator`) that trigger on
+overlapping "create/add an agent" phrasings — the evaluator is not widened
+to hold them. The residual risk — a trigger check passing here and
+misfiring in a project that installs `plugin-dev` — is accepted and named,
+not closed; mitigate it by stating in the description what distinguishes
+this skill regardless of what else is installed (that it operates on this
+repository's library).
+
+A check run inside the authoring context is not evidence: the skill is
+already sitting in that context, so it "fires" whether or not the
+description is any good — the exact failure this step exists to catch.
 
 Report both outcomes. A positive-prompt failure means the description is too
 narrow — widen it and re-run. A negative-prompt failure means it's too broad —
 narrow it and re-run. A skill is not reported complete until both hold.
+
+## Trigger check fixtures, and what invalidates them
+
+After a trigger check passes, record its **fixtures** — the positive and
+negative prompts, and the routing expected of each — in a `## Trigger check
+fixtures` section in this file. Record the negative prompt's expected
+routing by naming the asset that should serve it, where one should, rather
+than only asserting that it reaches nothing; that is what turns a route
+between two assets into a standing regression test instead of a claim made
+once.
+
+**Never record the outcome or the run date.** A description edit
+invalidates the trigger check, so a stored result is only ever valid
+against a description that may no longer exist by the time someone reads
+it, and it reads as assurance to anyone who doesn't reconstruct the edit
+history. Reporting an outcome and recording one are different obligations:
+*Triggering is verified before a skill is complete* requires both prompts
+and their outcomes to be reported in the authoring session — evidence
+offered at the moment the claim is made — and this section forbids only
+persisting that outcome in `SKILL.md`, where it would outlive the
+description it describes.
+
+**The routing recorded is the correct destination, confirmed by a passing
+run — not simply whatever a run happened to produce.** A run showing a
+prompt landing on the wrong asset is a description defect to fix and
+re-run; recording the observed misfire instead would turn the fixture into
+a snapshot of current behaviour and cost it the ability to detect the same
+drift later.
+
+**A description edit invalidates the recorded trigger check**, which must
+then be re-run and the fixtures updated. **Adding a new asset to the
+library invalidates the recorded checks of every existing asset it
+competes with for the same prompts** — a recorded check is only valid
+against the library that existed when it ran, and this library is flat with
+no index, so every asset competes with every other for the same dispatch
+decision. A recorded negative prompt asserting "activates nothing" is a
+claim a later addition can silently falsify; when it does, that check is
+re-run and updated as part of the same change that added the new asset.
+`agent-authoring` carries the identical rule for an agent's cold-run
+payload and trigger fixtures, in a companion `.checks.yaml` file rather
+than in `SKILL.md`, because an agent's body is a system prompt carried on
+every dispatch while a skill's body loads only on demand — the principle is
+shared, the location follows the cost.
 
 ## When two prompts aren't enough
 
@@ -217,20 +298,32 @@ quantitative trigger rates or variance analysis across many prompts, point to
 the scripted eval loop in the official `skill-creator` plugin instead of
 reproducing it here.
 
-## Recorded trigger check
+## Trigger check fixtures
 
-The check this skill's own authoring ran against itself, kept here so a later
-edit to the description can be re-verified against the same pair rather than
-inventing a new one from scratch:
+The prompts this skill's own authoring verified against, kept here so a
+later edit to the description can be re-verified against the same pair
+rather than inventing a new one from scratch. Per *Trigger check fixtures,
+and what invalidates them* above, only the prompts and expected routing are
+recorded — never the outcome or the run date, since a description edit
+invalidates whatever was last confirmed.
 
 - **Positive** — "I want to add a new skill to the ai-toolkit repo that helps
   write good commit messages. Can you walk me through creating it?" →
-  activated `create-skill`.
+  expected routing: `create-skill`.
 - **Negative** — "Can you write me a subagent that reviews my commit messages
-  for clarity before I push?" → activated nothing, correctly recognizing the
-  request is for `agents/`, not `skills/`.
+  for clarity before I push?" → expected routing: `create-agent`.
 
-Both held on the first pass, run 2026-07-27.
+The negative's expected routing changed from "activates nothing" to
+`create-agent` when this skill's routing counterpart was added — the
+prompt asks to "write me a subagent," which is squarely `create-agent`'s
+remit now that it exists. This is `agent-authoring`'s invalidation rule
+exercised on a skill: adding an asset to the library invalidates the
+recorded checks of the assets it competes with, and this fixture's earlier
+"nothing" was exactly such a claim, silently falsified by `create-agent`'s
+addition. Re-run and confirmed correct at the same time `create-agent` was
+authored: the negative reaches `create-agent`, and the positive still
+reaches `create-skill` — the two skills remain distinguishable rather than
+proving confusable.
 
 ## Also worth reading
 
