@@ -348,10 +348,13 @@ remit now that it exists. This is `agent-authoring`'s invalidation rule
 exercised on a skill: adding an asset to the library invalidates the
 recorded checks of the assets it competes with, and this fixture's earlier
 "nothing" was exactly such a claim, silently falsified by `create-agent`'s
-addition. Re-run and confirmed correct at the same time `create-agent` was
-authored: the negative reaches `create-agent`, and the positive still
-reaches `create-skill` — the two skills remain distinguishable rather than
-proving confusable.
+addition.
+
+The routing above is the correct destination, not a record of what a run
+produced — and no outcome or run date is recorded here, per the rule stated
+above. What the fixture asserts is that these two prompts should separate
+`create-skill` from `create-agent`; whether they currently do is re-established
+by running them, not by reading this file.
 
 ## Also worth reading
 

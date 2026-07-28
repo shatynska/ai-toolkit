@@ -401,8 +401,10 @@ second one.
   `create-agent` and `create-skill` are the two most confusable descriptions
   in the library.
 
-Both confirmed on the first pass by a fresh-context evaluator holding both
-skills' descriptions and neither the authoring conversation.
+Both routings above are the correct destinations, not a record of what a run
+produced. No outcome or run date is recorded here — re-run the two prompts
+against an evaluator composed as *After writing: the trigger check* describes,
+which now holds the `.claude/` assets as well as the library's.
 
 ## Also worth reading
 
