@@ -259,6 +259,45 @@ What no longer ships untested is whether the mechanism *composes* — that a wor
 
 *If the dry run fails,* the finding revises the procedure rather than being filed as a note. Task 4.7 exists for that, and the revision reaches both surfaces — the skill body and the `agent-authoring` delta — because the delta is what gets synced.
 
+**Dry-run result (2026-07-28): the procedure passed, with one deviation
+worth recording.** `claude-security` is not a git repository in this
+environment — `git worktree add` cannot target it directly, which the
+requirement's literal wording (written for *this repository's own*
+git-tracked agents) does not anticipate for a borrowed third-party target.
+The isolation intent was honoured anyway by substituting a plain directory
+copy of the plugin, dispatching from inside it with `--plugin-dir` pointed
+at the copy and no writable path back to the original marketplace clone or
+to this repository. That is a deviation in mechanism, not in outcome, and
+it is specific to dry-running a foreign agent — task 1.10 already confirmed
+the literal `git worktree` mechanism works for this repository's own
+uncommitted agents, which is the actual case this standard governs.
+
+Every other question the dry run was run to settle came back positive:
+
+- **Executable as written**: yes, on the real-dispatch branch — `explore`
+  registered as `claude-security:explore` under `--plugin-dir` and was
+  dispatched by name with a payload naming only what its dispatch contract
+  requires (`SCAN_ROOT`). No fallback to simulation was needed.
+- **Report recoverable, not just the dispatcher's account**: yes — the
+  agent's exact report came back both as the relayed final result and
+  independently via `task_notification.summary`, matching each other
+  verbatim.
+- **Pass criteria decidable by a reader who didn't write the body**: yes.
+  Output format matched the body's own stated shape ("concisely, with
+  file:line evidence"); every path in the report was absolute and rooted at
+  the supplied `SCAN_ROOT`, with no invented path or assumed cwd; the agent
+  concluded on its own with a complete answer rather than being cut off;
+  and the static half (tool demands against the `tools` field) matched
+  with no mismatch.
+- **One criterion this task didn't exercise**: the untrusted-input stance.
+  The scanned content contained no text addressed to the agent as an
+  instruction, so nothing here tested whether the agent would have
+  resisted it — a limit of this particular task, not of the check.
+
+Composition confirmed via the deviation above, not via the literal
+mechanism. Containment for a write remains untested by this target, per
+the paragraph below, unchanged by this result.
+
 ### D12: fixtures are recorded; outcomes are not
 
 The record exists to make re-verification mechanical after the library changes. That is a claim about *inputs*, and following it strictly rules out storing anything else.

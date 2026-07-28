@@ -35,7 +35,7 @@ The contract SHALL record the constraints that script places on the values, not 
 
 Where no specific model is called for, the declared value SHALL be `model: inherit`, which the validator accepts. Declaring a concrete model to satisfy a validator would pin a model on every consuming project for a reason the standard itself records as a tool defect.
 
-`metadata.tags` MAY be declared, as `toolkit-structure` permits for every asset. Tags SHALL be lowercase kebab-case and SHALL be chosen from the vocabulary already in use across `skills/` and `agents/`, with a stated reason required before a new tag is coined. The standard SHALL record that no agent in the reconciled corpus declares `metadata`, so the loader's acceptance of it is unverified by the corpus and SHALL be established by observation before an agent carrying tags is authored.
+`metadata.tags` MAY be declared, as `toolkit-structure` permits for every asset. Tags SHALL be lowercase kebab-case and SHALL be chosen from the vocabulary already in use across `skills/` and `agents/`, with a stated reason required before a new tag is coined. The standard SHALL record that no agent in the reconciled corpus declares `metadata`, so the loader's acceptance of it had no external evidence behind it; this was confirmed directly rather than left assumed — a throwaway agent declaring `metadata: { tags: [...] }` loaded and dispatched normally under `claude -p --plugin-dir`, confirmed 2026-07-28.
 
 Because the published sources disagree with one another and with shipped practice, the contract SHALL be recorded as a dated snapshot naming every source it was reconciled from — the validation script, the `agent-development` skill, and the shipped agent corpus — together with the points on which they conflict. It SHALL NOT be presented as a closed enumeration derived from a single authority.
 
@@ -73,7 +73,7 @@ Because the published sources disagree with one another and with shipped practic
 
 An agent definition SHALL reside directly inside `agents/` as `agents/<agent-name>.md`, with no intervening directory. The frontmatter `name` and the file's base name MUST be identical.
 
-Which of the two wins when they differ SHALL be treated as unverified until observed. The reconciled corpus contains no mismatch, so it is evidence for neither, and the empirical finding recorded in `agents/README.txt` establishes only that the file name is used when no `name` is declared. The standard SHALL therefore require the two to agree, rather than resting on a precedence it has not seen, and SHALL record the question as open until a load settles it.
+Where the two differ, the frontmatter `name` SHALL be treated as the one that wins at load time. This is now a verified finding, not an open question: a throwaway agent with a deliberately mismatched `name` and file base name was dispatched under `claude -p --plugin-dir`, and it registered and was invoked by its frontmatter `name`, confirmed 2026-07-28. The requirement that the two agree stands regardless of which one wins — a mismatch is confusing to a reader even though the loader resolves it consistently.
 
 The standard SHALL state the reason: agent discovery walks subdirectories but folds them into the invocation name as `plugin:subdir:agent-name`, so a grouping directory makes a grouping decision part of the agent's name and renames the agent if the grouping is later revised.
 
