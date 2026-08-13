@@ -1,0 +1,32 @@
+## Why
+
+LangGraph rewards a plausible-looking graph that is quietly wrong. Its state model, control flow, and persistence all have defaults that read as safe and aren't: an unannotated field silently overwrites instead of accumulating, a conditional edge returning a name with no matching node fails at runtime rather than at graph-definition time, a `MemorySaver` checkpointer works perfectly in every local run and loses everything the moment the process restarts. None of these announce themselves at the point they're written — the graph compiles, runs, and looks correct until the specific input or restart that exposes it.
+
+A competent model writes fluent LangGraph code and still writes past these behaviours unprompted, the same gap `bash` and `terraform` already close for their own domains. There is a concrete, greenfield Python/LangGraph project motivating this now — a multi-agent, tool-calling system — but the gap itself is general: state/reducer semantics, routing footguns, recursion limits, and checkpointer choice hold for any LangGraph graph, not only a multi-agent one.
+
+## What Changes
+
+- Add `skills/langgraph/` — a domain asset covering Python LangGraph authoring practice, held to `create-skill`'s standard, in the same archetype as `bash` and `terraform` (floor-level discipline, not a review checklist; defers to a consuming project's own `AGENTS.md` for that project's specific checkpointer backend, state schema conventions, and deployment target).
+- Scope it to the **whole LangGraph domain**, not narrowed to multi-agent: state schema and reducer design, conditional-edge routing, recursion limits on cyclic graphs, checkpointer/persistence choice, streaming modes, subgraphs, and testing. Multi-agent handoff patterns and tool-calling are the most-developed section — motivated by the concrete project behind this change — without being the skill's boundary, the same way `terraform`'s shape was informed by an infrastructure repo without being scoped to infrastructure alone.
+- Scope it to **Python only** (the `langgraph` package). The JS/TS `@langchain/langgraph` SDK is explicitly out of scope and named as such in the description, so a JS-flavored prompt doesn't over-trigger it.
+- Use a **split structure** rather than a flat file: `SKILL.md` carries the always-resident floor (state/reducers, edges, recursion, streaming, testing), and two `references/` files carry material that's load-bearing but not needed on every trigger — `references/checkpointing.md` (checkpointer choice, thread-ID hygiene, subgraph state-passing) and `references/multi-agent-tool-calling.md` (handoff patterns, `Command`, `ToolNode`, tool-call error handling, `interrupt()`-gated approval). This diverges from `bash`/`terraform`'s flat-file precedent because the full domain surface, at the depth wanted for the multi-agent/tool-calling material, doesn't project to stay within the ~5,000-word single-file budget.
+- Introduce one new tag, `langgraph`. Deliberately **do not** apply the existing `hitl` tag: LangGraph's own `interrupt()` primitive pauses the *authored graph* for human input, a property of the target code, whereas this library's `hitl` tag (`create-skill`, `create-agent`, `terraform`) means the *assistant* pauses to confirm before its own risky action. The two are unrelated senses of the same word, and design.md records this explicitly so the distinction isn't silently lost.
+- Verify the LangGraph-specific API claims this skill makes (`Annotated[list, add_messages]`, `Command(goto=, update=)`, `ToolNode`/`tools_condition`, `interrupt()`) against the current released `langgraph` package before they're written, rather than from training-data familiarity — the same discipline `add-bash-skill` applied to its ShellCheck claims, warranted here by how fast LangGraph's API has moved (`interrupt()` and `Command` both replaced older patterns relatively recently).
+- Re-run the recorded trigger-check fixtures of any existing asset the new skill competes with, per the invalidation requirement in `skill-authoring`.
+
+## Capabilities
+
+### New Capabilities
+- `langgraph-practice`: What the library's LangGraph guidance asserts and where it stops — Python-only scope, state/reducer semantics, conditional-edge routing and recursion-limit discipline, checkpointer/persistence choice, streaming-mode distinctions, subgraph state-passing, the testing gap between `.invoke()` and `.stream()`, multi-agent handoff and tool-calling patterns held to the same "verify against the real API" standard as `bash-practice`'s ShellCheck requirement, deference to a consuming project's own conventions, and the split-file structure that keeps the always-resident floor separate from on-demand deep-dive material.
+
+### Modified Capabilities
+(none)
+
+`skill-authoring` governs *how* a skill is authored and places no constraint on subject matter. `toolkit-structure` already makes tags the only classification and requires only that existing vocabulary be checked before a tag is coined — which this change does rather than changes, and its "adding an asset requires no catalogue update" requirement means no README or index edit is owed.
+
+## Impact
+
+- **Affected**: new directory `skills/langgraph/` (`SKILL.md` plus `references/checkpointing.md` and `references/multi-agent-tool-calling.md`). No existing asset changes except any recorded trigger-check fixture the invalidation sweep finds falsified, which is then updated in this change rather than a later one.
+- **Recorded checks elsewhere**: adding an asset invalidates the recorded trigger checks of every asset it competes with. Nothing currently in the library (`bash`, `terraform`, `create-skill`, `create-agent`, `n8n-workflow-review`, `openspec-change-reviewer`) touches AI agent-orchestration frameworks, so the expected finding is low risk — but the sweep is a determination to be run during tasks, not assumed here.
+- **Library positioning**: a domain asset not tied to a single tool's lifecycle, like `bash` and `terraform`. `/plugin install` is all-or-nothing, so it loads everywhere the plugin does — accepted, since an untriggered skill costs only its description line.
+- **No new dependencies, no tooling, no build step.** The `langgraph` Python package is referenced as the subject matter, not added as a repository dependency; API claims are verified during authoring against the released package rather than by adding it to this repo.
