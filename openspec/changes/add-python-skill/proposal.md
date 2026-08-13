@@ -1,0 +1,32 @@
+## Why
+
+Python rewards a plausible-looking line that is quietly wrong. A handful of its defaults contradict what the syntax suggests, and the failures are silent rather than loud: a mutable default argument is shared across every call that doesn't pass one, a closure captured inside a loop reads the loop variable's *final* value rather than the value at capture time, `is` appears to work correctly on small integers only because CPython caches them and then breaks the moment a value falls outside that range, a broad `except` swallows a bug along with the error it was written to catch, `return` inside `finally` silently discards whatever exception was propagating. None of this announces itself at the point it's written — the code runs, looks correct, and is discovered wrong later, on the input or code path that exposes it.
+
+A competent model writes fluent Python and still writes past these behaviors unprompted, the same gap `bash`, `terraform`, and `langgraph` already close for their own domains. There is a concrete new Python project motivating this now, but per this library's established pattern (`bash` over `infra-bash`, `langgraph` over `langgraph-multi-agent`), the skill scopes to general Python authoring practice rather than to that project's shape — the traps hold identically regardless of what the code is for.
+
+## What Changes
+
+- Add `skills/python/` — a domain asset covering general-purpose Python authoring practice, held to `create-skill`'s standard, in the same archetype as `bash` and `terraform` (floor-level discipline, not a review checklist or a style guide; defers to a consuming project's own `AGENTS.md` for that project's conventions).
+- Scope the `SKILL.md` floor to counterintuitive traps that survive model improvement, not syntax or style: mutable default arguments, mutable class attributes shared across instances, aliasing vs. copying, late-binding closures in loops, comprehension scoping, `is` vs `==` (including the small-int/string caching illusion), float/`NaN` equality, overly broad `except` clauses, `return`-in-`finally` masking exceptions, `__exit__` swallowing exceptions on a truthy return, and generator/iterator single-use exhaustion.
+- Split `references/` **from the outset** rather than growing into it later — diverging from `bash`/`terraform`'s flat-file-until-it-doesn't-fit precedent and instead following `langgraph`'s precedent of pre-splitting when the domain surface is wide enough at the wanted depth. Candidate reference files: `references/concurrency.md` (GIL false-safety, forgotten `await`, blocking an event loop), `references/imports-and-state.md` (circular imports, module-level mutable state as a hidden global), `references/typing-and-tooling.md` (`ruff`/`mypy` as a necessary-but-not-sufficient completion check, stating which traps above each does and doesn't catch), and `references/datetime-and-numerics.md` (naive vs. aware `datetime`, float vs. `Decimal` for money).
+- Point to `langgraph` for LangGraph-specific state/reducer/routing/checkpointer material rather than restating it — a cross-reference, not an exclusion boundary, mirroring how `bash` names `terraform` as the place to go for provisioning semantics without drawing a hard line between them.
+- Introduce one new tag, `python`.
+- Verify the version-dependent claims this skill makes (CPython small-int/string interning range, current `ruff`/`mypy` rule coverage for the traps listed) against a live-installed interpreter and tool versions before they're written, per the same discipline `add-bash-skill` and `add-langgraph-skill` applied.
+- Re-run the recorded trigger-check fixtures of any existing asset the new skill competes with, per the invalidation requirement in `skill-authoring` — `langgraph` is the primary risk given the cross-reference above.
+
+## Capabilities
+
+### New Capabilities
+- `python-practice`: What the library's general Python guidance asserts and where it stops — general-purpose scope (not shaped by any one project's stack), the enumerated trap list held to a "contradicts a reasonable reading of the code" selection bar, the pre-split `SKILL.md`/`references/` structure, the `ruff`/`mypy` necessary-but-not-sufficient completion discipline, the cross-reference to `langgraph` for LangGraph-specific material, deference to a consuming project's own conventions, and the live-verification requirement for version-dependent claims.
+
+### Modified Capabilities
+(none)
+
+`skill-authoring` governs *how* a skill is authored and places no constraint on subject matter. `toolkit-structure` already makes tags the only classification and requires only that existing vocabulary be checked before a tag is coined — which this change does rather than changes, and its "adding an asset requires no catalogue update" requirement means no README or index edit is owed.
+
+## Impact
+
+- **Affected**: new directory `skills/python/` (`SKILL.md` plus `references/concurrency.md`, `references/imports-and-state.md`, `references/typing-and-tooling.md`, `references/datetime-and-numerics.md`). No existing asset changes except any recorded trigger-check fixture the invalidation sweep finds falsified, which is then updated in this change rather than a later one.
+- **Recorded checks elsewhere**: adding an asset invalidates the recorded trigger checks of every asset it competes with. `langgraph` is the primary risk, since both cover Python and a prompt like "review my Python file" could plausibly reach either — the cross-reference in `SKILL.md` is the mitigation, and its recorded fixtures are re-run as part of this change. `bash`, `terraform`, `create-skill`, `create-agent`, `n8n-workflow-review`, and `openspec-change-reviewer` are lower risk (no existing overlap with general-purpose Python authoring) but the sweep is a determination to be run during tasks, not assumed here.
+- **Library positioning**: a domain asset not tied to a single tool's lifecycle, like `bash`, `terraform`, and `langgraph`. `/plugin install` is all-or-nothing, so it loads everywhere the plugin does — accepted, since an untriggered skill costs only its description line.
+- **No new dependencies, no tooling, no build step.** CPython and `ruff`/`mypy` are referenced as subject matter and as verification/completion tools, not added as repository dependencies; version-dependent claims are verified during authoring against live-installed versions rather than from training-data familiarity.
