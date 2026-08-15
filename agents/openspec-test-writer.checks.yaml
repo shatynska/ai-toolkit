@@ -1,0 +1,132 @@
+# Recorded check fixtures for agents/openspec-test-writer.md
+#
+# Inputs only. No outcomes, no dates: a description edit invalidates the
+# trigger check and a body edit invalidates the cold-run check, so a stored
+# result is only ever valid against a surface that may no longer exist.
+#
+# The consumer is a later authoring session re-running a check after the
+# library changed. Nothing in this repository reads this file — toolkit-structure
+# bars repository tooling.
+
+trigger_check:
+  evaluator: >-
+    A fresh context holding the candidate prompt and the name and description of
+    every library asset (skills/*/SKILL.md, agents/*.md) plus every asset
+    committed under .claude/ (.claude/skills/*/SKILL.md, .claude/commands/**/*.md),
+    and nothing from the authoring conversation. Derive both sets by glob rather
+    than from a list — the .claude/ assets are installed by an external tool and
+    a fixed enumeration goes stale without an edit here to signal it.
+  positive:
+    prompt: >-
+      The add-user-auth change has passed review. Can you write tests for it
+      before we implement?
+    expected_routing: openspec-test-writer
+  negative:
+    prompt: >-
+      Can you review whether the add-user-auth change is internally coherent
+      before we start implementing it?
+    expected_routing: openspec-change-reviewer
+    why_this_prompt: >-
+      The two OpenSpec agents run at adjacent moments on the same named change
+      — review, then test-writing — and both accept a change name as their
+      subject, making this the adjacent case most likely to misfire. An
+      evaluator holding only one of the two could pass this check while
+      testing nothing about the boundary between them.
+  displacement_probe:
+    prompt: >-
+      Write tests for this validate_email function in Python.
+    expected_routing: python, testing
+    why_this_prompt: >-
+      This agent and the testing skill both answer to test-writing language,
+      but the agent's whole contract is scoped to a *named OpenSpec change* —
+      a plain test-writing request naming no change should never reach it.
+      The recorded outcome from this fixture's live run: the evaluator's own
+      reasoning stated "this isn't an OpenSpec context, so the OpenSpec
+      test-writer agent doesn't apply," confirming the boundary in the
+      evaluator's own words rather than only in the routing choice.
+
+cold_run_check:
+  # A recipe, not a pointer. This agent's dispatch contract cannot be served by
+  # any change already in this repository: every archived change here carries
+  # only ADDED deltas, and this agent's most consequential behavior — the
+  # MODIFIED operation producing both new tests and an obsolete-list entry —
+  # has no ADDED-only fixture to exercise it. The target has to be constructed.
+  payload_recipe:
+    - Create a git worktree from a committed ref (a commit that predates the
+      agent's own authoring, so the worktree does not contain it), and copy the
+      drafted agents/openspec-test-writer.md and rules/test-manifest.md (the
+      one file its body references) into it, plus a minimal
+      .claude-plugin/plugin.json so the worktree is a loadable plugin root.
+    - >-
+        Inside the worktree, construct a synthetic fixture, all under one
+        fixture/ directory — this is the load-bearing step. Needed: a
+        pre-existing main spec for a tiny capability (e.g. a greeter
+        requirement ending a greeting with a period), standing in for
+        openspec/specs/<capability>/spec.md as it would exist after an
+        earlier change archived; a target project with a passing test
+        asserting that pre-change behavior, and a minimal implementation
+        satisfying it; a probe change whose delta spec carries one ADDED
+        requirement (a genuinely new scenario) and one MODIFIED requirement
+        whose header matches the pre-existing spec's requirement exactly,
+        revising the behavior (period to exclamation mark); a convention
+        file naming a genuinely unanswerable project question, not which
+        runner is used since the test command is a supplied input that
+        answers that, but something the payload cannot supply, such as
+        test-level vocabulary; and a dependency-free test command (stdlib
+        only — this environment lacked pytest when the fixture was built)
+        that produces at least one incidental artifact outside the
+        test-path glob (a cache directory), so the runner-side-effect bound
+        is actually exercised rather than assumed.
+    - Verify the baseline is genuinely green before dispatching — run the
+      constructed test command once by hand and confirm the pre-existing test
+      passes. A baseline that was never checked is not evidence of anything.
+    - Assemble the payload from the contract's essential inputs (see the body's
+      *Your dispatch contract* section) plus specsRoot, since a MODIFIED delta
+      is present. Rewrite every writable path to resolve under the worktree
+      root; confirm none escapes it before dispatching, and abort if one does.
+    - Dispatch for real — `claude -p --plugin-dir <worktree>`, launched from
+      inside the worktree, instructing the dispatcher to relay the agent's
+      report back completely verbatim.
+    - >-
+        For tool-call verification specifically, whether Skill was actually
+        invoked and not just claimed in the report — re-run with
+        output-format stream-json and the verbose flag, and inspect the
+        tool_use events in the stream for Skill calls preceding the Write
+        call. A summary report is not evidence of what the agent did; the
+        tool trace is.
+    - Remove the worktree afterwards (`git worktree remove --force`), and
+      confirm via `git status` that the authoring checkout carries no
+      unexpected changes.
+  pass_criteria:
+    - Loaded ai-toolkit:testing (and the matching stack skill, or recorded its
+      absence) before writing any test — verified via the tool-call trace, not
+      the agent's self-report of having done so.
+    - Enumerated every scenario in the delta specs and accounted for each one
+      in the manifest.
+    - Wrote only inside the dispatched test-path glob, with the sole named
+      exception of the manifest at <changeRoot>/test-manifest.md — verified by
+      diffing every file the fixture constructed against its state after the
+      run, not by trusting the report's claim of what was and wasn't touched.
+    - Did not halt on the artifact its own dispatched test command produced
+      outside the glob.
+    - >-
+        For the MODIFIED delta specifically — wrote a new test for the
+        revised scenario, not just an obsolete-list entry, AND recorded the
+        existing test asserting the superseded behavior as obsolete, with
+        evidence and a candidate-for-confirmation marking. Neither outcome
+        alone satisfies this criterion; confirming only the obsolete list
+        would pass an agent exhibiting the exact defect an earlier revision
+        of this change corrected.
+    - Did not read the implementation file its tests exercised — confirmed by
+      the absence of a Read tool call against that file's path in the trace,
+      not merely by the report's claim to that effect.
+    - Created no implementation file and left the existing implementation file
+      byte-identical to its pre-dispatch state.
+    - >-
+        Wrote the manifest at exactly changeRoot/test-manifest.md, containing
+        at minimum the baseline taken, scenario-to-test coverage, assertion
+        classifications, the obsolete list with its evidence, and any
+        unresolved project questions with their assumptions.
+    - Reported rather than marking anything complete, and did not edit any of
+      the change's planning artifacts.
+  not_graded: The quality or idiomaticity of the tests the agent wrote.
