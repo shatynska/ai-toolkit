@@ -3,14 +3,40 @@
 Memory fragments live at `rules/<rule-name>.md`, flat, directly under this
 directory.
 
-Rules are not carried by the plugin — there is no rules primitive to carry
-them. They are consumed by referencing them from a project's `CLAUDE.md` or
-`AGENTS.md` with an `@` import naming the fragment's path in this repository,
-for example `@~/projects/ai-toolkit/rules/<rule-name>.md`. This requires no
-tooling and no copying, and the fragment stays a single source of truth
-rather than being duplicated into the importing project.
+Rules have no dedicated Claude Code primitive — nothing loads `rules/`
+automatically the way `skills/` and `agents/` are loaded. That does not
+mean they are absent from an installed copy: plugin installation copies
+this repository's entire tree, so these files are present and readable
+wherever the plugin is installed. Two paths reach a fragment from there:
 
-The import path is machine-local: it resolves only on a machine where this
-repository is checked out at that path. An import committed to a repository
-shared with other people resolves only for people with this library at the
-same path.
+- **`@` import** — referencing a fragment from a project's `CLAUDE.md` or
+  `AGENTS.md`, for example `@~/projects/ai-toolkit/rules/<rule-name>.md`.
+  This requires no tooling and no copying, and the fragment stays a single
+  source of truth rather than being duplicated into the importing project.
+  The import path is machine-local: it resolves only on a machine where
+  this repository is checked out at that path. An import committed to a
+  repository shared with other people resolves only for people with this
+  library at the same path.
+- **A shipped tool reading it** — an executable under `scripts/` locates a
+  fragment relative to its own installed location and reads it directly,
+  with no `@` import and no harness involved. `scripts/project-init` does
+  this: it inlines `development-workflow.md` into a project's `AGENTS.md`.
+
+## Fragment kind
+
+Every fragment declares its kind in YAML frontmatter:
+
+```yaml
+---
+kind: standing-constraint    # or: procedural-checklist
+version: 1                   # only if the fragment is ever inlined
+---
+```
+
+A **standing constraint** is intended to reach a project's `CLAUDE.md` or
+`AGENTS.md` and remain in force there, by either path above. A
+**procedural checklist** describes a one-time procedure, read on demand,
+and is never inlined into a project's conventions file — inlining it would
+leave permanent instructions for work already finished. `version`
+increments when the fragment's text changes; it has no relationship to the
+plugin's own version.

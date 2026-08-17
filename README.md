@@ -25,6 +25,14 @@ rules/<rule-name>.md
 A skill's directory name is its invocation name. See `AGENTS.md` for the
 full conventions and the constraints behind this layout.
 
+Two further directories sit alongside these, in a separate category from
+library assets: `scripts/` holds deterministic tooling that ships with the
+library and is meant to be run directly (`scripts/project-init`, for
+instance) — reachable by a consumer, a shell, or any harness, not only one
+that loads `skills/`; `tests/` holds a dependency-free harness exercising
+it. Neither is discovered by description the way an asset is. See
+`AGENTS.md` for what belongs in each.
+
 ## Installing
 
 ```
@@ -41,16 +49,23 @@ To develop against the library without installing it, run:
 claude --plugin-dir ~/projects/ai-toolkit
 ```
 
-`rules/` fragments are not carried by the plugin. Adopt one by `@` importing
-its path from a project's `CLAUDE.md` or `AGENTS.md`:
+`rules/` fragments have no dedicated loading mechanism — installation
+copies this repository's entire tree, so the files are present in an
+installed copy, but nothing loads them automatically the way `skills/` and
+`agents/` are loaded. Two paths reach a fragment: adopt one yourself by `@`
+importing its path from a project's `CLAUDE.md` or `AGENTS.md`,
 
 ```
 @~/projects/ai-toolkit/rules/<rule-name>.md
 ```
 
-This path is machine-local — it resolves only where this repository is
-checked out at that path, so it is not suitable for a `CLAUDE.md` committed
-to a repository shared with other people.
+or let a shipped tool under `scripts/` read and inline it directly — this
+is how `scripts/project-init` delivers `rules/development-workflow.md`
+into a project's `AGENTS.md`, with no import involved.
+
+The `@` import path is machine-local — it resolves only where this
+repository is checked out at that path, so it is not suitable for a
+`CLAUDE.md` committed to a repository shared with other people.
 
 The first time a project's `CLAUDE.md` imports a path outside that project,
 Claude Code shows a one-time confirmation before reading it. That's expected
