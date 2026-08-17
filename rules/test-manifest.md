@@ -1,3 +1,8 @@
+---
+kind: standing-constraint
+version: 1
+---
+
 # Read the test manifest before implementing
 
 If an OpenSpec change has been passed to `openspec-test-writer`, its change
