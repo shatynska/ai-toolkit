@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Assertion helpers sourced by each file in tests/cases/*.sh.
+# A failed assertion prints a message to stderr and exits the case
+# non-zero immediately; tests/run.sh treats that as the case failing.
+
+assert_exit() {
+  local expected="$1" actual="$2" msg="${3:-}"
+  if [ "$actual" != "$expected" ]; then
+    echo "FAIL: expected exit code $expected, got $actual${msg:+ ($msg)}" >&2
+    exit 1
+  fi
+}
+
+assert_file() {
+  local path="$1" msg="${2:-}"
+  if [ ! -f "$path" ]; then
+    echo "FAIL: expected file to exist: $path${msg:+ ($msg)}" >&2
+    exit 1
+  fi
+}
+
+assert_file_absent() {
+  local path="$1" msg="${2:-}"
+  if [ -e "$path" ]; then
+    echo "FAIL: expected path to be absent: $path${msg:+ ($msg)}" >&2
+    exit 1
+  fi
+}
+
+assert_unchanged() {
+  local path="$1" expected_sum="$2" msg="${3:-}"
+  local actual_sum
+  actual_sum="$(md5sum "$path" 2>/dev/null | awk '{print $1}')"
+  if [ "$actual_sum" != "$expected_sum" ]; then
+    echo "FAIL: expected $path unchanged, checksum differs${msg:+ ($msg)}" >&2
+    exit 1
+  fi
+}
+
+assert_contains() {
+  local path="$1" pattern="$2" msg="${3:-}"
+  if ! grep -qF -- "$pattern" "$path" 2>/dev/null; then
+    echo "FAIL: expected $path to contain: $pattern${msg:+ ($msg)}" >&2
+    exit 1
+  fi
+}

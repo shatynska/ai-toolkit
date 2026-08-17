@@ -1,0 +1,271 @@
+#!/usr/bin/env bash
+# Deterministic project initialization for the ai-toolkit development
+# workflow. See `--help` for usage; see tests/README.md for the report
+# contract this script implements against.
+set -u
+
+print_help() {
+  cat <<'HELP'
+project-init — deterministic project initialization for the ai-toolkit development workflow
+
+Usage:
+  project-init [--tools <value>] [--help|-h] [TARGET_DIR]
+
+Modes (derived automatically, never flagged):
+  new project  — TARGET_DIR's repository has no commit yet. Ends by naming
+                 foundation discovery as the next step.
+  adoption     — TARGET_DIR's repository has at least one commit. Ends at
+                 the managed workflow block; no foundation change is created.
+
+Arguments:
+  TARGET_DIR   Directory to initialize. Defaults to the current working
+               directory if omitted.
+
+Flags:
+  --tools <value>   Specification-tooling target, passed through to
+                     `openspec init --tools <value>`. Default: claude.
+  --help, -h        Show this help and exit. Makes no filesystem change.
+
+Outcomes and exit codes:
+  0   SUCCESS   every applicable concern was completed or already satisfied
+  1   ERROR     a step was attempted and failed
+  2   BLOCKED   a precondition was unmet; no filesystem change was attempted
+
+Never overwrites a file it did not create, except appending the managed
+workflow block into AGENTS.md. Never commits. Never starts foundation
+discovery — only names it as the next step.
+HELP
+}
+
+# --- Self-location: never resolved from the environment. -------------------
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TOOLKIT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+FRAGMENT="$TOOLKIT_ROOT/rules/development-workflow.md"
+
+# --- Argument parsing --------------------------------------------------------
+target=""
+tools="claude"
+show_help=0
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --help|-h)
+      show_help=1
+      shift
+      ;;
+    --tools)
+      tools="${2:-}"
+      shift 2
+      ;;
+    --tools=*)
+      tools="${1#--tools=}"
+      shift
+      ;;
+    *)
+      if [ -z "$target" ]; then
+        target="$1"
+      fi
+      shift
+      ;;
+  esac
+done
+
+if [ "$show_help" -eq 1 ]; then
+  print_help
+  exit 0
+fi
+
+if [ -z "$target" ]; then
+  target="$(pwd)"
+fi
+
+# --- Terminal-outcome helpers -------------------------------------------------
+finish_blocked() {
+  echo "Outcome: BLOCKED"
+  echo "Reason: $1"
+  exit 2
+}
+
+finish_error() {
+  echo "Outcome: ERROR"
+  echo "Reason: $1"
+  exit 1
+}
+
+# --- Target validation, reported before anything else -----------------------
+if [ -d "$target" ]; then
+  target="$(cd "$target" && pwd)"
+fi
+echo "Target: $target"
+
+if [ ! -e "$target" ]; then
+  finish_blocked "target directory does not exist: $target"
+fi
+if [ ! -d "$target" ]; then
+  finish_blocked "target is not a directory: $target"
+fi
+if [ ! -w "$target" ]; then
+  finish_blocked "target directory is not writable: $target"
+fi
+
+# --- The fragment is read unconditionally, before any other precondition. ---
+if [ ! -f "$FRAGMENT" ]; then
+  finish_blocked "workflow rule fragment not found at $FRAGMENT"
+fi
+
+fragment_frontmatter="$(sed -n '2,/^---$/p' "$FRAGMENT" | sed '$d')"
+fragment_kind="$(printf '%s\n' "$fragment_frontmatter" | sed -n 's/^kind:[[:space:]]*//p' | head -n1)"
+fragment_version="$(printf '%s\n' "$fragment_frontmatter" | sed -n 's/^version:[[:space:]]*//p' | head -n1)"
+
+if [ -z "$fragment_kind" ] || [ -z "$fragment_version" ]; then
+  finish_blocked "workflow rule fragment at $FRAGMENT is missing kind or version frontmatter"
+fi
+
+closing_line="$(grep -n '^---$' "$FRAGMENT" | sed -n '2p' | cut -d: -f1)"
+fragment_body="$(tail -n "+$((closing_line + 1))" "$FRAGMENT")"
+
+# --- Determine which concerns are outstanding (filesystem reads only). ------
+repo_root="$(git -C "$target" rev-parse --show-toplevel 2>/dev/null || true)"
+if [ "$repo_root" = "$target" ]; then
+  repo_outstanding=0
+  if git -C "$target" rev-parse HEAD >/dev/null 2>&1; then
+    has_commit=1
+  else
+    has_commit=0
+  fi
+else
+  repo_outstanding=1
+  has_commit=0
+fi
+
+if [ -f "$target/openspec/config.yaml" ]; then
+  spec_outstanding=0
+else
+  spec_outstanding=1
+fi
+
+if [ -f "$target/.gitignore" ]; then
+  gitignore_outstanding=0
+else
+  gitignore_outstanding=1
+fi
+
+agents_path="$target/AGENTS.md"
+claude_path="$target/CLAUDE.md"
+
+existing_version=""
+if [ -f "$agents_path" ]; then
+  marker_line="$(grep -n '^<!-- ai-toolkit:development-workflow v' "$agents_path" 2>/dev/null | head -n1)"
+  if [ -n "$marker_line" ]; then
+    existing_version="$(printf '%s\n' "$marker_line" | sed -n 's/.*ai-toolkit:development-workflow v\([0-9][0-9]*\).*/\1/p')"
+  fi
+fi
+
+# --- External-command preconditions, scoped to outstanding concerns only. ---
+if [ "$repo_outstanding" -eq 1 ] && ! command -v git >/dev/null 2>&1; then
+  finish_blocked "git not found, required to initialize the repository"
+fi
+if [ "$spec_outstanding" -eq 1 ] && ! command -v openspec >/dev/null 2>&1; then
+  finish_blocked "openspec not found, required to initialize specification tooling"
+fi
+
+# --- Attempt each outstanding concern, in order. No rollback on failure. ----
+if [ "$repo_outstanding" -eq 1 ]; then
+  if ! git -C "$target" init -q >/dev/null 2>&1; then
+    finish_error "repository: git init failed"
+  fi
+  echo "repository: created"
+  has_commit=0
+else
+  echo "repository: already present"
+fi
+
+if [ "$spec_outstanding" -eq 1 ]; then
+  if ! openspec init --tools "$tools" --no-animation "$target" >/dev/null 2>&1; then
+    finish_error "specification tooling: openspec init --tools $tools failed"
+  fi
+  echo "specification tooling: created via \`openspec init --tools $tools\`"
+else
+  echo "specification tooling: already present"
+fi
+
+if [ "$gitignore_outstanding" -eq 1 ]; then
+  if ! cat > "$target/.gitignore" <<'GITIGNORE'
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+GITIGNORE
+  then
+    finish_error "ignore file: could not be written"
+  fi
+  echo "ignore file: created"
+else
+  echo "ignore file: already present"
+fi
+
+build_block() {
+  echo "<!-- ai-toolkit:development-workflow v$1 -->"
+  echo "<!-- Generated. Do not edit inside this block — it is replaced on update."
+  echo "     Project-specific conventions belong below the closing marker. -->"
+  printf '%s\n' "$fragment_body"
+  echo "<!-- /ai-toolkit:development-workflow -->"
+}
+
+claude_has_import=0
+if [ -f "$claude_path" ] && grep -qF '@AGENTS.md' "$claude_path" 2>/dev/null; then
+  claude_has_import=1
+fi
+
+import_needed=0
+
+if [ -f "$agents_path" ]; then
+  if [ -n "$existing_version" ]; then
+    if [ "$existing_version" = "$fragment_version" ]; then
+      echo "conventions file: block already present (version $existing_version, matches)"
+    else
+      echo "conventions file: block already present (existing version $existing_version, tool carries version $fragment_version; reconciling this is out of scope for this tool)"
+    fi
+  else
+    if ! { echo ""; build_block "$fragment_version"; } >> "$agents_path"; then
+      finish_error "conventions file: could not append the managed block"
+    fi
+    echo "conventions file: block appended (version $fragment_version)"
+  fi
+  if [ "$claude_has_import" -eq 0 ]; then
+    import_needed=1
+  fi
+else
+  if ! build_block "$fragment_version" > "$agents_path"; then
+    finish_error "conventions file: could not be created"
+  fi
+  echo "conventions file: created with block (version $fragment_version)"
+  if [ "$claude_has_import" -eq 0 ]; then
+    import_needed=1
+  fi
+fi
+
+if [ "$import_needed" -eq 1 ]; then
+  # shellcheck disable=SC2016 # single-quoted deliberately: the backticks are
+  # literal formatting, not command substitution, and no variable expansion
+  # is wanted in this string.
+  echo 'Import needed: add `@AGENTS.md` to CLAUDE.md for the rules to take effect'
+fi
+
+echo "Outcome: SUCCESS"
+
+if [ "$has_commit" -eq 1 ]; then
+  echo "Next step: none required — foundation discovery is available if you want to record this project's decisions; run /project-foundation."
+else
+  echo "Next step: foundation discovery — run /project-foundation to establish this project's foundation."
+fi
+
+exit 0
