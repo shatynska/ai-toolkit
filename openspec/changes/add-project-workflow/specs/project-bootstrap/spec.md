@@ -263,6 +263,8 @@ The tool SHALL apply the following, in order:
 
 **Writing the file is not the same as the rules taking effect, and the tool SHALL NOT conflate them.** Whether a harness loads `AGENTS.md` without an explicit import SHALL be established before implementation and recorded. Where a harness reaches its conventions only through a different file — as this repository's own arrangement happens to be, its `CLAUDE.md` consisting of a single `@AGENTS.md` import — the report SHALL state the one line the user must add for the rules to load, and SHALL still write nothing into that file.
 
+This condition is a property of the harness, not of which branch above fired: it holds whenever `CLAUDE.md` does not already contain the import, whether `CLAUDE.md` is absent entirely, present without the import, or present importing something else. The report obligation therefore applies identically whether `AGENTS.md` was appended to, created fresh alongside an existing `CLAUDE.md`, or created where neither file existed — it is not confined to the case where `CLAUDE.md` already exists.
+
 Reporting `SUCCESS` and stamping a version while the rules are inert would be the silent divergence this workflow exists to prevent, and it would be worse than an obvious failure: the marker's whole purpose is to answer "is this workflow adopted here", and it would answer yes.
 
 The tool SHALL write the workflow rule fragment into that file between delimiters that name the fragment and the version inlined, and SHALL include a notice inside the block stating that its contents are generated and that project-specific rules belong outside it.
