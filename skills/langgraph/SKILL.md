@@ -9,12 +9,13 @@ description: >
   node/edge definitions, checkpointers, or interrupt()/tool-calling. It
   covers floor-level Python discipline: state/reducer design,
   conditional-edge routing, recursion limits, checkpointer/persistence
-  choice, streaming modes, subgraphs, and — in depth — multi-agent handoff
-  and tool-calling error handling. It is specific to the Python langgraph
-  package, not JS/TS @langchain/langgraph or general agent-framework advice.
-  Not about authoring library assets, OpenSpec work, Terraform, or n8n
-  workflows. A project's own checkpointer backend, schema conventions, and
-  deployment target take precedence in that project's AGENTS.md.
+  choice, streaming modes, testing at each level, subgraphs, and — in depth
+  — multi-agent handoff and tool-calling error handling. It is specific to
+  the Python langgraph package, not JS/TS @langchain/langgraph or general
+  agent-framework advice. Not about authoring library assets, OpenSpec work,
+  Terraform, or n8n workflows. A project's own checkpointer backend, schema
+  conventions, and deployment target take precedence in that project's
+  AGENTS.md.
 metadata:
   tags: [langgraph]
 ---
@@ -53,11 +54,22 @@ bug that produces no error — it produces a replacement.
 
 ## Conditional edges and routing
 
-A conditional edge's routing function returning a node name that doesn't
-exist in the graph fails at **execution** time, not at graph-definition
-time — `.compile()` succeeds regardless of whether every possible return
-value has a matching node. A typo or a stale name after a refactor sits
-silent until the specific branch executes.
+A conditional edge's routing function returning a value that names no node
+is not one failure mode — it's three, and which one you get depends on
+whether the graph was given anything to check against. With no `path_map`
+and no `Literal`-annotated return type declaring the destinations,
+`.compile()` succeeds and a bad return isn't even raised as an exception —
+LangGraph logs it (`wrote to unknown channel ... ignoring it`) and the
+branch silently does nothing, which a test asserting only on the final
+state won't catch. Declare destinations via a `path_map` or a `Literal`
+return annotation and a return value absent from them raises `KeyError` —
+but only when that branch runs, not at `.compile()`. Only a *declared*
+destination that names no real node — a `path_map` value or a `Literal`
+member, not what the function returns — is caught at `.compile()` time.
+Adding a `path_map` turns a silent no-op into a loud `KeyError`, which is
+worth having, but it is not compile-time protection against a routing
+typo — nothing checks what the function actually returns until the graph
+runs.
 
 ## Recursion limits and cycles
 
@@ -96,6 +108,20 @@ rather than leaving it at whatever a first example used.
 tested only through `.invoke()` but also exposed through `.stream()` in
 production has not had its streaming path tested by that alone.
 
+A graph also presents four distinct things a test can observe, and picking
+a level above the smallest one that can observe the behavior costs speed
+and determinism without adding evidence. A **node's** behavior is testable
+by calling it directly with a state dict — no graph involved. A **routing
+decision** is testable by calling whatever makes it: the conditional
+edge's path function where the edge is conditional, or the node itself
+where routing is a `Command(goto=...)` return, since that form has no
+separate path function at all. That a routing decision **reaches the
+intended node** needs the compiled graph — see *Conditional edges and
+routing*, above, for what that check does and doesn't catch. Behavior
+spanning **turns** needs a checkpointer. See `references/testing.md` for
+how to construct a test at each level, and for stubbing a model to emit
+tool calls — the part that's actually hard.
+
 ## Read the project's conventions first
 
 This skill is a floor, not an authority. A consuming project's `AGENTS.md`,
@@ -118,6 +144,14 @@ repository with nothing recorded is the normal case, not an edge case.
   patterns, the `Command(goto=, update=)` idiom, `ToolNode` and
   `tools_condition`, parallel tool calls, tool-call error handling, and
   `interrupt()`-gated approval for sensitive tool calls.
+- `references/testing.md` — stubbing a model to emit tool calls,
+  constructing a test at each level of the ladder above, and
+  checkpointer-backed state across turns.
+
+For the language-agnostic discipline this skill's testing content assumes
+rather than restates — what a baseline establishes, what each failure
+state establishes, how an assertion's provenance is classified — load
+`ai-toolkit:testing` alongside this skill.
 
 ## Trigger check fixtures
 
@@ -135,3 +169,9 @@ description edit invalidates whatever was last confirmed.
   handoffs between agents?" → expected routing: none — no asset in this
   library covers the JS/TS `@langchain/langgraph` SDK, and `langgraph`'s own
   description excludes it explicitly.
+- **Positive, testing coverage** — "How do I stub the LLM in my LangGraph
+  test so it emits a tool call?" → expected routing: `langgraph` **and**
+  `testing` together. Recorded as co-triggering rather than exclusive,
+  since this skill supplies the LangGraph-specific stubbing mechanism and
+  `testing` supplies the language-agnostic discipline it builds on — see
+  `testing`'s own fixtures for the amended pass standard this follows.

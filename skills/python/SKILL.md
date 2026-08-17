@@ -3,18 +3,18 @@ name: python
 description: >
   This skill should be used when the user is writing, reviewing, or debugging
   general-purpose Python code — "write this in Python", "review my Python
-  script", "why does this function behave unexpectedly", "is this a Python
-  gotcha", "lint this with ruff/mypy" — or any task touching a .py file. It
-  covers traps that read as correct but aren't: mutable default arguments and
-  class attributes, aliasing vs copying, late-binding closures in loops,
-  comprehension scoping, is vs ==, float/NaN equality, overly broad except
-  clauses, return-in-finally masking exceptions, __exit__ swallowing
-  exceptions, and generator single-use exhaustion — plus references on
-  concurrency, imports/module state, ruff/mypy coverage, and datetime/numeric
-  pitfalls. For LangGraph state/routing/checkpointer specifics, see langgraph
-  instead; this skill's traps still apply to LangGraph code. Not about
-  authoring library assets, OpenSpec work, Terraform, bash, or n8n workflows.
-  A project's own conventions in AGENTS.md take precedence.
+  script", "why does this function behave unexpectedly", "lint this with
+  ruff/mypy" — or any task touching a .py file. It covers traps that read as
+  correct but aren't: mutable default arguments and class attributes,
+  aliasing vs copying, late-binding closures in loops, comprehension scoping,
+  is vs ==, float/NaN equality, overly broad except clauses, return-in-finally
+  masking exceptions, __exit__ swallowing exceptions, and generator
+  single-use exhaustion — plus references on concurrency, imports/module
+  state, ruff/mypy coverage, datetime/numeric pitfalls, and pytest practice.
+  For LangGraph state/routing/checkpointer specifics, see langgraph instead;
+  this skill's traps still apply to LangGraph code. Not about authoring
+  library assets, OpenSpec work, Terraform, bash, or n8n workflows. A
+  project's own conventions in AGENTS.md take precedence.
 metadata:
   tags: [python]
 ---
@@ -174,6 +174,14 @@ instead.
   caught-vs-missed split for every trap in this file.
 - `references/datetime-and-numerics.md` — naive vs. aware `datetime`, float
   vs. `Decimal` for money.
+- `references/testing.md` — `pytest` structure, fixture scope and the
+  shared-mutable-state trap, `pytest.raises` scoped narrowly, and what
+  makes an assertion meaningful.
+
+For the language-agnostic discipline this skill's testing content assumes
+rather than restates — what a baseline establishes, what each failure
+state establishes, how an assertion's provenance is classified — load
+`ai-toolkit:testing` alongside this skill.
 
 ## Trigger check fixtures
 
@@ -189,3 +197,8 @@ description edit invalidates whatever was last confirmed.
 - **Negative** — "I need to build a LangGraph agent in Python that routes
   between two tools and hands off state between them — can you help me
   write the graph?" → expected routing: `langgraph`.
+- **Positive, testing coverage** — "My pytest fixture is scoped to the
+  module and returns a list — is it safe to mutate it in a test?" →
+  expected routing: `python`. `testing` co-triggering as well is a pass,
+  not a failure — see `testing`'s own fixtures for the amended standard
+  this follows.
