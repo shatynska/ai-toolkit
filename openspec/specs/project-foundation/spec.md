@@ -1,8 +1,10 @@
+# project-foundation Specification
+
 ## Purpose
 
 Defines what establishing a new project's foundation must cover and how completion is judged: the decisions that must be settled before normal development begins, coverage expressed as named artifact sections rather than as conversation order, persistence that survives a conversation spanning sessions, and the one exemption from the workflow's own test-authoring rule.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: The foundation checklist is a portable fragment, not a skill's private content
 
@@ -18,7 +20,7 @@ The fragment SHALL NOT be inlined into a project's conventions file. It describe
 #### Scenario: The checklist does not accumulate in projects
 
 - **WHEN** a project has completed its foundation
-- **THEN** its conventions file carries the standing workflow rules but not the foundation checklist
+- **THEN** its conventions file carries the standing workflow rules but not the foundation checklist itself — it does carry the settled testing-strategy and development-tooling decisions, in their own separate section, per *Settled decisions are surfaced into the project's permanent documentation* below
 
 ### Requirement: The foundation covers a fixed set of decisions including non-goals
 
@@ -99,6 +101,36 @@ A foundation conversation may span sessions. The workflow's own rule against rel
 
 - **WHEN** a foundation conversation is interrupted after several decisions are settled and resumed later with no conversation history
 - **THEN** the settled decisions are readable from the change's artifacts, and only the unsettled ones remain open
+
+### Requirement: Settled decisions are surfaced into the project's permanent documentation
+
+A foundation's decisions SHALL NOT live only inside the OpenSpec change that establishes them. Once a decision settles, it SHALL also be written into the location a human or a fresh agent session actually reads, chosen by whether the decision needs to shape agent behavior automatically or is purely descriptive.
+
+Identity, problem, audience, scope, non-goals, technology, and architecture SHALL be written into the project's `README.md` — descriptive decisions that inform without needing to auto-load into every agent turn. Testing strategy and development tooling SHALL be written into a named, project-specific section of `AGENTS.md`, distinct from any standing workflow block already inlined there — operationally load-bearing decisions (a test command, a test-path glob, a tooling choice) that a later change's test-authoring step depends on as inputs, and which only reach an agent automatically through the file this repository has empirically confirmed Claude Code auto-loads via its `CLAUDE.md` import.
+
+The criterion is auto-load, not audience. A decision is not routed to `AGENTS.md` merely because an agent might someday consult it, and not routed to `README.md` merely because a human might read it — it is routed to `AGENTS.md` only if a future agent turn needs it without being told to go look, and to `README.md` otherwise.
+
+#### Scenario: Descriptive decisions reach README.md
+
+- **WHEN** identity, problem, audience, scope, non-goals, technology, or architecture settle
+- **THEN** they are written into the project's `README.md`, created if absent or added as a clearly delimited section if the file already exists
+
+#### Scenario: Operationally load-bearing decisions reach AGENTS.md
+
+- **WHEN** testing strategy or development tooling settle
+- **THEN** they are written into a named section of `AGENTS.md`, separate from the workflow's own managed block, so a later change's test-authoring step can read the test command and test-path glob without being told where to look
+
+Foundation presupposes a project already bootstrapped by this workflow's own initialization step, which always creates `AGENTS.md` before foundation can run — unlike `README.md`, which bootstrap deliberately never writes. `AGENTS.md` being absent when foundation runs is therefore out of scope, not a case this requirement defines behavior for.
+
+#### Scenario: A decision is not placed by which audience happens to value it
+
+- **WHEN** a decision is descriptive and would also interest an agent, or operationally load-bearing and would also interest a human reader
+- **THEN** it is placed by whether it must auto-load to shape a future agent turn, not by which audience happens to value it
+
+#### Scenario: design.md remains the canonical record
+
+- **WHEN** a decision has been surfaced into `README.md` or `AGENTS.md`
+- **THEN** it is still recorded in the change's `design.md` under its named section — the surfaced copy is a projection for discoverability, not a replacement for the artifact coverage is checked against
 
 ### Requirement: Change authoring is delegated, not reimplemented
 
