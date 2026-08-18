@@ -67,6 +67,20 @@ An unfilled section, or an unfilled item within `Identity`, is a visible
 gap — that is what makes coverage checkable in the artifact rather than
 only inside this conversation.
 
+## Also write to README.md and AGENTS.md as decisions settle
+
+`design.md` is archived with the change once foundation completes, so it
+is not what a human or a fresh agent session reads by default. Alongside
+each `design.md` write — never instead of it — write the same decision
+into whichever of the project's `README.md` or `AGENTS.md` it belongs in,
+per `rules/project-foundation.md`'s "Decisions also reach README.md and
+AGENTS.md" section: identity, problem, audience, scope, non-goals,
+technology, and architecture go to `README.md`; testing strategy and
+development tooling go to a separate, non-managed section of `AGENTS.md`.
+The split follows whether a future agent turn needs the fact without being
+told to look for it, not which audience happens to value it — do not
+re-derive the split from scratch here, read it from the fragment.
+
 ## The development-tooling decision has a concrete deliverable
 
 Once the stack is known, extend the project's `.gitignore` with that

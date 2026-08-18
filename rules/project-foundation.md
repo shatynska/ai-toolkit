@@ -85,6 +85,53 @@ An unfilled section, or an unfilled item within one, is a visible gap — that
 is what makes coverage checkable in the artifact rather than only inside
 the conversation that produced it.
 
+## Decisions also reach README.md and AGENTS.md
+
+`design.md` is the canonical, checkable record, but it is archived with the
+change once foundation completes — discoverable only by someone who goes
+looking inside OpenSpec's archive, not what a human landing on the project
+or a fresh agent session reads by default. As each decision settles, write
+it a second time into whichever of the project's `README.md` or `AGENTS.md`
+the decision belongs in, in addition to — never instead of — the `design.md`
+write.
+
+The split is not by audience. Do not route a decision to `AGENTS.md`
+because an agent might someday want it, or to `README.md` because a human
+might read it. Route it by whether a future agent turn needs the fact
+without being told to go look for it: only `AGENTS.md` reaches an agent
+that way, since this workflow's own bootstrap step and this fragment's
+sibling change both established that Claude Code auto-loads `AGENTS.md`
+(via a `CLAUDE.md` import) every session, while `README.md` is never
+auto-loaded at all.
+
+Under that test:
+
+- **`README.md`** gets identity, problem, audience, scope, non-goals,
+  technology, and architecture — decisions that inform without needing to
+  shape a future agent turn automatically. Create the file if it is absent;
+  otherwise append a section. Delimit it with
+  `<!-- ai-toolkit:project-foundation -->` /
+  `<!-- /ai-toolkit:project-foundation -->`, unversioned — this content is
+  never regenerated from a toolkit fragment, so there is nothing to stamp a
+  version against, and a human is free to edit it afterward. Use these
+  headings, in order: `## What it is`, `## Problem`, `## Audience`,
+  `## Scope`, `## Non-Goals`, `## Technology`, `## Architecture`. As each
+  decision settles, rewrite the content between the markers rather than
+  duplicating it.
+- **`AGENTS.md`** gets testing strategy and development tooling only —
+  the two decisions a later change's test-authoring step actually depends
+  on as inputs (the test command, the test-path glob), and which reach an
+  agent automatically only through this file. Append a second, separate
+  section — outside the existing `<!-- ai-toolkit:development-workflow
+  vN -->` block if one is present, never inside it, since that block is
+  regenerated wholesale on update and would silently destroy project-owned
+  content living inside it. Delimit it the same way, unversioned, with
+  headings `## Testing Strategy` and `## Development Tooling`, placed after
+  the workflow block where one exists. `AGENTS.md` is presupposed to
+  already exist — this workflow's own initialization step always creates
+  it before foundation can run — so there is no create-if-absent case to
+  handle here, unlike `README.md`.
+
 ## The foundation change is exempt from test authoring
 
 The workflow's rule that tests be derived from a change's specification
