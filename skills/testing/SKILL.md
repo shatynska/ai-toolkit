@@ -268,6 +268,8 @@ skill cannot track:
   sufficient check.
 - `terraform` — `terraform test`, plan-time validation, and what can be
   asserted without applying.
+- `ansible` — `ansible-lint`, `--check`/`--diff` as a dry-run with known
+  check-mode gaps, and Molecule as a role-level test harness.
 
 A skill named here may currently carry little on testing. That is a fact about
 its present state, not about its scope — it is still where that stack's testing

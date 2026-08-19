@@ -3,16 +3,16 @@ name: ansible
 description: >
   This skill should be used when the user is writing or reviewing Ansible
   playbooks, roles, or inventory — "write an ansible playbook", "review my
-  ansible role", "set up ansible in this repo", "why isn't this task
+  ansible role", "how do I test this playbook", "why isn't this task
   idempotent", "should this install docker". It covers host-configuration
   practice: pinning external Galaxy roles/collections, secrets as a stated
   boundary rather than one mandated mechanism, host-level security (firewall,
-  SSH hardening, unattended upgrades) split from cloud-level firewall
-  ownership, inventory-provenance patterns, and idempotency traps from
-  Ansible's stateless run model. It configures a provisioned host — not
-  infrastructure provisioning (see terraform) and not the application stack
-  itself (Compose/Kubernetes, container lifecycle); it stops once the runtime
-  is installed. Not for authoring library assets (create-skill, create-agent)
+  SSH hardening, unattended upgrades) split from cloud firewall ownership,
+  inventory-provenance patterns, testing mechanisms and their limits (lint,
+  check mode, Molecule), and idempotency traps from Ansible's stateless run
+  model. It configures a provisioned host, stopping at the runtime — not
+  provisioning (see terraform) and not the application stack
+  (Compose/Kubernetes). Not for authoring library assets (create-skill, create-agent)
   or OpenSpec work. A project's inventory choice, secrets mechanism, and
   hardening baseline belong in its own AGENTS.md; this skill defers to them.
 metadata:
@@ -139,6 +139,37 @@ tells a different story.
   any external role or collection used for any purpose — not only the one
   installing the container runtime engine.
 
+## Testing Ansible content
+
+Three mechanisms exist for testing Ansible content, each answering a
+different question — none of them substitutes for the others:
+
+- **Static checking** — `ansible-lint` and `ansible-playbook --syntax-check`
+  catch structural and style problems before anything runs, at effectively
+  zero cost.
+- **A live dry-run** — `--check` combined with `--diff` reports what a run
+  would change against a real host. The limit is real, not cosmetic: many
+  modules don't support check mode at all — including the `shell`/`command`
+  modules flagged above as non-idempotent by default — so a clean `--check`
+  pass doesn't mean a normal run would do nothing new. Treat it as a preview
+  with known blind spots, not the reliable substitute for applying that a
+  provisioning tool's plan step is.
+- **A role-level test harness** — Molecule provisions an ephemeral instance,
+  applies a role, and asserts against the result. It's the closest thing to
+  an actual test suite, and proportionate for a role meant to be shared or
+  reused. For a small-scale ops repo running a handful of servers, it's
+  often more setup than the target warrants — `ansible-lint` plus a
+  `--check --diff` pass before applying against production is frequently
+  the right-sized default instead. Don't mandate Molecule on the project's
+  behalf; name it and let the project's own scale decide, the same way this
+  skill defers the runtime-installation mechanism and the
+  inventory-provenance pattern.
+
+For the language- and tool-agnostic side of testing discipline — recording
+a baseline before claiming a test fails, what a failing test's state
+actually establishes — see this library's `testing` skill rather than
+restating it here.
+
 ## Inventory provenance: pick a pattern, record the choice
 
 How a playbook learns which host a provisioning stage just produced has no
@@ -164,6 +195,14 @@ project-specific and ask, rather than silently defaulting to one pattern.
   creates a deploy user, and mounts a data volume on a server I just
   provisioned with Terraform — can you help me structure it?" → expected
   routing: `ansible`.
+- **Positive, testing** — "How do I test this Ansible role before I run it
+  against production?" → expected routing: `ansible`, without `testing`.
+  `testing`'s own description does not name `ansible` among the skills it
+  co-triggers with (that pointer currently lives only in `testing`'s body,
+  not its description — see `testing`'s "Language and framework specifics"
+  section), so this does not currently co-trigger the way a Python testing
+  prompt co-triggers `python` and `testing` together; `ansible`'s own body
+  directs to `testing` once loaded.
 - **Negative** — "I need to write a docker-compose.yml that defines my
   FastAPI, Postgres, and nginx services and wires up their networks and
   volumes — can you help me structure it?" → expected routing: none — no
