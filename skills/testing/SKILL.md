@@ -294,6 +294,15 @@ first fixture below looks like a regression when it is the intended behaviour.
 
 - **Positive, authoring** — "Write tests for this function in my Python module."
   → expected routing: `testing` **and** `python` together.
+- **Positive, authoring (terraform)** — "How do I test this Terraform module
+  before I apply it?" → expected routing: `testing` **and** `terraform`
+  together, the same co-trigger pattern as the Python fixture above:
+  `terraform` is named explicitly in this skill's own description ("load
+  python, langgraph, bash or terraform alongside it"), so the overlap is
+  the intended relationship, not a defect. Contrast `ansible`, which this
+  skill's description does not name — a testing-shaped Ansible prompt was
+  confirmed to route to `ansible` alone (see `ansible/SKILL.md`'s own
+  trigger fixtures).
 - **Positive, review/debug** — "Why does this test pass when it shouldn't?" →
   expected routing: `testing`. Recorded separately because the description claims
   three surfaces — write, review, debug — and an authoring prompt alone cannot

@@ -4,16 +4,16 @@ description: >
   This skill should be used when the user is writing or running Terraform —
   "write a terraform module", "add a resource", "review my .tf files", "set up
   terraform in this repo", "why does the plan want to replace this", "should I
-  run apply", "the state is out of sync", "import an existing resource" — or on
-  any task touching .tf files, .tfvars, a plan, or Terraform state. It covers
-  provider-neutral practice: module and variable design, validation, version
-  pinning, and the discipline around plan, apply, state and drift, including
-  confirming before any apply that would replace or destroy a resource. It is
-  about infrastructure code, not about authoring assets for this library (see
-  create-skill and create-agent) and not about OpenSpec proposals or reviews.
-  How to build a CI pipeline around Terraform is not covered here. Provider
-  specifics and a project's own infrastructure decisions belong in that
-  project's AGENTS.md; this skill defers to them on conflict.
+  run apply", "the state is out of sync", "import an existing resource", "how
+  do I test this module" — or on any task touching .tf files, .tfvars, a plan,
+  or Terraform state. It covers provider-neutral practice: module and variable
+  design, validation, version pinning, testing mechanisms and their limits, and
+  the discipline around plan, apply, state and drift, including confirming
+  before any apply that would replace or destroy a resource. Not for authoring
+  library assets (create-skill, create-agent) or OpenSpec work. How to build a
+  CI pipeline around Terraform is not covered here. Provider specifics and a
+  project's own infrastructure decisions belong in that project's AGENTS.md;
+  this skill defers to them on conflict.
 metadata:
   tags: [infrastructure, terraform, hitl]
 ---
@@ -215,6 +215,39 @@ confirmed to be provider-managed noise, with a note saying so. It's
 concealment when it's applied broadly to make an inconvenient diff go away
 without knowing why the diff exists.
 
+## Testing Terraform
+
+Three mechanisms exist for testing Terraform code, each answering a
+different question — none of them substitutes for the others:
+
+- **Static checking** — `terraform validate` and `terraform fmt -check`,
+  together with third-party linters and policy tools (`tflint`, `checkov`,
+  OPA/Sentinel, and similar) where the project already uses them. This
+  catches structural, style, and policy problems before anything runs, at
+  effectively zero cost — but it says nothing about what a real apply
+  against real state would actually do.
+- **`terraform plan` as a dry-run** — see "The plan is a checkpoint, not a
+  step", above. That section's discipline is what this mechanism means for
+  testing purposes, and isn't restated here.
+- **`terraform test`** — the native HCL-based test framework, and the
+  closest thing to an actual test suite: it runs assertions against either
+  mocked providers or real infrastructure. It's proportionate for a module
+  meant to be shared or reused; for a small, single-use configuration it's
+  often more setup than the target warrants. Don't mandate it on the
+  project's behalf — name it and let the project's own scale decide, the
+  same way this skill defers CI/pipeline shape and module-registry choice.
+  **A run against real infrastructure is not a shortcut around the plan
+  checkpoint above.** Without `mock_provider` blocks, it applies and tears
+  down real resources through a path other than a reviewed `terraform
+  apply` — any replace or destroy it would perform carries the same
+  confirmation obligation as an ordinary apply, not an exemption because
+  the command is different.
+
+For the language- and tool-agnostic side of testing discipline — recording
+a baseline before any claim that a test fails, what a failing test's state
+actually establishes — see this library's `testing` skill rather than
+restating it here.
+
 ## What this skill doesn't decide
 
 Provider choice, backend choice, module registry versus local modules, and
@@ -229,3 +262,11 @@ that holds regardless of those choices; it does not make them.
 - **Negative** — "I want to create a new skill in this repo that teaches
   good Terraform practices — how do I set that up?" → expected routing:
   `create-skill`.
+- **Positive, testing** — "How do I test this Terraform module before I
+  apply it?" → expected routing: `terraform` **and** `testing` together.
+  `testing`'s own description names `terraform` explicitly among the
+  skills it co-triggers with ("load python, langgraph, bash or terraform
+  alongside it"), so this behaves like the documented `testing` + `python`
+  pair rather than like `ansible`'s case, where `testing`'s description
+  names no domain skill and a testing-shaped Ansible prompt was confirmed
+  to route to `ansible` alone.
