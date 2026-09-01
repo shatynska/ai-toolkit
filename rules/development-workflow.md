@@ -1,6 +1,6 @@
 ---
 kind: standing-constraint
-version: 1
+version: 2
 ---
 
 # Development workflow
@@ -10,40 +10,100 @@ foundation. They apply independently of any single tool — each names an
 obligation as a role to fill, and where this project uses Claude Code, names
 the binding for that role beneath it.
 
-## Spec-driven development
+## Spec-driven development and spec review
 
 Use a specification-driven change process for non-trivial features, changes,
-and significant architectural decisions. Do not begin implementing a
-non-trivial change without a corresponding change proposal recording what is
-intended and why.
+and significant architectural decisions. Do not begin implementing or
+applying a non-trivial change without a corresponding change proposal
+recording what is intended and why.
 
-A change's artifacts — its proposal, its design, its specification deltas —
-are the record of intended behavior and the decisions behind it. They are
-read before implementation, not written after the fact to describe what was
-already done.
+A change's artifacts — its proposal, its design, its specification deltas,
+its task list — are the record of intended behavior and the decisions behind
+it. They are read before implementation, not written after the fact to
+describe what was already done.
+
+Review is dispatched against the complete set, never against a package still
+being written: a reviewer given half a package spends its round reporting
+absent sections rather than defects, and a round that establishes only "this
+is incomplete" is one spent, not one passed. Complete means every artifact
+the change calls for exists — an artifact a change legitimately does not
+have does not make its package incomplete.
+
+Before any code is written or applied, the change must be independently
+reviewed, then revised and re-reviewed until the reviewer's verdict permits
+proceeding. Where a verdict permits proceeding only conditionally, the
+conditions it names are applied before proceeding — a conditional pass is
+not an unconditional one, and applying conditions of that kind does not
+require a further review round.
+
+The revise-and-re-review loop is bounded. Beyond an initial review and five
+automatic re-reviews, do not dispatch a further round unasked: report where
+the loop stands, what is still outstanding, and ask before continuing. A
+loop that has not converged in six rounds is rarely one round from
+converging, and an unbounded loop spends the reviewer against a change no
+one has looked at since it started.
+
+Where the reviewer judges the change's concept unsound rather than its
+artifacts defective, that is not another revision round at all: stop and
+raise it immediately, whatever the count stands at, because no amount of
+rewriting the artifacts answers it.
+
+An approved plan is committed before tests are derived from it. The commit
+fixes the baseline those tests map to; where the specification deltas keep
+moving while tests are being written against them, the mapping goes stale
+with nothing reporting it. Per the commit rule below, suggest that commit
+rather than making it unasked — and where it is declined, report that the
+next step is blocked on it and stop there, rather than proceeding without
+it.
+
+_Claude Code binding:_ once `proposal.md`, `tasks.md`, every delta spec, and
+`design.md` where one is written are complete, dispatch
+`ai-toolkit:openspec-change-reviewer`. On `CHANGES REQUIRED`, revise the
+artifacts and re-dispatch, up to the five automatic re-reviews the bound
+above allows. On `PROCEED WITH CHANGES`, apply the `[MINOR]` fixes it lists
+— that verdict is permission conditional on them — and continue without a
+further review round. On `PROCEED`, continue. On `REJECT`, stop and raise
+it.
 
 ## Test design before implementation
 
-Before implementing a change with testable behavior, have an independent
-author derive tests from its specification deltas — not from the
-implementation, and not written by whoever writes the implementation. Two
-processes that see only the implementation share its blind spots; a test
-author with no sight of the implementation does not.
+Before implementing a change with behavior that tests can be derived from,
+have an author other than whoever writes the implementation derive tests
+from that change's approved specification deltas — not from implementation
+code. Two processes that see only the implementation share its blind spots;
+a test author with no sight of the implementation does not.
 
-*Claude Code binding:* dispatch `ai-toolkit:openspec-test-writer` after a
-change is reviewed and before it is implemented.
+Where this project's rules, or a procedure or specification they defer to,
+state an exemption from test authoring for a named class of change, that
+exemption applies. It applies by having been stated in advance, not by being
+decided at the gate, and the reason is stated when it is used. A change that
+declares it carries no specification deltas has none to derive from and owes
+no new tests; what it owes is that the existing suite stays green. Deltas
+that are merely unwritten are not that declaration — an absence found at the
+gate is the gap this rule forbids, not an exemption.
 
-## Independent review before completion
+Test authoring is dispatched only against a plan that has passed review and
+been committed — never against artifacts still being written, and never
+ahead of review. A test derived from a specification the review has not yet
+cleared encodes whatever defect that review would have caught.
 
-After implementing a change, have an independent reviewer check it against
-its own specification before considering it complete. The reviewer verifies
-that requirements are implemented, that the implementation matches what the
-specification describes, that tests adequately cover the behavior that
-changed, that no unrelated scope was introduced, and that project
-conventions were followed.
+_Claude Code binding:_ dispatch `ai-toolkit:openspec-test-writer` only after
+the reviewer's verdict permitted proceeding, any conditions it named were
+applied, and the approved plan was committed — and strictly before applying
+changes or implementing code.
 
-*Claude Code binding:* dispatch `ai-toolkit:openspec-change-reviewer` before
-treating a change as done.
+## Implementation and execution
+
+Only after the specification has passed review, and the tests it calls for
+have been derived from its specification deltas, may the change be applied
+and implemented in code.
+
+Three things are checkable before implementation begins: a review verdict
+that permitted proceeding, a commit holding the approved plan, and the tests
+derived from that plan — or, in place of those tests, the stated exemption
+that excused them. Where any of the three is absent and no stated exemption
+covers it, take the missing step first rather than starting implementation
+and noting the gap.
 
 ## Verification before any completion claim
 
@@ -51,6 +111,32 @@ Implementation existing is not the same as a change being complete. Run the
 verification relevant to the change — tests, type checking, linting,
 formatting, a build, or whatever else the project's conventions require —
 and do not report a change as complete without having run it.
+
+## Independent review before completion
+
+Verification establishes that a change does not fail. It does not establish
+that the change is the one its specification asked for. After implementing a
+change, have an independent reviewer read the diff against the change's own
+specification before the change is called complete. That reviewer checks
+that each requirement is implemented, that the implementation matches what
+the specification describes rather than something adjacent to it, that the
+tests derived from the specification deltas cover the behavior that actually
+changed, that no unrelated scope was introduced, and that the project's
+conventions were followed.
+
+This review reads code; the review that gates implementation reads plans.
+They are separate obligations and neither substitutes for the other — the
+earlier one asks whether the plan is sound, this one asks whether the code
+is that plan.
+
+Dispatch it against a diff that already passes verification. A reviewer
+handed a change whose tests fail spends its round on the failure, which
+verification had already reported.
+
+_Claude Code binding:_ run `/code-review` over the change's diff before
+treating the change as done. Do not use
+`ai-toolkit:openspec-change-reviewer` for this role — it reviews a change's
+planning artifacts and explicitly not the code that follows them.
 
 ## Small, reviewable commits
 

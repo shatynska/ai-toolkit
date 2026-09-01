@@ -8,8 +8,8 @@ source "$TESTLIB"
 work="$TESTDIR/work"
 mkdir -p "$work"
 cd "$work" || exit 1
-cat > AGENTS.md <<'BLOCK'
-<!-- ai-toolkit:development-workflow v1 -->
+cat > AGENTS.md <<BLOCK
+<!-- ai-toolkit:development-workflow v$(fragment_version) -->
 <!-- Generated. Do not edit inside this block — it is replaced on update.
      Project-specific conventions belong below the closing marker. -->
 placeholder existing content at the current version

@@ -18,6 +18,33 @@ next change to this repository has a real test command
 (`bash tests/run.sh`) and a real test-path glob (`tests/cases/**`), and
 `openspec-test-writer` applies normally to it.
 
+## The exemption's second use, and why
+
+`revise-development-workflow` added three cases to this suite
+(`fragment-role-before-tool.sh`, `inlined-body-matches-fragment.sh`, and the
+`fragment_version` helper the version-coupled cases now use) without
+dispatching `ai-toolkit:openspec-test-writer`. That is a second stated
+exemption, recorded here rather than decided silently, because the paragraph
+above forecloses the silent option.
+
+The reason is not the circularity that excused the first use — this suite has
+a real test command and a real test-path glob now. It is that the agent's own
+dispatch contract requires a change that "has passed review and is ready for
+implementation", and this change had no such verdict: its review returned
+`CHANGES REQUIRED` on its third round and implementation proceeded on the
+maintainer's explicit direction instead. Dispatching a test author against a
+plan no verdict had cleared is the precondition failure the workflow rules
+this very change introduces forbid. The exemption is therefore narrower than
+the first: it does not say test authoring was impossible, only that its
+stated precondition was not met, and it expires with the verdict.
+
+What this costs is real and worth stating: these three cases were written by
+whoever wrote the change, so they carry that author's blind spots. Two are
+guarded against the usual failure of a test that cannot fail — each was run
+against a deliberately violating fixture and observed to fail, and each
+carries a vacuity guard that fails rather than passes when its extraction
+comes back empty.
+
 ## Running
 
 ```

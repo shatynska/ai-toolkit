@@ -38,5 +38,9 @@ A **standing constraint** is intended to reach a project's `CLAUDE.md` or
 **procedural checklist** describes a one-time procedure, read on demand,
 and is never inlined into a project's conventions file — inlining it would
 leave permanent instructions for work already finished. `version`
-increments when the fragment's text changes; it has no relationship to the
-plugin's own version.
+increments when the fragment's **body** changes — the text a project actually
+inlines — and not for an edit confined to the frontmatter itself; it has no
+relationship to the plugin's own version. The obligation is owned by
+`project-bootstrap`'s requirement "The fragment's version increments when its
+body changes"; `toolkit-structure` fixes the frontmatter's form and defers
+that condition to it.
