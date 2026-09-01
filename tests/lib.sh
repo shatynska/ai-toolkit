@@ -50,14 +50,24 @@ assert_contains() {
 # literal, so that editing the fragment does not break a case for a reason
 # unrelated to what it tests. Defaults to the toolkit under test; pass a root
 # to read a decoy's fragment instead.
+#
+# Returns non-zero rather than exiting. Every call site is a command
+# substitution, and an `exit` inside `$( )` ends only the subshell — the
+# caller would carry on with an empty version, degrading its assertions to
+# ones that pass against anything. Callers MUST therefore write:
+#
+#   version="$(fragment_version)" || exit 1
+#
+# so the failure reaches the case itself. `|| exit 1` is not optional
+# defensiveness here; without it the guard below is unreachable.
 fragment_version() {
   local root="${1:-$TOOLKIT_ROOT}"
   local fragment="$root/rules/development-workflow.md"
   local version
-  version="$(sed -n '2,/^---$/p' "$fragment" | sed -n 's/^version:[[:space:]]*//p' | head -n1)"
+  version="$(sed -n '2,/^---$/p' "$fragment" 2>/dev/null | sed -n 's/^version:[[:space:]]*//p' | head -n1)"
   if [ -z "$version" ]; then
     echo "FAIL: could not read version from $fragment" >&2
-    exit 1
+    return 1
   fi
   printf '%s\n' "$version"
 }

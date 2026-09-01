@@ -32,4 +32,5 @@ if grep -q "version 999" "$report"; then
   echo "FAIL: the script read the decoy toolkit's fragment via AI_TOOLKIT_ROOT — it must self-locate, not consult the environment" >&2
   exit 1
 fi
-assert_contains "$work/AGENTS.md" "v$(fragment_version)" "the real fragment's version was inlined, not the decoy's"
+version="$(fragment_version)" || exit 1
+assert_contains "$work/AGENTS.md" "v$version" "the real fragment's version was inlined, not the decoy's"

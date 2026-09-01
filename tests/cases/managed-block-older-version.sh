@@ -23,7 +23,8 @@ assert_exit 0 "$status"
 assert_unchanged "$work/AGENTS.md" "$sum_before" "older-version block is left unchanged, not upgraded"
 assert_contains "$work/AGENTS.md" "this is the stale v0 text" "stale content survives"
 assert_contains "$report" "existing version 0" "report states the existing version"
-assert_contains "$report" "tool carries version $(fragment_version)" "report states the tool's own version"
+version="$(fragment_version)" || exit 1
+assert_contains "$report" "tool carries version $version" "report states the tool's own version"
 assert_contains "$report" "out of scope" "reconciliation stated as out of scope"
 
 count="$(grep -c '<!-- ai-toolkit:development-workflow' "$work/AGENTS.md")"
