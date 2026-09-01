@@ -61,7 +61,7 @@ The two kinds are:
 - a **standing constraint**, intended to reach a consuming project's `CLAUDE.md` or `AGENTS.md` and remain in force there; or
 - a **procedural checklist**, describing a one-time procedure, read on demand and NOT intended for a project's conventions file.
 
-`version` is the fragment's own and increments when its text changes; it is unrelated to any package or plugin version. The form is fixed here rather than in a design document because this requirement outlives the change that introduces it, and a normative obligation deferred to an archived file cannot be checked afterwards.
+`version` is the fragment's own and is unrelated to any package or plugin version. The form is fixed here rather than in a design document because this requirement outlives the change that introduces it, and a normative obligation deferred to an archived file cannot be checked afterwards. When it increments is NOT fixed here: that obligation belongs to `project-bootstrap`'s requirement "The fragment's version increments when its body changes", which owns it because the increment exists to make a project's inlined copy distinguishable from a current one, and only the capability that inlines the fragment can say which part of it a project actually carries. The deferral covers every fragment this repository inlines, not only the workflow rule fragment that occasions it: an inlined fragment's increment condition is the body-scoped one `project-bootstrap` states, whatever the fragment. This clause states where the rule lives so that an author checking a fragment edit reaches one answer rather than two.
 
 The distinction is behavioral rather than cosmetic: inlining a one-time procedure into a project's conventions file would leave permanent instructions for work already finished, while leaving a standing constraint unimported would mean it never takes effect.
 
@@ -106,6 +106,11 @@ A placeholder document standing in for an unpopulated directory MUST NOT be disc
 
 - **WHEN** a fragment describing a one-time procedure is added to `rules/`
 - **THEN** it states that it is a procedural checklist, and nothing inlines it into a consuming project's conventions file
+
+#### Scenario: The increment rule has exactly one owner
+
+- **WHEN** an author editing a rule fragment needs to know whether to increment its `version`
+- **THEN** this requirement names `project-bootstrap` as the owner of that obligation and states no competing condition of its own, so the two capabilities cannot give divergent answers for the same edit
 
 ### Requirement: Skills are discovered without manifest enumeration
 
