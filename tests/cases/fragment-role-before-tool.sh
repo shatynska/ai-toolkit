@@ -13,13 +13,17 @@ assert_file "$fragment" "the fragment this case reads"
 
 # Tokens naming one harness's agents, commands or verdict vocabulary. Matched
 # case-sensitively: role text says "proceeding" freely, and only the verdict
-# `PROCEED` is harness-specific.
+# `PROCEED` is harness-specific. The slash-command pattern is deliberately
+# generic — enumerating only the commands in use today would let the next one
+# added to role prose through, which is the dangling reference the rule
+# exists to prevent. It matches a backtick-quoted command so that an ordinary
+# "and/or" in prose does not trip it.
 offenders="$(awk '
   /^_Claude Code binding:_/ { binding = 1 }
   /^[[:space:]]*$/          { binding = 0 }
   binding                   { next }
-  /ai-toolkit:/ || /\/code-review/ || /PROCEED/ || /CHANGES REQUIRED/ ||
-  /REJECT/ || /\[MINOR\]/ || /openspec-/ { printf "  line %d: %s\n", NR, $0 }
+  /ai-toolkit:/ || /PROCEED/ || /CHANGES REQUIRED/ || /REJECT/ ||
+  /\[MINOR\]/ || /openspec-/ || /`\/[a-z][a-z-]*/ { printf "  line %d: %s\n", NR, $0 }
 ' "$fragment")"
 
 if [ -n "$offenders" ]; then

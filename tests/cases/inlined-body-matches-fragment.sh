@@ -18,7 +18,7 @@ status=$?
 assert_exit 0 "$status"
 assert_file "$work/AGENTS.md"
 
-version="$(fragment_version)"
+version="$(fragment_version)" || exit 1
 assert_contains "$work/AGENTS.md" "<!-- ai-toolkit:development-workflow v$version -->" "opening marker carries the fragment's own version"
 assert_contains "$work/AGENTS.md" "<!-- /ai-toolkit:development-workflow -->" "closing marker present"
 

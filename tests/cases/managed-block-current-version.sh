@@ -8,13 +8,20 @@ source "$TESTLIB"
 work="$TESTDIR/work"
 mkdir -p "$work"
 cd "$work" || exit 1
-cat > AGENTS.md <<BLOCK
-<!-- ai-toolkit:development-workflow v$(fragment_version) -->
+version="$(fragment_version)" || exit 1
+
+# The marker is printed separately so the fixture body keeps a quoted
+# heredoc: an unquoted one would subject every line to parameter, command
+# and backslash expansion to interpolate one value.
+{
+  printf '<!-- ai-toolkit:development-workflow v%s -->\n' "$version"
+  cat <<'BLOCK'
 <!-- Generated. Do not edit inside this block — it is replaced on update.
      Project-specific conventions belong below the closing marker. -->
 placeholder existing content at the current version
 <!-- /ai-toolkit:development-workflow -->
 BLOCK
+} > AGENTS.md
 sum_before="$(md5sum AGENTS.md | awk '{print $1}')"
 
 report="$TESTDIR/report.txt"
