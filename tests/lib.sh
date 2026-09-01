@@ -44,3 +44,20 @@ assert_contains() {
     exit 1
   fi
 }
+
+# Reads the `version:` from a toolkit's workflow rule fragment, mirroring the
+# parse in scripts/project-init. Cases assert against this rather than a
+# literal, so that editing the fragment does not break a case for a reason
+# unrelated to what it tests. Defaults to the toolkit under test; pass a root
+# to read a decoy's fragment instead.
+fragment_version() {
+  local root="${1:-$TOOLKIT_ROOT}"
+  local fragment="$root/rules/development-workflow.md"
+  local version
+  version="$(sed -n '2,/^---$/p' "$fragment" | sed -n 's/^version:[[:space:]]*//p' | head -n1)"
+  if [ -z "$version" ]; then
+    echo "FAIL: could not read version from $fragment" >&2
+    exit 1
+  fi
+  printf '%s\n' "$version"
+}

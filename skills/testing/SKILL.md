@@ -275,6 +275,18 @@ A skill named here may currently carry little on testing. That is a fact about
 its present state, not about its scope — it is still where that stack's testing
 material belongs, and still where it should be added.
 
+One further skill belongs in this section for a different reason than the five
+above: not a runner or framework with a version to pin, but a modeling
+discipline applied on top of whichever stack is in use.
+
+- `ddd` — testing an aggregate's or value object's invariants with no I/O, as
+  distinct from testing through a repository port. Unlike the skills above,
+  this is not framework- or runner-specific and carries no version-dated
+  claim; it's named here because `testing-practice` requires every domain
+  skill covering a testable artifact to be reachable from this list, not
+  because it fits the "load the matching runner" pattern the rest of this
+  section describes.
+
 ## Trigger check fixtures
 
 The prompts this skill's authoring verified against, kept so a later edit to the
@@ -317,6 +329,18 @@ first fixture below looks like a regression when it is the intended behaviour.
   routing: `python`, without `testing`. This exists because the accepted overlap
   above has a failure mode the other three cannot detect: this skill crowding out
   the language skill on a prompt that was never about tests.
+- **Positive, authoring (ddd) — reversed entry point** — "How do I test that my
+  Order aggregate's invariants hold, without hitting the database?" → expected
+  routing: `ddd` **and** `testing` together, but via the opposite direction
+  from the Python/Terraform fixtures above: this skill's own description does
+  not name `ddd` (unlike `python`, `langgraph`, `bash`, `terraform`), because
+  `ddd` is the entry point here — its domain-specific noun phrase ("aggregate's
+  invariants") matches `ddd`'s description first, and `ddd`'s own "composes
+  with testing" clause is what pulls this skill in, not the reverse. Contrast
+  `ansible`, which absorbs a testing-shaped prompt alone because its
+  description internalizes concrete testing mechanisms; `ddd` names none of
+  its own and instead defers, which is why this prompt co-routes rather than
+  being absorbed by `ddd` alone.
 
 A coverage-target prompt ("what coverage percentage should we aim for?") was
 considered as the negative and rejected. Coverage policy is outside this skill's
