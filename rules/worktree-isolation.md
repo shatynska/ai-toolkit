@@ -16,8 +16,9 @@ discriminator is the branch and the lifetime, not the contents. A worktree
 created from a committed ref carries whatever that commit held, a change's
 own artifacts included, so a scope drawn on contents would exclude nothing
 and would leave such a checkout bound by rules it can satisfy no route of.
-These rules do not govern it. They also do not say what becomes of it: that
-is the business of whatever created it.
+These rules do not govern it, and they make no claim about what does. Do
+not read the exclusion as an assurance that its removal is owned elsewhere;
+whether anything owns it is a separate question these rules leave open.
 
 ## Orientation on entering a worktree
 
@@ -82,13 +83,14 @@ conventions name holds — not when the first one does. A partially
 provisioned environment fails in ways that read as defects in the change
 under test.
 
-State and reach provisioning as a *state*, never as an act performed once.
-That applies to every clause of it, the completeness clause above included.
-A session entering a worktree it did not provision must be able to reach the
-provisioned state without first establishing what an earlier session did;
-otherwise it cannot tell whether re-performing a step is destructive, and
-falls back to reporting verification as not run every time — in exactly the
-resumed-worktree case orientation exists for.
+Reach the provisioned state; do not ask whether someone already reached it.
+Every clause above is a state to hold, the completeness clause included, and
+each is safe to re-reach. A session entering a worktree it did not provision
+therefore provisions it without first establishing what an earlier session
+did — which it usually cannot. A session that instead had to judge whether
+re-performing a step was destructive would fall back to reporting
+verification as not run every time, in exactly the resumed-worktree case
+orientation exists for.
 
 Where the project's verification writes to a shared external service,
 provisioning brings this session's namespace in that service to the
@@ -124,33 +126,35 @@ a rule about isolation is indistinguishable from a rule that forgot.
 ## Removing the branch and the worktree
 
 Remove a session's branch and worktree only against an observable condition,
-never against a judgment that the work looks finished. The condition has two
-routes, and either satisfies it:
+never against a judgment that the work looks finished. Two routes satisfy
+it, and each carries its own clauses in full — read the route you are on,
+not a shared list.
 
-- **The branch is merged into the trunk.**
-- **The change's abandonment is recorded in its own artifacts**, stating
-  that the change is abandoned and that the work on its branch is not
-  wanted. A merge is not the only way a change legitimately ends; with a
-  merge as the only route, an abandoned change's branch and worktree can
-  never be removed, and they accumulate — which is what this rule exists to
-  prevent. The record is written down rather than said, because the session
-  that removes a worktree may not be the session that abandoned the change
-  and cannot see an exchange it was not part of. Commit it on the abandoned
-  branch before reading the condition below: left uncommitted, it trips the
-  one clause it does not displace, so the act that authorises removal blocks
-  it.
+**Route one — the branch is merged into the trunk.** Alongside it: nothing
+uncommitted remains in the worktree, and, where the project has a remote,
+nothing unpushed remains.
 
-Alongside whichever route applies:
+**Route two — the change's abandonment is recorded in its own artifacts,**
+stating that the change is abandoned and that the work on its branch is not
+wanted. Alongside it: nothing uncommitted remains. That is the whole of it —
+the record stands in for the merge clause and, where the project has a
+remote, for the unpushed clause too, because both concern commits on the
+abandoned branch and those commits are exactly what the record covers. An
+abandoned branch whose commits were never pushed is still removable.
 
-- Nothing uncommitted remains in the worktree.
-- Where the project has a remote, nothing unpushed remains.
+The record does not stand in for the uncommitted clause. Uncommitted changes
+are not what the decision mentioned — they may be unrelated or accidental —
+so removal still halts and reports them, and the operator extends the
+decision or does not.
 
-An abandonment record displaces the merge clause and, where the project has
-a remote, the unpushed clause — both concern commits on the abandoned branch,
-which is what the record covers. It does **not** displace the uncommitted
-clause: uncommitted changes are not what the decision mentioned, they may be
-unrelated or accidental, so removal still halts and reports them, and the
-operator extends the decision or does not.
+A merge is not the only way a change legitimately ends. With a merge as the
+only route, an abandoned change's branch and worktree can never be removed
+and they accumulate, which is what this rule exists to prevent. The record is
+written down rather than said, because the session that removes a worktree
+may not be the session that abandoned the change and cannot see an exchange
+it was not part of. Commit it on the abandoned branch before reading the
+condition: left uncommitted, it trips the one clause it does not stand in
+for, so the act that authorises removal blocks it.
 
 Every clause above that presupposes a remote is conditioned on the project
 having one. A project without a remote is one this rule is meant to serve,

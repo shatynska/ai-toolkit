@@ -13,6 +13,17 @@ source "$TESTLIB"
 
 for name in worktree-isolation change-delivery deferred-work; do
   fragment="$TOOLKIT_ROOT/rules/$name.md"
+
+  # Checked before the existence assertion below, not after: a fragment that
+  # sits ONLY in a subdirectory would otherwise trip assert_file first and be
+  # reported as absent, which is the wrong diagnosis for the wrong defect.
+  nested="$(find "$TOOLKIT_ROOT/rules" -mindepth 2 -name "$name.md" 2>/dev/null)"
+  if [ -n "$nested" ]; then
+    echo "FAIL: $name.md sits below rules/ rather than directly under it" >&2
+    echo "$nested" >&2
+    exit 1
+  fi
+
   assert_file "$fragment" "session-scoped fragment: $name"
 
   # Frontmatter is lines 2..closing-1, where closing is the second `^---$`.
@@ -36,6 +47,26 @@ for name in worktree-isolation change-delivery deferred-work; do
     exit 1
   fi
 
+  # `closing` is the second `^---$` in the file, which is the real delimiter
+  # only while one exists. Delete it and the next `---` in the body takes its
+  # place, silently widening the region every check below reads: `kind:` is
+  # still on line 2 so they pass, against a file whose YAML does not parse.
+  # Requiring the region to be keys alone is what makes that fail loudly.
+  while IFS= read -r fm_line; do
+    [ -z "$fm_line" ] && continue
+    case "$fm_line" in
+      '#'*) continue ;;
+    esac
+    if ! printf '%s\n' "$fm_line" | grep -q '^[A-Za-z_][A-Za-z0-9_-]*:'; then
+      echo "FAIL: $fragment has a non-key line inside its frontmatter region:" >&2
+      printf '  %s\n' "$fm_line" >&2
+      echo "  the closing '---' is probably missing, and the region has widened into the body" >&2
+      exit 1
+    fi
+  done <<EOF
+$frontmatter
+EOF
+
   if ! printf '%s\n' "$frontmatter" | grep -q '^kind:[[:space:]]*standing-constraint[[:space:]]*$'; then
     echo "FAIL: $fragment does not declare kind: standing-constraint" >&2
     printf '%s\n' "$frontmatter" >&2
@@ -48,10 +79,4 @@ for name in worktree-isolation change-delivery deferred-work; do
     exit 1
   fi
 
-  nested="$(find "$TOOLKIT_ROOT/rules" -mindepth 2 -name "$name.md" 2>/dev/null)"
-  if [ -n "$nested" ]; then
-    echo "FAIL: $name.md sits below rules/ rather than directly under it" >&2
-    echo "$nested" >&2
-    exit 1
-  fi
 done

@@ -25,8 +25,16 @@ for name in $names; do
   # required to name at that exact path. It is not a reference to a sibling
   # fragment, so it is removed before the scan — otherwise the one path the
   # delta fixes would read as the reference the delta forbids.
+  # Scrub only in the fragment the path belongs to. Elsewhere the same
+  # string IS the cross-set reference this case exists to catch -- a scrub
+  # applied to every fragment would hide exactly the violation it is meant
+  # to find, while doing nothing in the one file it was written for.
   scrubbed="$TESTDIR/$name.scrubbed"
-  sed 's|docs/deferred-work\.md||g' "$fragment" > "$scrubbed"
+  if [ "$name" = "deferred-work" ]; then
+    sed 's|docs/deferred-work\.md||g' "$fragment" > "$scrubbed"
+  else
+    cat "$fragment" > "$scrubbed"
+  fi
 
   if [ ! -s "$scrubbed" ]; then
     echo "FAIL: $fragment is empty after scrubbing — the scan below would pass vacuously" >&2

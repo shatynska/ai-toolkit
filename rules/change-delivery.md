@@ -33,6 +33,14 @@ step, not something the steps happen to imply.
 3. **Open the pull request.**
 4. **Let verification run** against it.
 
+This sequence fixes the archive commit's *position* — last on the branch,
+before the merge — and not permission to make it. Where the project's own
+rules require a commit to be proposed and confirmed rather than made unasked,
+that applies here as it does anywhere: propose this one, and make it once
+confirmed. Read as permission, step 1 would have a session commit unasked in
+every project holding such a rule, and a session that instead deferred to
+that rule would never reach step 2.
+
 The archive commit precedes the merge rather than following it so that the
 change's record is reviewed by the same pull request that reviews the work.
 Archived afterwards, the record reaches the trunk outside any review — the

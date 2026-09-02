@@ -23,7 +23,7 @@ assert_file "$fragment" "session-scoped fragment: change-delivery"
 # or a fragment that states no delivery route at all.
 assert_contains "$fragment" "pull request" "the fragment states the delivery route it is named for"
 
-offenders="$(grep -n -i -E 'worktree|working tree' "$fragment")"
+offenders="$(grep -n -i -E 'worktree|working[- ]tree' "$fragment")"
 if [ -n "$offenders" ]; then
   echo "FAIL: $fragment names a working tree — it must be satisfiable in a project that keeps none" >&2
   echo "$offenders" >&2
