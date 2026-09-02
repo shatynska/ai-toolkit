@@ -111,9 +111,9 @@ line, where it bites earlier. Conditioning one clause of a presupposition is
 not conditioning the presupposition.
 
 The isolation fragment's rules are scoped too, and to a different axis: they
-govern a working tree that carries a session's change. Unscoped they would
-bind every working tree in the repository, including ones created and
-destroyed inside a single act of tooling — `agent-authoring` mandates one for
+govern a working tree in which a session is doing a change's work. Unscoped
+they would bind every working tree in the repository, including ones whose
+lifetime is bounded by a single act of tooling — `agent-authoring` mandates one for
 a cold-run check — which hold no change, no trunk-bound branch, and therefore
 no artifacts in which the gate's abandonment route could be recorded. Such a
 tree could satisfy neither route and would be unremovable under a rule

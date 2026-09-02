@@ -92,8 +92,11 @@ archive step instead of before adopting.
   knows how far it got.
 
   The fragment scopes its rules before stating them: they govern a worktree
-  that carries a session's change, not one some tooling creates and destroys
-  within a single act. Unscoped they would bind a cold-run check's throwaway
+  in which a session is doing a change's work, not one whose lifetime is
+  bounded by the single act of tooling that created it and which carries no
+  trunk-bound branch. The discriminator is the branch and the lifetime rather
+  than the contents — a worktree made from a committed ref carries that
+  commit's change artifacts, so "holds no change" would exclude nothing. Unscoped they would bind a cold-run check's throwaway
   worktree — which `agent-authoring` in this very repository mandates — and
   that worktree holds no change, so it satisfies neither route of the
   teardown gate and becomes unremovable under a rule written to prevent

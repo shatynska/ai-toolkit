@@ -82,7 +82,9 @@ Nothing here licenses skipping the report. Orientation still precedes the work; 
 
 ### Requirement: One session works in one branch and one working tree
 
-The isolation fragment SHALL state what its rules govern before stating them: a working tree that carries a session's change. A working tree some tooling creates and removes within a single act, holding no change and no branch destined for the trunk — a cold-run check of an agent under authoring, for example — is outside them.
+The isolation fragment SHALL state what its rules govern before stating them: a working tree in which a session is doing a change's work. A working tree whose lifetime is bounded by the single act of tooling that created it, and which carries no branch destined for the trunk — a cold-run check of an agent under authoring, for example — is outside them.
+
+The discriminator is the branch and the lifetime, not the contents. A working tree created from a committed ref carries whatever that commit held, a change's own artifacts included, so "holds no change" would exclude nothing and would leave the exemplar named here inside the rules it is named to be outside of.
 
 Without that scope the rules bind every working tree there is, including ones that can satisfy neither the one-tree rule nor either route of the teardown gate below, because they hold no change in whose artifacts an abandonment could be recorded. This repository's own `agent-authoring` capability already mandates such a working tree, so the collision is present rather than hypothetical, and it is the same two-standing-constraints-on-one-act defect the deferred-work requirement below spends a paragraph curing.
 
@@ -177,7 +179,7 @@ Reclaiming a namespace once its working tree is gone is **not** stated by this f
 
 ### Requirement: A working tree is torn down only against an observable gate
 
-This gate governs a working tree carrying a session's change, per the scope stated above. A working tree holding no change is not held by it and is removed by whatever created it.
+This gate governs a working tree in which a session is doing a change's work, per the scope stated above. A working tree outside that scope is not held by this gate; the fragment SHALL state that as an exclusion and SHALL NOT assert that something else removes it, since no capability in this repository obliges anyone to.
 
 The isolation fragment SHALL state the condition under which a session's branch and working tree are removed as an observable one: the branch is merged into the trunk, nothing uncommitted remains in the working tree, and — where the project has a remote — nothing unpushed remains.
 
@@ -196,7 +198,7 @@ The record SHALL be committed on the abandoned branch before the gate is evaluat
 
 Left unstated, the narrow reading blocks an abandoned branch that was never pushed, which is the permanent unremovability this route exists to remove; the broad reading silently discards uncommitted work on the strength of a decision that did not mention it.
 
-The gate SHALL NOT be stated as the completion of a step described in another fragment. Where a delivery fragment is also adopted, its confirmed merge is what satisfies this gate; where it is not, the gate is satisfied by however that project merges.
+The gate SHALL NOT be stated as the completion of a step described in another fragment. Where a delivery fragment is also adopted, its confirmed merge is what satisfies this gate; where it is not, the gate is satisfied by however that project merges — stated in this requirement rather than in the fragment, which names no sibling.
 
 Teardown SHALL cover the branch locally, the branch on the remote where one exists, and the working tree. The fragment SHALL state from where the working tree's removal is performed, since the tree the gate authorises removing is ordinarily the one the session is running in; an act whose execution context is undefined is resolved by the first implementer's guess. It does not cover the shared-service namespace the session allocated: reclaiming that belongs to a separate proposed capability, named in this requirement rather than in the fragment, and stating half of it here would leave a rule whose safety depends on clauses this fragment does not carry.
 

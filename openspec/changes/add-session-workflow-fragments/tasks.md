@@ -14,9 +14,12 @@
       route safe: it phrases provisioning as a state to reach, so reaching it
       here needs no finding about what an earlier session did.
 - [ ] 1.3 Scope the fragment's rules before stating them: they govern a
-      working tree that carries a session's change. A tree some tooling
-      creates and removes within one act, holding no change and no branch
-      destined for the trunk, is outside them. Unscoped, the rules bind trees
+      working tree in which a session is doing a change's work. A tree whose
+      lifetime is bounded by the single act of tooling that created it, and
+      which carries no branch destined for the trunk, is outside them. The
+      discriminator is the branch and the lifetime, not the contents — a tree
+      made from a committed ref carries that commit's change artifacts, so
+      "holds no change" would exclude nothing. Unscoped, the rules bind trees
       that can satisfy neither the one-tree rule nor either gate route —
       `agent-authoring` in this repository mandates exactly such a tree for a
       cold-run check, so the collision is present, not hypothetical.
@@ -39,9 +42,10 @@
       state the verification touches. That premise is what makes the rule
       actionable; without it the fragment says "provision before relying on a
       result" and never says what is missing. Then the false pass as the
-      stated reason, not convenience. Include that provisioning is complete only
-      when every step the project names has been performed, and that a
-      shared service is checked for before being declared absent. Include the
+      stated reason, not convenience. Include that provisioning is complete when the
+      end state of every step the project's conventions name holds, not when
+      the first one does, and that a shared service is checked for before
+      being declared absent. Include the
       end-state obligation, conditioned on the project having a shared
       service at all: provisioning brings the session's namespace in it to the
       project's known initial state whether or not one already exists under
@@ -87,8 +91,10 @@
       performed — the tree the gate authorises removing is ordinarily the one
       the session is running in, and an act with no stated execution context
       gets resolved by the first implementer's guess. The gate governs a
-      working tree that carries a session's change, per 1.3; one holding no
-      change is removed by whatever created it.
+      working tree in which a session is doing a change's work, per 1.3. A
+      tree outside that scope is excluded from the gate; do not assert that
+      something else removes it, since nothing in this repository obliges
+      anyone to.
       Teardown does not cover the shared-service namespace: stating half a reclamation rule here would leave one whose
       safety depends on clauses this fragment does not carry.
       Give the gate two routes, not one — a merge, or an abandonment the
@@ -96,10 +102,10 @@
       change's branch and working tree are permanently unremovable, which is
       the accumulation the gate exists to prevent. Make the second route as
       observable as the first: name where the record lives — the abandoned
-      change's own artifacts — and what it must say. (The parallel with how
-      the deferred-work fragment places a blocking dependency is this task's
+      change's own artifacts — and what it must say. The parallel with how the
+      deferred-work fragment places a blocking dependency is this task's
       reason, not fragment text: the fragment states the location alone and
-      names no sibling.) It must say (the change is abandoned; the
+      names no sibling. The record must say (the change is abandoned; the
       work on its branch is not wanted). And state what it displaces — the
       merge clause and, where there is a remote, the unpushed clause, both
       being commits the record covers; **not** the uncommitted clause, which
@@ -219,11 +225,6 @@
       `change-delivery.md` is excluded deliberately: a remote is its
       applicability axis, so its push and pull-request clauses presuppose one
       by design and are not hedged.
-- [ ] 4.7 Confirm provisioning is stated as a state to reach throughout
-      `worktree-isolation.md` — the completeness clause included — and that
-      the fragment scopes its rules to a working tree that carries a
-      session's change, per 1.3. Both were added late and each has already reached the delta
-      once without reaching the fragment's own text.
 - [ ] 4.6 Confirm no fragment directs releasing, deleting or dropping a
       shared-service namespace at all. Scope the check by the *act*, not by
       timing: a release clause written into the teardown rule while the
@@ -235,6 +236,11 @@
       way this split fails. Six review rounds on that rule are the reason to
       check this by reading rather than assume it.
 
+- [ ] 4.7 Confirm provisioning is stated as a state to reach throughout
+      `worktree-isolation.md` — the completeness clause included — and that
+      the fragment scopes its rules to a working tree in which a session is
+      doing a change's work, per 1.3. Both were added late and each has already reached the delta
+      once without reaching the fragment's own text.
 ## 5. Tests
 
 - [ ] 5.1 Dispatch `ai-toolkit:openspec-test-writer` against this change
@@ -256,7 +262,12 @@
       `worktree-isolation.md` ships allocating a shared-service namespace and
       not releasing it, that `add-namespace-reclamation` owns the release,
       and that until it ships an adopting project accumulates namespaces and
-      needs a manual sweep.
+      needs a manual sweep. Record a second entry beside it: excluding a
+      tooling-created working tree from these rules leaves a class of working
+      tree that no capability in this repository obliges anyone to remove —
+      `agent-authoring` mandates a cold-run worktree and states no removal —
+      so the accumulation this fragment exists to prevent is displaced onto a
+      class it now excludes rather than solved for it.
       The destination is the point, not a formality: a deferral left in this
       `tasks.md` moves to `openspec/changes/archive/` when this change ships
       and stops being findable — the exact failure the fragment being written
