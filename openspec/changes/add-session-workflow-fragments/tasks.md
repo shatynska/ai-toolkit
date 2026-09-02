@@ -1,8 +1,8 @@
 ## 1. `rules/worktree-isolation.md`
 
-- [ ] 1.1 Create the fragment with frontmatter `kind: standing-constraint`
+- [x] 1.1 Create the fragment with frontmatter `kind: standing-constraint`
       and no `version:` key.
-- [ ] 1.2 Write the orientation rule: on entering a working tree, report the
+- [x] 1.2 Write the orientation rule: on entering a working tree, report the
       change's stage, its verification result and its committed state, each
       derived from the repository rather than from recalled conversation —
       and, except as the composition clause below provides, from a real run. State how this composes with 1.5, since the two rules do
@@ -13,7 +13,7 @@
       never from a run against an unprovisioned tree. 1.5 is what makes that
       route safe: it phrases provisioning as a state to reach, so reaching it
       here needs no finding about what an earlier session did.
-- [ ] 1.3 Scope the fragment's rules before stating them: they govern a
+- [x] 1.3 Scope the fragment's rules before stating them: they govern a
       working tree in which a session is doing a change's work. A tree whose
       lifetime is bounded by the single act of tooling that created it, and
       which carries no branch destined for the trunk, is outside them. The
@@ -31,12 +31,12 @@
       no-remote project. Name the path in the fragment — the containment
       rules in 1.4 are uncheckable against a path left to the project's
       choice.
-- [ ] 1.4 Write the containment rules for `.claude/worktrees/` — the root is
+- [x] 1.4 Write the containment rules for `.claude/worktrees/` — the root is
       named in the repository's ignore file, and every recursive tool that
       does not read that file is scoped explicitly. State the failure each
       prevents: a run that silently includes a sibling session's copy of the
       tree, and a forced clean that destroys every session's unmerged work.
-- [ ] 1.5 Write the provisioning rule. State **first** what a new working
+- [x] 1.5 Write the provisioning rule. State **first** what a new working
       tree carries — tracked files only: no ignored configuration, no
       installed dependencies, no build artifacts, no share of any external
       state the verification touches. That premise is what makes the rule
@@ -65,7 +65,7 @@
       cannot tell whether re-performing a step is destructive reports
       verification as not run every time, in exactly the resumed-tree case
       orientation exists for.
-- [ ] 1.6 Write the external-state rule: a session takes its own namespace in
+- [x] 1.6 Write the external-state rule: a session takes its own namespace in
       any shared service its verification writes to, named deterministically
       from its working tree, in whatever form the project's naming
       constraints require. State the obligation generally; prescribe no
@@ -73,7 +73,7 @@
       that which session holds which namespace is readable rather than
       guessed. The further properties a name needs to be safely *reclaimable*
       belong to `add-namespace-reclamation` and are not stated here.
-- [ ] 1.7 State the boundary in terms an adopting project can act on: this
+- [x] 1.7 State the boundary in terms an adopting project can act on: this
       fragment does not direct reclaiming an allocated namespace, so a
       project that allocates needs a sweep of its own. Say it rather than
       leave the gap to read as an oversight — an unstated gap in a rule about
@@ -84,7 +84,7 @@
       that carries no version precisely because nothing would maintain such a
       claim. Both belong in this repository's `docs/deferred-work.md`, where
       6.1 already puts them.
-- [ ] 1.8 Write the teardown gate as an observable — branch merged into the
+- [x] 1.8 Write the teardown gate as an observable — branch merged into the
       trunk, nothing uncommitted, and nothing unpushed *where the project has
       a remote* — covering the local branch, the remote branch where one
       exists, and the working tree. State from where that removal is
@@ -120,59 +120,59 @@
       conditioned; an unconditional one makes the gate unsatisfiable in a
       project with no remote, which is one of the shapes this fragment is
       meant to serve.
-- [ ] 1.9 Read the finished fragment for sibling dependence: no sentence may
+- [x] 1.9 Read the finished fragment for sibling dependence: no sentence may
       name another session-scoped fragment or require one to be present.
       Where shared context is needed, restate it here rather than referring
       outward.
 
 ## 2. `rules/change-delivery.md`
 
-- [ ] 2.1 Create the fragment with frontmatter `kind: standing-constraint`
+- [x] 2.1 Create the fragment with frontmatter `kind: standing-constraint`
       and no `version:` key.
-- [ ] 2.2 Write the entry gate first: delivery begins only where the change's
+- [x] 2.2 Write the entry gate first: delivery begins only where the change's
       verification has run and passed against the branch head. The fragment
       is adoptable alone, so a sequence opening with the archive commit and
       no precondition sanctions delivering work nothing verified.
-- [ ] 2.3 Write the delivery sequence: archive the change's record as the
+- [x] 2.3 Write the delivery sequence: archive the change's record as the
       last commit on the branch, push, open the pull request, let
       verification run. Name OpenSpec directly — the proposal's decision 2.
-- [ ] 2.4 State why the archive commit precedes the merge rather than
+- [x] 2.4 State why the archive commit precedes the merge rather than
       following it: the record is reviewed by the pull request that reviews
       the work, instead of reaching the trunk outside any review.
-- [ ] 2.5 Write the confirmation rule: the operator confirms the merge, the
+- [x] 2.5 Write the confirmation rule: the operator confirms the merge, the
       session never infers it, and nothing is treated as delivered before
       that confirmation.
-- [ ] 2.6 State the fragment's adoption preconditions in the fragment itself:
+- [x] 2.6 State the fragment's adoption preconditions in the fragment itself:
       a remote, and — because 2.3 names OpenSpec directly rather than stating
       a role with the tool bound beneath — OpenSpec. Recording the narrowing
       only in this change's artifacts is what the delta forbids: those are
       archived, and a project with a remote and different specification
       tooling would then meet it at the archive step.
-- [ ] 2.7 Verify the fragment names no working tree and no branch-per-session
+- [x] 2.7 Verify the fragment names no working tree and no branch-per-session
       obligation, so it is satisfiable in a project that has not adopted
       `worktree-isolation.md`.
 
 ## 3. `rules/deferred-work.md`
 
-- [ ] 3.1 Create the fragment with frontmatter `kind: standing-constraint`
+- [x] 3.1 Create the fragment with frontmatter `kind: standing-constraint`
       and no `version:` key.
-- [ ] 3.2 Write the one-change-per-session rule. State the reason as the
+- [x] 3.2 Write the one-change-per-session rule. State the reason as the
       observable one — two changes in flight in one session leaves it unclear
       which artifact and which commit belong to which change — rather than
       asserting a consequence about session capacity that no recorded
       incident in this change's evidence supports.
-- [ ] 3.3 Write the blocking-dependency path — record the dependency and the
+- [x] 3.3 Write the blocking-dependency path — record the dependency and the
       wait in the current change's artifacts *first*; then optionally a
       proposal-only branch and a recommendation to continue in a separate
       session. Make explicit that recording is the obligation and branching
       is the option.
-- [ ] 3.4 Write the independent-work path: a proposal-only branch, or an
+- [x] 3.4 Write the independent-work path: a proposal-only branch, or an
       entry in the project's deferred-work file at the named path
       `docs/deferred-work.md`. State that the file is created where the
       project has none — an option that silently reduces to no option in a
       project lacking a file the fragment never told it to create is not an
       option.
-- [ ] 3.5 State the seam against `rules/development-workflow.md`, which a
+- [x] 3.5 State the seam against `rules/development-workflow.md`, which a
       bootstrapped project carries inlined and which obliges out-of-scope work
       noticed during a change to become a separate proposed change rather
       than being folded in. State it against that **obligation**, not against
@@ -186,21 +186,21 @@
       other requires. This is the one reference outside the session-scoped
       set, and it is permitted because `development-workflow.md` is not a
       session-scoped fragment.
-- [ ] 3.6 State what becomes of a proposal-only branch on either path: it is
+- [x] 3.6 State what becomes of a proposal-only branch on either path: it is
       created and left — no working tree of its own, and it does not become
       the session's working branch. Neither fragment may name the other, so a
       project that also keeps one branch and one working tree per session
       cannot reconcile this by cross-reference; stating it here is the only
       route open, and without it a session reads a permitted route as one its
       other rules forbid.
-- [ ] 3.7 State the reason the deferred-work file exists outside any change:
+- [x] 3.7 State the reason the deferred-work file exists outside any change:
       a deferral recorded only inside a change stops being findable when the
       change is archived, so it is the change succeeding — not the session
       ending — that loses it.
 
 ## 4. Cross-fragment checks
 
-- [ ] 4.1 Check every rule in all three fragments against the phrasing
+- [x] 4.1 Check every rule in all three fragments against the phrasing
       standard: the instruction is the durable half, any defect appears only
       as the reason an instruction matters, and no rule consists of an
       incident alone.
@@ -209,23 +209,23 @@
       instruction survives the fix. `commerce-ops` nearly lost its
       `_test`-suffix rule that way — the change expected to obsolete it in
       fact enforced it harder, and only the consequence had gone stale.
-- [ ] 4.2 Confirm no session-scoped fragment names another session-scoped
+- [x] 4.2 Confirm no session-scoped fragment names another session-scoped
       fragment, and no fragment's gate is expressed as another fragment's
       step having completed. Task 3.5's reference to
       `rules/development-workflow.md` is outside that set and is the one
       permitted reference; confirm it is the only one.
-- [ ] 4.3 Confirm each fragment carries `kind: standing-constraint` and no
+- [x] 4.3 Confirm each fragment carries `kind: standing-constraint` and no
       `version:`.
-- [ ] 4.4 Confirm the flat layout: all three sit directly under `rules/`,
+- [x] 4.4 Confirm the flat layout: all three sit directly under `rules/`,
       with no grouping subdirectory.
-- [ ] 4.5 Confirm every clause presupposing a remote is conditioned on the
+- [x] 4.5 Confirm every clause presupposing a remote is conditioned on the
       project having one, in `worktree-isolation.md` — the fetch at 1.3 and
       the gate at 1.8, which are where the delta states remote-conditioning
       obligations, and not only the gate.
       `change-delivery.md` is excluded deliberately: a remote is its
       applicability axis, so its push and pull-request clauses presuppose one
       by design and are not hedged.
-- [ ] 4.6 Confirm no fragment directs releasing, deleting or dropping a
+- [x] 4.6 Confirm no fragment directs releasing, deleting or dropping a
       shared-service namespace at all. Scope the check by the *act*, not by
       timing: a release clause written into the teardown rule while the
       working tree still exists passes a timing-scoped check and is exactly
@@ -236,14 +236,14 @@
       way this split fails. Six review rounds on that rule are the reason to
       check this by reading rather than assume it.
 
-- [ ] 4.7 Confirm provisioning is stated as a state to reach throughout
+- [x] 4.7 Confirm provisioning is stated as a state to reach throughout
       `worktree-isolation.md` — the completeness clause included — and that
       the fragment scopes its rules to a working tree in which a session is
       doing a change's work, per 1.3. Both were added late and each has already reached the delta
       once without reaching the fragment's own text.
 ## 5. Tests
 
-- [ ] 5.1 Dispatch `ai-toolkit:openspec-test-writer` against this change
+- [x] 5.1 Dispatch `ai-toolkit:openspec-test-writer` against this change
       once the review verdict permits proceeding and the approved plan is
       committed. Test authoring is not exempt here: the delta states
       properties of three files a shell case can check by reading them.
@@ -251,13 +251,13 @@
       paths, the absolute `.openspec.yaml` path, `AGENTS.md` and
       `CLAUDE.md`, the test command `bash tests/run.sh`, and the test-path
       glob `tests/cases/**`.
-- [ ] 5.2 Run `bash tests/run.sh` and confirm the pre-existing suite is
+- [x] 5.2 Run `bash tests/run.sh` and confirm the pre-existing suite is
       unaffected — this change touches no executable, so any movement there
       is a defect in the change.
 
 ## 6. Deferred work, recorded where archiving cannot hide it
 
-- [ ] 6.1 Create `docs/deferred-work.md` in this repository — it has none —
+- [x] 6.1 Create `docs/deferred-work.md` in this repository — it has none —
       and record there, **before this change is archived**, that
       `worktree-isolation.md` ships allocating a shared-service namespace and
       not releasing it, that `add-namespace-reclamation` owns the release,
