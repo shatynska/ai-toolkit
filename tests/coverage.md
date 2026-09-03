@@ -113,3 +113,43 @@ plugin cache contents in section 1, `rules/README.md` and `AGENTS.md`
 content in section 7) and by `openspec validate --strict`, which confirms
 every `MODIFIED` header matches an existing requirement and no scenario
 already in `specsRoot` was dropped.
+
+## specs/session-workflow/spec.md (37 scenarios)
+
+This change ships no executable. Its deliverable is three markdown fragments
+under `rules/`, so the scenarios divide by what a shell case can reach: a
+property of the finished files, or a description of what an agent following
+them would do.
+
+**One covered in full** — "A fragment carries no version claim"
+(`session-fragment-frontmatter.sh`).
+
+**Seven covered in part**, each with the unasserted half named in the
+change's `test-manifest.md`: the two adoptability scenarios and "The gate is
+checkable without a delivery fragment" (`session-fragments-name-no-sibling.sh`,
+`change-delivery-names-no-working-tree.sh`), "A recursive tool does not
+descend into sibling working trees" and "The deferred-work file does not yet
+exist" (`session-fragments-name-fixed-paths.sh`), "A project carrying both
+fragments has one rule to follow, not two"
+(`deferred-work-states-workflow-seam.sh`), and "A fragment is adopted without
+tooling" (`session-fragments-not-inlined.sh`).
+
+**Twenty-nine uncovered**, for two reasons. Most describe what a session
+*does* — report verification as not run rather than as a pass, decline to
+inherit a surviving namespace, halt teardown on uncommitted work. There is no
+program in this repository to run them against, the same limit this file
+already records for `project-foundation` and the `toolkit-structure` delta.
+The rest are properties of prose: whether a rule's durable half is its
+instruction, whether creation and teardown are *stated* as one invariant,
+whether provisioning is phrased as a state rather than an act. A token scan
+cannot tell a rule from a mention, and one built to try would fail on a
+faithful wording. Tasks 4.1, 4.2, 4.4, 4.6 and 4.7 direct each of these by
+reading, and say so.
+
+Two candidates were declined rather than approximated, and the reasoning is
+in `test-manifest.md` under *Deliberately untested*. The namespace-release
+check (task 4.6) is the sharper one: requirement 6 obliges
+`worktree-isolation.md` to *state* that it allocates and does not release, so
+a correct fragment necessarily contains a sentence carrying both a release
+verb and the word "namespace" — any lexical scan for that pair fails on a
+compliant fragment.
