@@ -36,19 +36,20 @@ its own marker rather than assume one block per file.
 
 ## `seed-the-worktree-ignore-entry`
 
-`rules/development-workflow.md` v3 obliges a project to name
-`.claude/worktrees/` in its ignore file, and `scripts/project-init` — which
-inlines v3 into every project it initializes — cannot write that entry.
+`rules/development-workflow.md` v3 fixes a change's working tree at
+`.worktrees/<name>`, with `.claude/worktrees/` as the Claude Code binding, and
+neither root is named in the ignore file `scripts/project-init` writes.
 `project-bootstrap`'s requirement "The minimal ignore file is enumerated, not
 described" fixes the created file at exactly seven entries "and no others", and
 `tests/cases/gitignore-enumerated-entries.sh` asserts it.
 
-So a freshly initialized project carries the obligation and not the entry, and
-the window in which a forced clean at the project root destroys every session's
-unmerged work opens at initialization rather than closing there. v3 names the
-session as the actor and directs the entry to be added with the first working
-tree, which makes the obligation satisfiable — but a rule satisfied only by a
-session remembering is weaker than one the tool discharges.
+So a freshly initialized project carries the working-tree rules and not the
+containment, and the window in which a forced clean at the project root destroys
+every session's unmerged work opens at initialization rather than closing there.
+v3 states neither the ignore entry nor the recursive-tool scoping, per
+`session-workflow`'s rule that a one-time setup obligation is recorded for the
+capability that owns project setup rather than added to a fragment every session
+reads. This entry is that record.
 
 The change is two obligations, both one-time and neither a session's:
 
@@ -63,7 +64,7 @@ The change is two obligations, both one-time and neither a session's:
   is added.
 
 **Argued in**: `consolidate-development-workflow`'s implementation review,
-round 2. The contradiction is new to that change — the obligation lived in
+round 2. The gap is new to that change — the obligation lived in
 `rules/worktree-isolation.md` until then, and `project-init` never inlined that
 fragment.
 

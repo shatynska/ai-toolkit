@@ -16,7 +16,7 @@
 
 **Reason**: Two of its scenarios assert properties this change removes — that the gate is satisfiable in a project with no remote, and that it is checkable without a delivery fragment. Both exist because the isolation fragment had to stand alone in a project that might have neither. With one document and a stated profile, they are dead clauses that a reader must decide to ignore. The requirement is replaced rather than amended because its scenarios, not only its prose, encode the removed property.
 
-**Migration**: Replaced by "A session's branch and working tree are removed only against an observable gate", which keeps both routes, the displacement analysis, the commit-the-record-first clause and the execution-context clause, and drops the conditionals for a project with no remote and for a delivery rule stated elsewhere.
+**Migration**: Replaced by "A change's branch and working tree are removed only against an observable gate", which keeps both routes, the displacement analysis, the commit-the-record-first clause and the execution-context clause, and drops the conditionals for a project with no remote and for a delivery rule stated elsewhere.
 
 ### Requirement: A change is delivered through a pull request that carries its own record
 
@@ -29,6 +29,12 @@
 **Reason**: Two of its clauses no longer hold. It names `docs/deferred-work.md` as the destination for an identified change, and that file already exists in this repository and in `commerce-ops` holding something else — what the project deliberately has not done, deleted when it stops being true, rather than an identified change, deleted when that change is archived. And its reconciliation scenario is written for a project carrying the inlined workflow rules alongside a separate deferred-work fragment — a pairing consolidation removes, since the two obligations now sit in one document and the seam between them is internal rather than cross-file.
 
 **Migration**: Replaced by "A second change surfacing in a session is recorded in the change queue", which keeps the one-change rule, the dependent and independent paths, the proposal-only-branch clause and the reason the artifact sits outside the change, and routes identified work to `docs/change-queue.md` with the two artifacts' deletion conditions stated.
+
+### Requirement: One session works in one branch and one working tree
+
+**Reason**: The requirement is keyed to the session, and this change keys every working-tree rule to the change instead — a change outlives the sessions that work on it, and a session-keyed invariant lets a change acquire another branch and another working tree whenever a new session picks it up. Its title states the superseded keying, and one of its scenarios asserts the containment behaviour this change moves out of the fragment: that a recursive tool walking the repository is scoped or excluded by the ignore file, which is a one-time setup obligation recorded for the capability that owns project setup rather than an obligation any session discharges. A `MODIFIED` delta cannot drop that scenario — the tooling refuses, since a modified block replaces the whole requirement — so the requirement is replaced, as three others in this change are and for the same reason: the scenarios, not only the prose, encode what is being dropped.
+
+**Migration**: Replaced by "A change works in one branch and one working tree", which keeps the one-branch-one-tree invariant, the fixed working-tree path, the serial-session clause and the scoping of the rules, restates the invariant as the change's, and adds the return to the freshly fetched trunk after each merge and the periodic rebase between. The containment obligations travel to `docs/change-queue.md` as `seed-the-worktree-ignore-entry`.
 
 ## MODIFIED Requirements
 
@@ -106,58 +112,6 @@ Nothing here licenses skipping the report. Orientation still precedes the work; 
 - **WHEN** the session has earlier conversation describing the change's state
 - **THEN** the report is still derived from the repository and a run of the verification, because the conversation records what was true when it was written and the repository records what is true now
 
-### Requirement: One session works in one branch and one working tree
-
-**Every working-tree rule SHALL be keyed to the change**, not to the session or to working trees in general: a change's branch, a change's working tree, the change's record. So phrased, the rules bind nothing that is not a change's, and a working tree tooling creates for a single act — a cold-run check of an agent under authoring, for example — falls outside them without an exclusion being written.
-
-An earlier form keyed the rules to a session's working tree and needed such an exclusion, since a cold-run tree is also a session's. It also needed a clause saying that contents do not decide the question, because a working tree created from a committed ref carries whatever that commit held, a change's own artifacts included. Keying to the change removes both.
-
-The fragment SHALL NOT carry the exclusion. A scope statement defending against a reading the text no longer invites is text a reader must understand before discovering it is inert, and the case that motivated it — `agent-authoring`'s mandated cold-run working tree — exists in this library and not in the projects the fragment is written for.
-
-**The fragment SHALL state the invariant as one change, one branch, one working tree**, not as one session's. A change outlives the sessions that work on it — which is what the orientation report above exists for — so binding the branch and the working tree to the session says a change may acquire another of each whenever a new session picks it up.
-
-The fragment SHALL state that several sessions may work on one change, one after another and never concurrently, and that a session resuming a change enters the working tree that change already has. Two concurrent sessions on one change would share a working tree, which the containment reason below forbids.
-
-**A change SHALL keep that one branch from proposal to record.** Delivery merges it more than once — the work, then the record — and the fragment SHALL direct bringing it back to the freshly fetched trunk after each merge before continuing on it.
-
-The fragment SHALL also direct fetching the trunk periodically and rebasing onto it while the change is in progress, not only when the branch is cut. A change that spans several sessions diverges from a trunk other changes are merging into, and a divergence first met at the pull request is one nobody chose the moment to deal with.
-
-**Fetching, rebasing and merging SHALL be scoped separately, and the fragment SHALL give a route for each part of the change's life rather than stopping at one.** Fetching is not destructive and continues throughout. Before the branch is pushed, the trunk is brought in by rebasing. After, it is brought in by merging, since a rebase then needs a force push over a branch under review where a merge does not.
-
-Stated as a single instruction that stops at the push, the rule leaves a session with no way to stay current for the whole of `ship` — which is where a change waits longest and the trunk moves most. An incomplete route is worse than a stated one: a session that needs the trunk and has been told only what not to do will force-push.
-
-Reusing the branch is stated rather than left open because the alternative a session would otherwise reach for is a second branch, and the reasoning against it is not obvious: a branch left at its pre-merge tip re-presents the whole work diff in the record's pull request under a squash or rebase merge, and a trunk that advanced while the deploy ran is diverged from rather than fetched. Returning to the trunk answers both, and one branch per change makes the teardown gate a check on one branch rather than on a set no later session can enumerate.
-
-The obligation that a session carries only one change at a time belongs to the change-queue requirement below and is not restated here.
-
-It SHALL name the location of a change's working tree as a fixed path within the repository — `.worktrees/`, one directory per working tree — rather than describing it as a path the project chooses, since the containment obligations below are checks against a path and a path left to choice makes them uncheckable.
-
-The path SHALL be harness-neutral. Where a harness creates working trees at a path of its own and will not enter one elsewhere, that path SHALL be named beneath the rule as that harness's binding, and the containment obligations SHALL cover both roots. Naming a harness's directory in the rule itself would put one tool inside an obligation the fragment states tool-neutrally.
-
-**The containment obligations that location carries SHALL NOT be stated in the fragment.** Naming the working-tree root in the repository's ignore file, and scoping every recursive tool that does not read that file so it cannot descend into one, are discharged once when a project is set up and once when a tool is added — never by a session working a change. They belong to the capability that owns project setup, per the requirement below, and are recorded there.
-
-Naming them here would put two setup acts in a document read on every change, to prevent sibling trees filling `git status`, `git add -A` committing one as an embedded repository, and one session's run including another's source tree. Each is worth preventing; none is prevented by a session reading a rule.
-
-#### Scenario: A working tree carrying no change is not held by these rules
-
-- **WHEN** tooling creates a working tree that holds no change and no branch destined for the trunk — a cold-run check, say — and removes it when done
-- **THEN** the one-tree rule and the teardown gate do not bind it, because the fragment scopes its rules to a working tree carrying a session's change
-
-#### Scenario: A long-running change does not first meet the trunk at its pull request
-
-- **WHEN** a change spans several sessions while other changes merge to the trunk
-- **THEN** the fragment has directed fetching and rebasing onto the trunk periodically, so divergence is met while the work is in hand rather than at the pull request
-
-#### Scenario: Two sessions do not share a working tree
-
-- **WHEN** a second session begins work on the same repository while a first is in progress
-- **THEN** it works in its own working tree on its own branch, rather than sharing the working tree, index or checked-out branch of the first
-
-#### Scenario: A recursive tool does not descend into sibling working trees
-
-- **WHEN** a tool that walks the repository tree runs from the repository root
-- **THEN** it is either scoped explicitly or excluded by the ignore file, and does not collect, lint, type-check or package another session's copy of the project
-
 ### Requirement: A working tree is provisioned before any verification result is relied on
 
 The workflow fragment SHALL state that a newly created working tree carries tracked files only — no ignored configuration, no installed dependencies, no build artifacts, and no share of any external state the project's verification uses — and that provisioning it is a precondition of relying on any verification result obtained in it.
@@ -221,12 +175,12 @@ Reclaiming a namespace once its working tree is gone is **not** stated by the wo
 
 ### Requirement: The session obligations are published in the workflow fragment and one binding fragment
 
-The obligations this capability governs SHALL be published in two places, and in no further place that a session must read to act correctly:
+The obligations this capability governs SHALL be published in the two places named below, and in no further place a session must read alongside them to act correctly:
 
 - `rules/development-workflow.md` — the workflow fragment, which states every obligation service-neutrally alongside the spec-driven gates it already carries, and which `scripts/project-init` inlines into a consuming project's conventions file;
 - `rules/development-workflow-database.md` — the binding fragment, which binds the workflow fragment's provisioning and namespace obligations to a containerized relational database.
 
-The workflow fragment SHALL state a role and name its binding beneath it, as it already does for specification tooling. The binding fragment SHALL NOT restate an obligation the workflow fragment states; it names the service, the naming form and the operations that reach the stated end state.
+The workflow fragment SHALL state a role and name its binding beneath it, as it already does for the agents and the working-tree location it binds to Claude Code. The binding fragment SHALL NOT restate an obligation the workflow fragment states; it names the service, the naming form and the operations that reach the stated end state.
 
 **The fragment SHALL name its unit of work before stating any rule about it.** The unit is a change, and every rule below is a rule about a change's life; a document that never says so leaves a reader to infer it from the rules themselves.
 
@@ -288,6 +242,8 @@ The fragment SHALL state the transitions, the derivation rule, and enough exampl
 
 Where a transition name matches a command the same session drives — `apply`, `archive`, `verify`, `review` — the state derived from it SHALL keep that word, so the operation remains recoverable from the stage.
 
+**The `confirm` transition SHALL be stated as completing on either the operator's confirmation or a recorded waiver**, so `ship:confirmed` is true of a waived change rather than a name it lacks. A waiver is one of the two ways the gate is passed, not a way around it — the delivery requirement closes the record on either — and a transition stated as completing on only one of them leaves a session that has just recorded a waiver with no true stage between `ship:deployed` and `ship:archiving`, at the point in the sequence where the next session most needs to know where it stands. This is a statement about when the transition completes, not a licence to report a state that has not been reached.
+
 **The family prefix SHALL always be written, and the vocabulary SHALL say so.** `plan:reviewing` and `build:reviewing` dispatch different reviewers — one reads the plan and refuses diffs — and the bare word names neither.
 
 Both families SHALL share one review loop — `reviewing → fixing → reviewing` — since applying what a review returned is one act in two families, and stating it twice under two words would present two settings of one mechanism as two mechanisms.
@@ -331,7 +287,7 @@ The fragment SHALL state that the bypass suspends the pre-commit check and not t
 
 ### Requirement: A production-confirmation waiver is recorded
 
-**A production-confirmation waiver SHALL be recorded in the change's own artifacts**, and it is the only record these rules require beyond the artifacts a change already carries.
+**A production-confirmation waiver SHALL be recorded in the change's own artifacts**, and it is the only record this requirement adds beyond the artifacts a change already carries.
 
 The change's record is archived on the strength of the waiver, and the specification that archive writes to the trunk then describes behavior production does not have. The waiver is the only trace of why.
 
@@ -394,7 +350,7 @@ Where the deploy is healthy and the intended effect is absent, the fragment SHAL
 
 **The wrong change is the confirmation gate's second waivable class**, named in advance on the same terms as the first: a change whose proposed observation was made, whose effect is absent, and which is **not to be corrected in place**. Being superseded by a new proposal is the typical case and SHALL NOT be a defining condition — a change judged wrong and reverted, or simply dropped, satisfies the class as fully, and a definition requiring a successor would leave it in neither class and back at the dead end this exemption exists to close.
 
-The session says so plainly and names the class, the operator waives, the waiver is recorded in the change's own artifacts, and the record proceeds on it. **Where a successor is intended, the waiver SHALL name its change-queue entry or its proposal branch.** This class is the one whose defining fact is a decision rather than an observation, so what it leaves behind is the only trace of why a change was archived as shipped while its effect was confirmed absent — and the specification the archive step writes to the trunk then describes behaviour production does not have. A reader meeting that specification later is owed the pointer.
+The session says so plainly and names the class, the operator waives, the waiver is recorded in the change's own artifacts, and the record proceeds on it. **Where a successor is intended, the waiver SHALL name its change-queue entry or the branch it was opened on.** This class is the one whose defining fact is a decision rather than an observation, so what it leaves behind is the only trace of why a change was archived as shipped while its effect was confirmed absent — and the specification the archive step writes to the trunk then describes behaviour production does not have. A reader meeting that specification later is owed the pointer.
 
 Without that terminal the path dead-ends. The record cannot be written, because the effect is unconfirmed. The first waivable class does not reach it, because an observation *was* proposed and made — and improvising an exemption at the gate is what stating exemptions in advance forbids. The abandonment route does not reach it either, because that record must assert the work on the change's branch is not wanted, and this work is merged, deployed and running. A compliant session would stop with a branch and a working tree it can never remove, which is the accumulation this capability exists to prevent, reached down a path the fragment itself names.
 
@@ -438,7 +394,7 @@ The predecessor of this requirement permitted the opposite, and could: it govern
 #### Scenario: The record follows the confirmed effect
 
 - **WHEN** the change's intended effect is confirmed in production
-- **THEN** the record is archived in a commit of its own, on a branch of its own, and merged through the last of the change's pull requests
+- **THEN** the change's one branch is brought back to the freshly fetched trunk, the record is archived there in a commit of its own, and it is merged through the last of the change's pull requests
 
 #### Scenario: A remedial cycle adds a pull request rather than reusing one
 
@@ -463,11 +419,58 @@ The predecessor of this requirement permitted the opposite, and could: it govern
 #### Scenario: The wrong change reaches its record rather than stalling
 
 - **WHEN** a change's effect is absent and the session and operator agree the change was the wrong change, to be superseded by a new proposal rather than corrected
-- **THEN** the operator waives the confirmation gate, the waiver is recorded in the change's own artifacts naming that class, and the record proceeds — rather than the change stalling with a branch set and working tree that no route can remove
+- **THEN** the operator waives the confirmation gate, the waiver is recorded in the change's own artifacts naming that class, and the record proceeds — rather than the change stalling with a branch and working tree that no route can remove
 
-### Requirement: A session's branch and working tree are removed only against an observable gate
+### Requirement: A change works in one branch and one working tree
 
-This gate governs a working tree in which a session is doing a change's work, per the scope stated above. A working tree outside that scope is not held by it; the workflow fragment SHALL state that as an exclusion and SHALL NOT assert that something else removes it, since no capability in this repository obliges anyone to.
+**Every working-tree rule SHALL be keyed to the change**, not to the session or to working trees in general: a change's branch, a change's working tree, the change's record. So phrased, the rules bind nothing that is not a change's, and a working tree tooling creates for a single act — a cold-run check of an agent under authoring, for example — falls outside them without an exclusion being written.
+
+An earlier form keyed the rules to a session's working tree and needed such an exclusion, since a cold-run tree is also a session's. It also needed a clause saying that contents do not decide the question, because a working tree created from a committed ref carries whatever that commit held, a change's own artifacts included. Keying to the change removes both.
+
+The fragment SHALL NOT carry the exclusion. A scope statement defending against a reading the text no longer invites is text a reader must understand before discovering it is inert, and the case that motivated it — `agent-authoring`'s mandated cold-run working tree — exists in this library and not in the projects the fragment is written for.
+
+**The fragment SHALL state the invariant as one change, one branch, one working tree**, not as one session's. A change outlives the sessions that work on it — which is what the orientation report above exists for — so binding the branch and the working tree to the session says a change may acquire another of each whenever a new session picks it up.
+
+The fragment SHALL state that several sessions may work on one change, one after another and never concurrently, and that a session resuming a change enters the working tree that change already has. Two concurrent sessions on one change would share a working tree, which the containment reason below forbids.
+
+**A change SHALL keep that one branch from proposal to record.** Delivery merges it more than once — the work, then the record — and the fragment SHALL direct bringing it back to the freshly fetched trunk after each merge before continuing on it.
+
+The fragment SHALL also direct fetching the trunk periodically and rebasing onto it while the change is in progress, not only when the branch is cut. A change that spans several sessions diverges from a trunk other changes are merging into, and a divergence first met at the pull request is one nobody chose the moment to deal with.
+
+**Fetching, rebasing and merging SHALL be scoped separately, and the fragment SHALL give a route for each part of the change's life rather than stopping at one.** Fetching is not destructive and continues throughout. Before the branch is pushed, the trunk is brought in by rebasing. After, it is brought in by merging, since a rebase then needs a force push over a branch under review where a merge does not.
+
+Stated as a single instruction that stops at the push, the rule leaves a session with no way to stay current for the whole of `ship` — which is where a change waits longest and the trunk moves most. An incomplete route is worse than a stated one: a session that needs the trunk and has been told only what not to do will force-push.
+
+Reusing the branch is stated rather than left open because the alternative a session would otherwise reach for is a second branch, and the reasoning against it is not obvious: a branch left at its pre-merge tip re-presents the whole work diff in the record's pull request under a squash or rebase merge, and a trunk that advanced while the deploy ran is diverged from rather than fetched. Returning to the trunk answers both, and one branch per change makes the teardown gate a check on one branch rather than on a set no later session can enumerate.
+
+The obligation that a session carries only one change at a time belongs to the change-queue requirement below and is not restated here.
+
+It SHALL name the location of a change's working tree as a fixed path within the repository — `.worktrees/`, one directory per working tree — rather than describing it as a path the project chooses, since the containment obligations below are checks against a path and a path left to choice makes them uncheckable.
+
+The path SHALL be harness-neutral. Where a harness creates working trees at a path of its own and will not enter one elsewhere, that path SHALL be named beneath the rule as that harness's binding, and the containment obligations SHALL cover both roots. Naming a harness's directory in the rule itself would put one tool inside an obligation the fragment states tool-neutrally.
+
+**The containment obligations that location carries SHALL NOT be stated in the fragment.** Naming the working-tree root in the repository's ignore file, and scoping every recursive tool that does not read that file so it cannot descend into one, are discharged once when a project is set up and once when a tool is added — never by a session working a change. They belong to the capability that owns project setup, per the requirement below, and are recorded there.
+
+Naming them here would put two setup acts in a document read on every change, to prevent sibling trees filling `git status`, `git add -A` committing one as an embedded repository, and one session's run including another's source tree. Each is worth preventing; none is prevented by a session reading a rule.
+
+#### Scenario: A working tree carrying no change is not held by these rules
+
+- **WHEN** tooling creates a working tree that holds no change and no branch destined for the trunk — a cold-run check, say — and removes it when done
+- **THEN** the one-tree rule and the teardown gate do not bind it, because the fragment scopes its rules to a change's working tree and this is not one
+
+#### Scenario: A long-running change does not first meet the trunk at its pull request
+
+- **WHEN** a change spans several sessions while other changes merge to the trunk
+- **THEN** the fragment has directed fetching and rebasing onto the trunk periodically, so divergence is met while the work is in hand rather than at the pull request
+
+#### Scenario: Two sessions do not share a working tree
+
+- **WHEN** a second session begins work on the same repository while a first is in progress
+- **THEN** it works in its own working tree on its own branch, rather than sharing the working tree, index or checked-out branch of the first
+
+### Requirement: A change's branch and working tree are removed only against an observable gate
+
+This gate governs a working tree in which a session is doing a change's work, per the scope stated above. Because every working-tree rule is keyed to the change, a working tree that is not a change's falls outside this gate without an exclusion being written, and the requirement above forbids writing one.
 
 The fragment SHALL state the condition under which a change's branch and working tree are removed as an observable one: **the change's record has reached the trunk through its own pull request, every other pull request the change opened is merged**, nothing uncommitted remains in the working tree, and nothing unpushed remains.
 
@@ -475,7 +478,7 @@ The record's pull request SHALL be named as its own conjunct rather than left to
 
 The universal is likewise not enough on its own for the opposite reason. A change abandoned before any pull request was opened satisfies "every one of them is merged" vacuously, and a gate passed by having done nothing would authorise deleting unmerged work — for exactly the class of change the second route below exists to serve, bypassing that route rather than using it. Requiring the record's pull request closes this too: a change that opened none has no record on the trunk.
 
-**The merge clause SHALL be stated against the pull request's state and not against branch ancestry.** A squash merge and a rebase merge put a branch's changes on the trunk without making the branch an ancestor of it, so an ancestry test reports every branch of every change unmerged in such a project and teardown never happens — the accumulation this requirement exists to prevent, produced by the check meant to authorise removal. The forge's report that a pull request merged holds under every strategy, and a forge is among the assumptions the publication requirement obliges the fragment to state.
+**The merge clause SHALL be stated against the pull request's state and not against branch ancestry.** A squash merge and a rebase merge put a branch's changes on the trunk without making the branch an ancestor of it, so an ancestry test reports every branch of every change unmerged in such a project and teardown never happens — the accumulation this requirement exists to prevent, produced by the check meant to authorise removal. The forge's report that a pull request merged holds under every strategy, and a forge is implied by the pull requests the publication requirement obliges the fragment to assume.
 
 The gate SHALL admit a second route, because a merge is not the only way a change legitimately ends: an abandonment the operator recorded satisfies it as a merge does. Stated with a merge as the only route, the gate can never be passed by an abandoned change, and its working tree and branch accumulate — the outcome this requirement exists to prevent, reached in the one case it forecloses.
 
@@ -535,7 +538,7 @@ Teardown SHALL cover the change's branch, locally and on the remote, and the wor
 #### Scenario: Teardown follows the record's pull request, not the work's
 
 - **WHEN** a change is delivered through the pull requests the delivery requirement states
-- **THEN** every branch the change created and the working tree are removed once the last pull request — the one carrying the record — has merged, since the change is not delivered until its record is on the trunk
+- **THEN** the change's branch and working tree are removed once the last pull request — the one carrying the record — has merged, since the change is not delivered until its record is on the trunk
 
 ### Requirement: A second change surfacing in a session is recorded in the change queue
 
@@ -547,15 +550,17 @@ Where the change in progress depends on the identified change, the fragment SHAL
 
 `handoff.md` SHALL carry what the originating session knows and the next will not: why the change was identified, what the originating work established that bears on it, and what it must not undo. The session that takes the change up writes its proposal.
 
-`handoff.md` SHALL sit at the identified change's root, where the change's own artifacts sits.
+`handoff.md` SHALL sit at the identified change's root, where the change's own artifacts sit.
+
+The name SHALL NOT be reserved to this use. A change that already has a proposal MAY carry a `handoff.md` for something else — a survey handed from one session to another, say — so what marks an *identified* change is the handoff standing where a proposal is not, rather than the filename alone.
 
 **The fragment SHALL direct proposing a commit on that branch as soon as it is opened**, and SHALL state what happens where that commit is declined: report that the handoff is unsaved and stop, as the plan-commit rule does, rather than continuing and leaving it to be lost. The session that opened it is by definition not returning to it, so no later commit will carry the handoff and an uncommitted one is lost with the session. It is proposed rather than made, per the fragment's commit rule.
 
-The path SHALL be fixed here, at the identified change's root, for the reason `docs/change-queue.md` and `.claude/worktrees/` are fixed: a location stated only in a change's own artifacts is archived with them.
+The path SHALL be fixed here, at the identified change's root, for the reason `docs/change-queue.md` and `.worktrees/` are fixed: a location stated only in a change's own artifacts is archived with them.
 
-Where the change in progress does not depend on the identified change, the fragment SHALL require that it is recorded either as a proposal on a branch of its own or as an entry in the project's **change queue**.
+Where the change in progress does not depend on the identified change, the fragment SHALL require that it is either opened on a branch of its own, carrying the handoff the clauses above state, or recorded as an entry in the project's **change queue**.
 
-Where a proposal-only branch is created by either path, the fragment SHALL state that it is created and left: it does not become the session's working branch and gets no working tree of its own here.
+Where such a branch is created by either path, the fragment SHALL state that it is created and left: it does not become the session's working branch and gets no working tree of its own here. The branch carries the identified change's handoff and no proposal, so it is not named for a proposal — the term this requirement's predecessor used, and the one this change replaces.
 
 **The fragment SHALL name the change queue's path as `docs/change-queue.md`, and SHALL NOT name `docs/deferred-work.md` for this purpose.** The two are distinct artifacts with distinct lifecycles, and the fragment SHALL state the distinction rather than leave a project to discover it:
 
@@ -566,7 +571,7 @@ One entry is swept on being shipped and the other on being fixed, so an entry fi
 
 The fragment SHALL state what happens where the adopting project has no change queue: it is created. An option that silently reduces to no option in a project lacking a file the fragment never told it to create is not an option.
 
-The path is fixed here rather than left to the fragment's author for the reason `.claude/worktrees/` is fixed above: a path stated only in a change's own artifacts is archived with them, and a requirement whose subject is then unnameable cannot be checked against the fragment afterwards.
+The path is fixed here rather than left to the fragment's author for the reason `.worktrees/` is fixed above: a path stated only in a change's own artifacts is archived with them, and a requirement whose subject is then unnameable cannot be checked against the fragment afterwards.
 
 The fragment SHALL reconcile the second route against its own scope rule, which obliges out-of-scope work noticed during a change to become a separate proposed change rather than being folded in. The reconciliation SHALL be stated against that obligation rather than against a quoted string, since both now live in one document that will be reworded. The seam is that a change-queue entry *is* that separate proposed change, recorded rather than opened, and the obligation both rules share is that the work leaves the change in progress.
 
@@ -580,7 +585,7 @@ The fragment SHALL state that recording is the obligation and branching is the o
 #### Scenario: An unrelated improvement is recorded rather than implemented
 
 - **WHEN** a session identifies work outside its change's scope that nothing in the current change depends on
-- **THEN** it is recorded as a proposal on its own branch or as an entry in the change queue, and is not implemented in the session that found it
+- **THEN** it is opened on a branch of its own carrying a handoff, or recorded as an entry in the change queue, and is not implemented in the session that found it
 
 #### Scenario: An identified change is not filed as deferred work
 
@@ -607,9 +612,9 @@ The fragment SHALL state that recording is the obligation and branching is the o
 - **WHEN** a session opens an identified change on a branch of its own and then continues with its own change
 - **THEN** it has proposed a commit on that branch already, because no later commit of its own will carry the handoff
 
-#### Scenario: A proposal-only branch does not become the session's working branch
+#### Scenario: An opened-and-left branch does not become the session's working branch
 
-- **WHEN** a session creates a proposal-only branch for work it identified but will not do here
+- **WHEN** a session opens a branch for work it identified but will not do here
 - **THEN** the branch is created and left, taking no working tree and not becoming the branch this session works on
 
 #### Scenario: A deferral outlives the change that recorded it
@@ -664,7 +669,7 @@ The fragment SHALL NOT restate an obligation the workflow fragment already state
 #### Scenario: A skipped tier is not reported as a pass
 
 - **WHEN** a session runs verification in a working tree it has not finished provisioning, and the tier skips and reports success
-- **THEN** the session reports verification as not run, and why, rather than as passing
+- **THEN** the binding fragment has stated the database the tier needs as a step to be reached before a result from it means anything, rather than leaving the skip to be noticed, rather than as passing
 
 #### Scenario: Two sessions do not share one database
 

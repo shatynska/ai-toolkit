@@ -72,18 +72,25 @@ The expensive property was never universality. It was independence.
   goes.
 
 - **A change's stage is named from a fixed vocabulary of three families**, and
-  every stage is derivable from the repository. `plan:` and `build:` each carry
+  the report is derived from the repository where it can be. Nothing requires
+  that every stage be derivable — see the design's decision 6, which withdrew
+  that requirement along with the ledger built to satisfy it. `plan:` and
+  `build:` each carry
   their own review and their own relation to tests — `plan:tests-derived` is tests being
   written from the delta specs, `build:verifying` is tests being run against the
   implementation. `ship:` is where a session waits, and is a family of its own
   because the only actionable content of a waiting state is which one it is.
 
-- **Two records are required, and only two.** A review's verdict and what was
-  done about it, because the implementation gate checks it; and a
-  production-confirmation waiver, because the record is archived on the strength
-  of it. Both to the change's own artifacts. An earlier draft mandated a ledger
-  holding eight kinds of record so every stage would be exactly derivable; that
-  precision buys nothing anyone depends on, and it went.
+- **One new record is required.** A production-confirmation waiver, written to
+  the artifacts of a change whose confirmation gate is waived, because the
+  record is archived on the strength of it. The abandonment record the teardown
+  gate already obliges is the only other, and this change does not add it.
+  An earlier draft mandated a ledger holding eight kinds of record so every
+  stage would be exactly derivable; that precision buys nothing anyone depends
+  on, and it went. A review's verdict went with it: the rules already require
+  the approved plan to be committed before tests are derived from it, so the
+  commit is the marker that a verdict cleared it, and a separate record states
+  the same fact twice.
 
 - **Delivery is at least two pull requests, unconditionally.** The work merges
   and deploys; the deploy is confirmed healthy; the change's intended effect is
@@ -102,15 +109,31 @@ The expensive property was never universality. It was independence.
   use the abandonment route, whose record must assert that work is unwanted when
   this work is merged and running. So each is a named class the operator waives,
   the waiver is recorded, and the record proceeds on it. Without them a
-  compliant session stalls holding a branch set and a working tree that no route
+  compliant session stalls holding a branch and a working tree that no route
   can remove — and a change can be archived as shipped with its effect confirmed
   absent, which the waiver is what records.
+
+- **A change's working tree moves to `.worktrees/<name>`**, with
+  `.claude/worktrees/` demoted to a Claude Code binding named beneath the rule.
+  The published requirement fixes the harness's own path in the rule sentence,
+  and `project-bootstrap` forbids exactly that in the file it governs — a role
+  stated in one harness's terms is not portable. Every adopting project sees the
+  path change, which is why it is named here rather than left to the delta.
 
 - **The report of where a change stands is a fixed row, not a paragraph**, given
   on entering a working tree and again as the last thing said before stopping.
 
 - **Identified work is routed to `docs/change-queue.md`**, distinct from
   `docs/deferred-work.md`, with each artifact's deletion condition stated.
+
+- **An identified change opened on a branch carries a `handoff.md` and no
+  proposal.** A proposal is the artifact the workflow reviews before anything is
+  built, so one written in passing draws a review round it has not earned; and
+  it is a formed document, which a session with no time for it either writes
+  badly or does not write at all. The handoff states what the originating
+  session learned and the next will not, and the session that takes the change
+  up writes the proposal from it. This is a new artifact type in every adopting
+  project, which is why it is named here and not only in the design.
 
 - **Four rules found in the two projects already running this workflow are
   recorded rather than added.** Continuous integration failing rather than
@@ -129,10 +152,12 @@ The expensive property was never universality. It was independence.
   binding, exactly as v3 already states a role and names its Claude Code binding
   beneath it.
 
-- **v3 assumes a remote, a forge that reports a pull request's merged state,
-  CI, and a deploy triggered by merging to the trunk, and states no conditional
-  for their absence.** Every project this library is written for has all four,
-  and teardown's merge clause rests on the forge by name. This
+- **v3 assumes a remote, pull requests, CI, and a deploy triggered by merging
+  to the trunk, and states no conditional for their absence.** Every project
+  this library is written for has all four. The forge is not named separately
+  among them: pull requests imply it, and teardown's merge clause already states
+  what it must report — a pull request's merged state, the only merge evidence
+  that survives a squash or rebase merge. This
   repository does not deploy and is deliberately not a consumer of its own
   workflow fragment; should a library-shaped consumer need one, it gets a
   publication of its own rather than a conditional in this one. The conditionals
@@ -152,17 +177,63 @@ The expensive property was never universality. It was independence.
   fragment. Most requirements survive with their subject retargeted and their
   independence conditionals dropped; the requirement fixing the set at three is
   removed, as is the one forbidding a version on a fragment nothing inlines.
-  Seven requirements are ADDED. Three — teardown, delivery and the change queue
-  — are renamed replacements for REMOVED ones, replaced rather than modified
-  because their existing scenarios encode properties this change drops. Four are
-  genuinely new: the publication shape, the stage vocabulary, the
-  gates-that-did-not-run rules, and the database binding. Of the five MODIFIED requirements, two
-  retarget their subject from the three fragments to the workflow fragment with
-  their substance otherwise unchanged. Three gain substance: the report
-  requirement adds the fixed row, the departure report and two cells; the
-  one-branch requirement restates the invariant as the change's rather than the
-  session's and adds the return to the trunk and the periodic rebase; and the
-  rule-phrasing requirement adds the brevity rules and the precedence clause.
+  Nine requirements are ADDED. Four — teardown, delivery, the change queue and
+  the one-branch invariant — are renamed replacements for REMOVED ones, replaced
+  rather than modified because their existing scenarios encode properties this
+  change drops, which a `MODIFIED` block cannot shed: the tooling refuses a
+  modified requirement that omits a scenario the current spec still holds. Five
+  are genuinely new: the publication shape, the stage vocabulary, the
+  production-confirmation waiver, the rule that a one-time setup obligation does
+  not belong in the fragment, and the database binding. Of the four MODIFIED
+  requirements, two retarget their subject from the three fragments to the
+  workflow fragment with their substance otherwise unchanged. Two gain
+  substance: the report requirement adds the fixed row, the departure report and
+  two cells; and the rule-phrasing requirement adds the brevity rules and the
+  precedence clause. The one-branch requirement, which also gains substance —
+  the invariant restated as the change's rather than the session's, the return
+  to the trunk after each merge, the periodic rebase between — is among the
+  replacements rather than the modifications, because it sheds a scenario too.
+
+- `change-test-authoring` — the test-authoring artifact is renamed from
+  `test-manifest.md` to `test-plan.md`, and the library's fragment naming it
+  from `rules/test-manifest.md` to `rules/test-plan.md`. `test-plan` is the name
+  the wider OpenSpec ecosystem uses for an artifact of this shape, so a project
+  forking a schema that declares `id: test-plan` gets this artifact unchanged
+  rather than renaming it at the moment that is least wanted. Six requirements
+  are MODIFIED and the change is the filename alone: what the artifact is and
+  what it must carry are untouched. "Manifest" remains the capability's generic
+  noun for the artifact — five further requirements use it and take no delta,
+  and two more take none because they never name the artifact at all — so only
+  the name of the file changes, not the word the specification calls it by. All six are named because a partial rename
+  leaves the capability contradicting itself about its own artifact.
+
+- `change-review` — the four recommended actions are renamed to `APPROVED`,
+  `CONDITIONALLY APPROVED`, `FIX REQUIRED` and `REJECTED`, from `PROCEED`,
+  `PROCEED WITH CHANGES`, `CHANGES REQUIRED` and `REJECT`, for the same reason:
+  these are the verdicts the ecosystem's review artifacts already carry. Four
+  requirements are MODIFIED — the verdict set, the severity floor that cites a
+  verdict by name, the artifacts-are-data requirement whose planted-instruction
+  example quotes one, and the clean-review requirement whose scenario names the
+  clean verdict.
+
+Both renames also rename the agents that implement the two capabilities:
+`openspec-change-reviewer` becomes `change-plan-reviewer` and
+`openspec-test-writer` becomes `change-test-writer`. The `openspec-` prefix
+named the tool rather than the work, and it collided with the OpenSpec skills
+installed under `.claude/`; `change-plan-reviewer` also pairs with the
+`change-code-reviewer` the workflow fragment names, which distinguishes the two
+review gates the fragment states. The renames are cheap now and expensive once
+archived, which is why they ride with this change rather than waiting: every
+`.checks.yaml` fixture, test case and fragment binding that names one would
+otherwise be rewritten twice. `handoff.md` records the survey they came from,
+including what it proposed and this change declined.
+
+The implementation gate still names the review verdict among its preconditions.
+What decision 6 removes is the separate record of it: `project-bootstrap`'s
+scenario "A stage boundary names an observable rather than a stage" enumerates
+the verdict, the commit holding the approved plan, and the tests derived from
+that plan, and all three survive — the commit is how a later session observes
+the verdict, rather than a record written alongside it.
 
 `project-bootstrap` owns how the workflow fragment reaches a project — the
 managed block, the version, the ordered sequence and the dispatch bound. Those
@@ -176,22 +247,40 @@ managed block the database fragment needs belongs to the follow-up change.
 - `rules/development-workflow-database.md` — new.
 - `rules/worktree-isolation.md`, `rules/change-delivery.md`,
   `rules/deferred-work.md` — removed.
-- `openspec/specs/session-workflow/spec.md` — substantially rewritten.
-- `docs/change-queue.md` — new here, seeded with the follow-up change.
-- `AGENTS.md` — its "Reaching a project" section carries the same two-path
-  account as `rules/README.md`, and is made incomplete by the same fact.
-- `rules/README.md` — its two-path account of how a fragment reaches a project
-  (an `@` import, or a shipped tool reading it) covers neither route the
-  database binding fragment takes: hand-pasting until the tooling change lands,
-  and a second managed block after it.
+- `openspec/specs/session-workflow/spec.md` — substantially rewritten. Its
+  `## Purpose` is false on three counts once the deltas apply — it describes the
+  capability as governing three separate fragments, says `project-bootstrap`
+  owns an inlined fragment "which this capability does not touch", and says the
+  capability governs fragment content only. A delta cannot carry a `## Purpose`
+  change for a modified capability and fails silently when it tries, so the
+  rewrite is made by hand in the archive commit.
+- `openspec/specs/change-test-authoring/spec.md`,
+  `openspec/specs/change-review/spec.md` — the artifact and verdict renames.
+- `agents/change-plan-reviewer.md`, `agents/change-test-writer.md` and their
+  `.checks.yaml` fixtures — renamed from `openspec-change-reviewer` and
+  `openspec-test-writer`, with the fixtures' planted verdict and manifest
+  filename brought to the new vocabulary.
+- `rules/test-plan.md` — renamed from `rules/test-manifest.md`.
+- `docs/change-queue.md` — new here, seeded with the follow-up change, the
+  two containment obligations the fragment does not carry, and the four setup
+  rules.
+- `AGENTS.md` and `rules/README.md` — their two-path account of how a fragment
+  reaches a project (an `@` import, or a shipped tool reading it) stands
+  unchanged. An earlier draft added a third path for the database binding
+  fragment; `toolkit-structure` fixes the count at two, and the justification
+  was independently false — the `@` import reaches a binding fragment like any
+  other, so what the binding lacks until the tooling change is a *tool* route,
+  not a route.
 - `openspec/changes/add-namespace-reclamation/proposal.md` — an active change
   whose text names `rules/worktree-isolation.md`.
 - `tests/coverage.md` — names all three fragments being removed.
 - `docs/deferred-work.md` — gains a cross-reference to the change queue, and its
   two entries argued from `add-session-workflow-fragments` name a fragment this
   change deletes.
-- The change's own artifacts gain two records: a review verdict with its
-  disposition, and a production-confirmation waiver where one is given.
+- No record is written here. The one this change obliges — a
+  production-confirmation waiver — arises only at a gate this repository never
+  reaches, since it does not deploy and is deliberately not a consumer of the
+  workflow fragment (design decision 3).
 - `tests/` — the cases asserting the three fragments' content, their frontmatter
   and their fixed paths, plus the inlined-body and version-coupled cases that
   now cover a changed fragment.

@@ -106,3 +106,22 @@ The verdict naming the blocked state SHALL be cause-neutral — it states that t
 - **WHEN** the change addresses a real problem through an approach that cannot work
 - **THEN** the verdict is `FIX REQUIRED` with a `[MAJOR — design]` issue, and not `REJECTED`
 
+
+
+### Requirement: A clean review is a valid outcome
+
+The review SHALL state that an empty issues matrix is a valid and expected outcome. Where no evidence-backed issue is found, the reviewer SHALL say so explicitly rather than reporting a lower-severity issue to populate a section.
+
+Where the reviewer investigates a concern and concludes it is unsubstantiated, it SHALL report that conclusion rather than omitting the concern or downgrading it to a finding.
+
+A section of the report with nothing to say SHALL be marked as such rather than filled.
+
+#### Scenario: Nothing is wrong with the change
+
+- **WHEN** a change is internally consistent, fully traced, and consistent with existing specs
+- **THEN** the review reports an empty issues matrix and an `APPROVED` verdict, rather than raising a `[MINOR]` issue to avoid an empty section
+
+#### Scenario: A concern does not survive investigation
+
+- **WHEN** the reviewer suspects a failure mode and analysis shows the design handles it
+- **THEN** the review states that the concern was considered and is unsubstantiated

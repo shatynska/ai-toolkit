@@ -95,6 +95,8 @@ Two classes cannot answer that gate and are waivable. Say so plainly, name the c
 - a change with no observable effect — a refactor, a dependency bump, an internal cleanup;
 - a change that was the wrong change: its observation was made, its effect is absent, and it is not to be corrected in place.
 
+A recorded waiver completes **confirm**: `ship:confirmed` is true of a waived change.
+
 **archive** — once the effect is confirmed or the gate waived, bring the branch back to the freshly fetched trunk, commit the change's specification record there, and open a pull request for it: the last of the change's pull requests. The branch's commits are on the trunk by now, so this discards nothing and needs no force push.
 
 Two is a floor. Where the deploy is unhealthy, or the effect is absent through a defect, fix it and re-enter at `build`'s review gate; the fix takes a pull request of its own.

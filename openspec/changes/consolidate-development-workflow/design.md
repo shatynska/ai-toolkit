@@ -16,7 +16,9 @@ gates and the bound on its dispatch loops.
 
 - The session obligations reach a project by the path that already works.
 - One text per rule, so a change to a rule is made once.
-- A change's stage readable from the repository by a session that was not there.
+- A change's stage readable by a session that was not there — from the
+  repository where the repository holds the fact, and by asking where it does
+  not. Decision 6 withdrew the stronger form, that every stage be derivable.
 
 ## Non-Goals
 
@@ -68,10 +70,18 @@ next change will amend the wrong one.
 than carried.** `change-delivery.md` was permitted to name the specification
 tooling directly instead of stating a role, because `project-bootstrap` does not
 govern that file. It governs `rules/development-workflow.md`, and requires there
-that every obligation be a role with the tool named beneath it and never in the
-role sentence. So v3 states the archive step as a role, as it already does for
-its review dispatches. This is the kind of defect consolidation creates rather
-than inherits, and it is why the seam had to be written down before the merge
+that every obligation be stated as a role, permitting — never requiring — a tool
+named beneath it, and forbidding one in the role sentence. So v3 states the archive step as a role, as it already does for
+its review dispatches. **The same rule catches a second inherited permission**, and it is worth naming
+because the two look unrelated: `worktree-isolation.md` fixed a change's working
+tree at `.claude/worktrees/` — a harness's own directory, sitting in the rule
+sentence. That was legal there for the same reason the tooling name was legal in
+`change-delivery.md`, and it stops being legal on the file `project-bootstrap`
+governs. So v3 fixes `.worktrees/` as the rule's path and names
+`.claude/worktrees/` beneath it as Claude Code's binding.
+
+These are the kind of defect consolidation creates rather
+than inherits, and they are why the seam had to be written down before the merge
 rather than after.
 
 **Alternative rejected: remove `session-workflow` and move everything into
@@ -80,11 +90,14 @@ is about bootstrapping — it would then own the substance of rules that have
 nothing to do with initializing a project, and the capability's own purpose
 statement would stop being true.
 
-### 3. v3 assumes a remote, a forge, CI and a deploy — no conditionals
+### 3. v3 assumes a remote, pull requests, CI and a deploy — no conditionals
 
-Every project this library is written for has all four. The forge is not
-decoration: teardown's merge clause reads a pull request's merged state, which
-is the only merge evidence that survives a squash or rebase merge. The conditionals for
+Every project this library is written for has all four. The forge is not among
+them as a fifth item, and that is deliberate: pull requests imply it, and
+teardown's merge clause is where what it must report gets stated — a pull
+request's merged state, the only merge evidence that survives a squash or rebase
+merge. Naming it in the assumptions as well states twice what one clause states
+once. The conditionals for
 their absence are exactly the class of text that made the three fragments
 expensive: `where the project has a remote`, `a project that runs sessions
 serially`, `the gate is checkable without a delivery fragment`.
@@ -172,19 +185,33 @@ reported for their information, so a stage that is one step off costs a sentence
 of correction. Six of the eight records were bought to make the stage exactly
 derivable, and that precision buys nothing anyone depends on.
 
-Two records survive because each gates a decision rather than a report: **the
-review verdict and its disposition**, which the implementation gate checks and
-whose absence makes a session re-dispatch a real agent run; and **the
+One record survives because it gates a decision rather than a report: **the
 production-confirmation waiver**, which the archive proceeds on and which is the
 only trace of why the trunk's specification describes behavior production does
-not have. Both go to the change's own artifacts, needing no named ledger. The
-abandonment record is a third, already obliged by the teardown gate as its own
+not have. It goes to the change's own artifacts, needing no named ledger. The
+abandonment record is a second, already obliged by the teardown gate as its own
 second route.
 
-`ship:waived` went with it. The waiver had no state of its own, so an earlier
-draft said a recorded waiver "satisfies `ship:confirmed`" — reporting a state
-that is not true so the change could move on. With the derivability requirement
-gone the patch has nothing to patch.
+**The review verdict went too, and it is the closest call here.** It looks
+load-bearing, because the implementation gate checks that a review permitted
+proceeding. But the rules already require the approved plan to be committed
+before tests are derived from it, so the commit is that marker; a separate
+record states the same fact twice, and a session could write a false one as
+easily as it could commit an unapproved plan. What the record buys is the
+occasional re-dispatched review, which returns the same verdict.
+
+`ship:waived` went with it, but the gap it was patching is real and outlives
+derivability: the report obligation stands, and a session that has just recorded
+a waiver still has to name a stage. An earlier draft patched it by saying a
+recorded waiver "satisfies `ship:confirmed`" — reporting a state that is not
+true so the change could move on.
+
+**The fix is to define the transition rather than to patch the state.** `confirm`
+completes on the operator's confirmation *or* a recorded waiver, because those
+are the two ways the gate is passed and the delivery sequence already closes the
+record on either. `ship:confirmed` is then true of a waived change, and no
+name is owed. A state whose transition has genuinely completed is not the same
+thing as a state asserted to have been reached.
 
 ### 7. A change keeps one branch, brought back to the trunk after each merge
 
@@ -277,8 +304,11 @@ holding a branch set and a working tree no route can remove.
 
 **Decision: the wrong change is the confirmation gate's second waivable class**,
 named in advance on the same terms as the first — a change whose observation was
-made, whose effect is absent, and which will be superseded by a new proposal
-rather than corrected. Same disclosure, same recorded waiver, same route to the
+made, whose effect is absent, and which is not to be corrected in place. Being
+superseded by a new proposal is the typical case and is deliberately **not** a
+defining condition: a change judged wrong and reverted, or simply dropped,
+satisfies the class as fully, and a definition requiring a successor would leave
+it in neither class and back at the dead end this exemption exists to close. Same disclosure, same recorded waiver, same route to the
 record.
 
 **Alternative rejected: route it to abandonment.** Cheaper to state, but the
@@ -335,7 +365,7 @@ They cannot share a file: one entry is swept on being fixed and the other on
 being shipped, so an entry in the wrong one is deleted early or kept forever.
 
 **Decision: `docs/change-queue.md`**, with the path fixed in the specification
-for the reason `.claude/worktrees/` is fixed — a path stated only in a change's
+for the reason `.worktrees/` is fixed — a path stated only in a change's
 artifacts is archived with them, and a requirement whose subject is then
 unnameable cannot be checked afterwards.
 
@@ -343,6 +373,58 @@ unnameable cannot be checked afterwards.
 More precise and already populated; longer, and inherited by every project.
 Rejected because the fragment is written for projects that have never seen one.
 Reversible — a path in one fragment and one requirement.
+
+### 12. The vocabulary is aligned with OpenSpec's, and the renames ride here
+
+`handoff.md` surveyed what the wider OpenSpec ecosystem calls the things this
+change names. Four of its findings are adopted and one is declined.
+
+**Adopted.** `apply` replaces `doing` as the `build` transition, because `apply`
+is the ecosystem's most load-bearing verb — `/opsx:apply`, the
+`openspec-apply-change` skill, `openspec instructions apply`, `applyRequires`,
+the `apply:` block every schema carries — and `doing` names no operation.
+`archive` replaces `record` as the last `ship` transition, because `archive` is
+unambiguous across the CLI, the skills and the `openspec/changes/archive/`
+directory, while `record` is also a plain verb this fragment uses several times,
+in the one document where a stage name has to be unmistakable. The
+test-authoring artifact becomes `test-plan.md` and the review verdicts become
+`APPROVED` / `CONDITIONALLY APPROVED` / `FIX REQUIRED` / `REJECTED`, both to
+match names a forked schema already declares.
+
+**Declined: `build:review` → `build:code-review`.** The collision is real —
+everywhere else in the ecosystem, and in `plan:review` here, "review" means a
+read-only pass over artifacts before code exists, and a session reading an
+unqualified `review` can dispatch the reviewer that refuses a diff. But the
+fragment already answers it more cheaply, by requiring the family prefix always
+be written and saying why: `plan:reviewing` and `build:reviewing` dispatch
+different reviewers. Qualifying one member of a generated set would also break
+the generation rule decision 6 rests on — the transitions are the closed set and
+the states derive from them — for a disambiguation the prefix already carries.
+
+The `PROCEED WITH CHANGES`-has-no-stage gap the handoff names closes with the
+verdict rename rather than a new stage: `CONDITIONALLY APPROVED` says what it
+is, and the fragment states that such a pass is permission conditional on the
+fixes it names, applied without a further round. That sentence is v2's, carried
+forward unchanged under task 1.3 rather than written here, and it is obliged by
+`project-bootstrap`, not by this capability — its bounded-dispatch-loop
+requirement obliges the fragment to state a loop's exits, and a pass conditional
+on named fixes is one. So the gap closes against a requirement that holds over
+v3, rather than against text nothing binds.
+
+**They ride with this change rather than following it** because every affected
+word is uncommitted here. Renaming now is a substitution; renaming after the
+archive costs a `MODIFIED` delta against a published specification plus archived
+history written in the superseded words. The same argument carries the two agent
+renames — `openspec-change-reviewer` to `change-plan-reviewer`,
+`openspec-test-writer` to `change-test-writer` — which additionally drop a prefix
+naming the tool rather than the work, and which collided with the OpenSpec
+skills installed under `.claude/`.
+
+**This widens the change, and that is the cost.** The alternative was a rename
+change of its own, which would have been the tidier scope and is what
+`design.md`'s Non-Goals would otherwise imply. It was rejected on the
+cheap-now-expensive-later argument above, and the widening is bounded: both
+renames touch filenames, verdict tokens and agent names, and no obligation.
 
 ## Risks / Trade-offs
 
@@ -359,14 +441,9 @@ Reversible — a path in one fragment and one requirement.
   The reasoning survives in the requirements, which are retargeted rather than
   rewritten. What is discarded is the conditionals, which is the intent.
 
-- **Two records land in every change's artifacts.** → Each gates a decision a
-  later session must make. An earlier draft required six more, to make the
-  stage exactly derivable; that went with the derivability requirement.
-
-- **Recording dispatches, verdicts and confirmations adds an artifact to every
-  change, and adds writes mid-flow.** → Each write is a line, and it replaces a
-  re-dispatched review or a re-asked confirmation, which are not. The
-  alternative is a vocabulary whose persistent half no session can report.
+- **One record lands in the artifacts of a change whose gate is waived.** → It
+  gates a decision a later session must make. An earlier draft required seven more, to make the
+  stage exactly derivable; they went with the derivability requirement.
 
 - **The production-confirmation gate rests on an operator waiver that could be
   given reflexively.** → It is recorded in the change's artifacts with the class
@@ -374,11 +451,14 @@ Reversible — a path in one fragment and one requirement.
   them is readable. The alternative — no exemption — forecloses refactors
   entirely.
 
-- **A project adopting v3 must reconfigure its continuous integration.** → It is
-  the only obligation here reaching outside the library's files, and it is
-  disclosed in the proposal's Impact rather than found at adoption. It is also
-  the only one of the four new rules that closes the false-pass hole
-  structurally rather than by session discipline.
+- **The false-pass hole stays closed by session discipline, not structurally.**
+  → Continuous integration failing rather than skipping is the one rule of the
+  four that would have closed it structurally, and it is recorded for the setup
+  capability rather than added here, because a session never performs it. Until
+  that change lands, an adopting project relies on the fragment's
+  provisioning rule and its report-as-not-run instruction. That is weaker, and
+  it is the price of keeping one-time obligations out of a document every
+  session reads.
 
 - **A project on another database stack must replace the binding fragment.** →
   That is what a binding is for; the alternative is v3 naming Postgres.

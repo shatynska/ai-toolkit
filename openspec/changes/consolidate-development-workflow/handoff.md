@@ -14,6 +14,13 @@ the change records its rejected alternatives. Whether this file then
 archives with the change as the survey behind those decisions, or is
 deleted once consumed, is this change's call.
 
+**Consumed.** `design.md`'s decision 12 records what was accepted, what was
+declined and why; `proposal.md` carries both renames under Modified
+Capabilities. This file archives with the change as the survey behind that
+decision. It describes the fragment as it stood when the survey was made,
+before the compression pass and before the gate log was dropped, so where it
+quotes the fragment's text read decision 12 for what shipped.
+
 ## What the survey established
 
 There is no community *stage* vocabulary to converge on. OpenSpec's
