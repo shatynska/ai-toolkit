@@ -37,7 +37,7 @@ On entering a working tree, before anything else, and again as the last thing sa
 
 The entering report carries one further cell, the verification result.
 
-Derive the report from the repository where you can — artifacts, commit log, forge. Where a fact is in neither, ask rather than assume it.
+Derive the report from the repository where you can — the change's own artifacts, the commit log, the forge, and an actual run of the verification. Where a fact is in none of them, ask rather than assume it.
 
 **The stage names a state, never an act.** The acts are the transitions between them, and the sections below walk them in order — some together, where one act follows another with no decision in between:
 
@@ -116,7 +116,7 @@ While applying, the derived tests fail by design until the implementation is com
 
 **Scope.** Prefer changes small enough to review in one sitting; where one grows to cover multiple independent concerns, consider splitting it. Implement only what belongs to the change in progress — an improvement noticed along the way becomes a separate proposed change rather than being folded in.
 
-**A second change surfacing.** Record it before doing anything else about it.
+**A second change surfacing.** You work on one change at a time. Record the second before doing anything else about it.
 
 - Where the change in progress **depends** on it: record the dependency and the wait in the current change's own artifacts, then at most open the identified change and recommend it be continued in a separate session.
 - Where it **does not**: record it in `docs/change-queue.md`, creating that file if absent, or open the identified change.
@@ -126,6 +126,8 @@ While applying, the derived tests fail by design until the implementation is com
 Such a branch is created and left: it takes no working tree and does not become the branch this session works on.
 
 `docs/change-queue.md` holds identified changes, deleted when archived; an entry there is the separate proposed change the scope rule calls for, recorded rather than opened. `docs/deferred-work.md` holds what this project has deliberately not done, deleted when it stops being true.
+
+Both sit outside the change that recorded them, because a note kept inside one is archived with it: it is the change succeeding, not the session ending, that would lose it.
 
 **Assumptions.** Do not silently invent a requirement that was not stated and cannot reasonably be inferred; where an important decision cannot be inferred, ask rather than guess. Record significant decisions in this project's own artifacts rather than in conversation history alone.
 

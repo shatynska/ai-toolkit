@@ -31,9 +31,10 @@ Until it ships, the sweep is manual.
 
 ## A tooling-created worktree is governed by no removal obligation
 
-`rules/development-workflow.md` scopes its working-tree rules to a worktree in
-which a session is doing a change's work, and excludes one whose lifetime is
-bounded by the single act of tooling that created it. The exclusion is necessary —
+`rules/development-workflow.md` keys every working-tree rule to *the change* —
+a change's branch, a change's working tree, a change's record — so a worktree
+that carries no change falls outside them with no exclusion written, and the
+capability forbids the fragment writing one. The scoping is what matters here —
 such a worktree carries no branch destined for the trunk, so it can satisfy
 neither route of the removal condition, and unscoped rules would make it
 permanently unremovable.

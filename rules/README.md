@@ -35,7 +35,7 @@ Every fragment declares its kind in YAML frontmatter:
 ```yaml
 ---
 kind: standing-constraint    # or: procedural-checklist
-version: 1                   # only if the fragment is ever inlined
+version: 1                   # only if the fragment is inlined, now or later
 ---
 ```
 

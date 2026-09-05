@@ -147,7 +147,17 @@ general enough to reach for before any diff exists.
 **Blocks nothing, but the fragment already names it.** `rules/development-workflow.md`'s
 code-review binding reads `ai-toolkit:change-code-reviewer`, so until this
 change lands that binding points at an agent that does not exist. Deliberate:
-the alternative was naming `/code-review` and rewriting the line twice.
+the alternative was naming `/code-review` and rewriting the line twice. In the
+interval a session reaching `build`'s review gate has to improvise, which is
+the cost being accepted.
+
+**Extend the dangling-reference case when the agent lands.**
+`tests/cases/workflow-fragment-no-dangling-reference.sh` scans for `rules/`
+paths, fragment filenames and `@` imports; it does not scan for an
+`ai-toolkit:` agent name with no file behind it, which is why nothing in the
+suite reports this gap or would report its recurrence. The check cannot be
+added before the agent exists without failing the suite on a state this change
+intends, so it belongs to this change rather than to that one.
 
 ## `evaluate-an-openspec-schema-for-our-artifacts`
 

@@ -137,7 +137,6 @@ above.
 which nineteen cover at least one scenario:
 
 `workflow-fragment-publication-set.sh`,
-`workflow-fragment-no-dangling-reference.sh`,
 `workflow-fragment-states-assumptions.sh`,
 `workflow-fragment-stage-vocabulary.sh`,
 `workflow-fragment-fixed-paths.sh`,
