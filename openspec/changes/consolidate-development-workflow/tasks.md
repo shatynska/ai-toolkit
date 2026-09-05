@@ -63,7 +63,7 @@
 ## 7. Review and deliver
 
 - [x] 7.1 `/code-review` over the diff. Apply the findings; re-review only where the fixes were substantial. Bound at three.
-- [ ] 7.2 Commit, push, open the pull request, and let CI run.
+- [x] 7.2 Commit, push, open the pull request, and let CI run. Opened as #13. This repository carries no CI workflow, so there is nothing to wait on — consistent with design decision 3, which states it is deliberately not a consumer of the fragment whose assumptions include continuous integration.
 - [x] 7.3 Establish whether a delta can carry the `## Purpose` change. **It cannot, and it fails silently.** A `## Purpose` block added to a delta for a *modified* capability passes `openspec validate --strict` and is parsed into no delta operation — `openspec show --deltas-only` reports the same requirement deltas with or without it, unchanged in count and content. The artifact instructions say purpose belongs to new capabilities only; what the probe adds is that the non-carrying case is silent rather than rejected, so a change that tried it would archive with the purpose unchanged and nothing reporting why.
 - [ ] 7.4 Make the `## Purpose` edit by hand in the archive commit, where the deltas are applied and no window of inconsistency opens. `openspec/specs/session-workflow/spec.md`'s purpose is false on three counts: it describes the capability as governing three separate fragments, it says `project-bootstrap` owns the inlined workflow fragment "which this capability does not touch", and it says the capability governs fragment content only. Then confirm the rewritten purpose is true of the archived capability.
 
