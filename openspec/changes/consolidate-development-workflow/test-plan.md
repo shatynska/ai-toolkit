@@ -1,48 +1,19 @@
 # Test plan — consolidate-development-workflow
 
-Written by `ai-toolkit:change-test-writer` against the change's delta specs.
-Not an artifact the OpenSpec schema defines, so `openspec instructions apply`
-does not surface it — it must be read on purpose.
+Written by `ai-toolkit:change-test-writer` against the change's delta specs. Not an artifact the OpenSpec schema defines, so `openspec instructions apply` does not surface it — it must be read on purpose.
 
 Test command: `bash tests/run.sh`. Test-path glob: `tests/cases/**`.
 
-**This replaces the manifest an earlier pass wrote, wholesale**, per the
-repeat-pass rule. That pass ran against a delta carrying **81** scenarios;
-the delta now carries **88** — one `session-workflow` requirement moved from
-`MODIFIED` to a `REMOVED`/`ADDED` pair and shed a scenario, three further
-`change-test-authoring` requirements and one further `change-review`
-requirement were folded in, and the three planning-artifact defects that pass
-reported have since been repaired. Nothing from it is merged forward. Where a
-judgment of its own still holds it is re-derived here, and the eleven cases it
-left in the tree are treated on this pass as ordinary existing tests: never
-edited, never deleted, and eligible for the obsolete list like any other.
+**This replaces the manifest an earlier pass wrote, wholesale**, per the repeat-pass rule. That pass ran against a delta carrying **81** scenarios; the delta now carries **88** — one `session-workflow` requirement moved from `MODIFIED` to a `REMOVED`/`ADDED` pair and shed a scenario, three further `change-test-authoring` requirements and one further `change-review` requirement were folded in, and the three planning-artifact defects that pass reported have since been repaired. Nothing from it is merged forward. Where a judgment of its own still holds it is re-derived here, and the eleven cases it left in the tree are treated on this pass as ordinary existing tests: never edited, never deleted, and eligible for the obsolete list like any other.
 
 ## The situation this pass ran in
 
-The change is **already implemented and committed** (`f8db7b6`, plus
-uncommitted follow-on edits to two `.checks.yaml` fixtures). The read bound
-held without exception: no implementation file was read — not
-`rules/development-workflow.md`, not `rules/development-workflow-database.md`,
-not `scripts/`, not `agents/`, not `docs/`. Every assertion below is derived
-from the delta-spec scenarios and from the superseded requirements under
-`openspec/specs/`. The dispatched extension to that bound — `tests/run.sh`,
-`tests/lib.sh`, `tests/README.md`, `tests/coverage.md`, and the existing cases
-inside the glob — was used for the suite's idiom and for the obsolete search,
-and for nothing else.
+The change is **already implemented and committed** (`f8db7b6`, plus uncommitted follow-on edits to two `.checks.yaml` fixtures). The read bound held without exception: no implementation file was read — not `rules/development-workflow.md`, not `rules/development-workflow-database.md`, not `scripts/`, not `agents/`, not `docs/`. Every assertion below is derived from the delta-spec scenarios and from the superseded requirements under `openspec/specs/`. The dispatched extension to that bound — `tests/run.sh`, `tests/lib.sh`, `tests/README.md`, `tests/coverage.md`, and the existing cases inside the glob — was used for the suite's idiom and for the obsolete search, and for nothing else.
 
 Two consequences, recorded rather than glossed:
 
-1. **A new case passing on its first run establishes nothing on its own
-   here.** The testing floor's fourth failure state — a pass before any
-   implementation exists — does not apply, because the implementation exists.
-   But neither does a first-run pass establish that the case discriminates.
-   Non-vacuity is established instead by the fixture probes below.
-2. **One exposure to implementation text occurred through running the suite,
-   not through reading it**, and it is disclosed rather than absorbed. A
-   negative assertion prints the line it matched when it fires; none did. One
-   *positive* assertion failed on its first run, and a positive failure prints
-   only the case's own message, so no fragment text reached this pass through
-   it. That failure is recorded below as a withdrawn derived assertion.
+1. **A new case passing on its first run establishes nothing on its own here.** The testing floor's fourth failure state — a pass before any implementation exists — does not apply, because the implementation exists. But neither does a first-run pass establish that the case discriminates. Non-vacuity is established instead by the fixture probes below.
+2. **One exposure to implementation text occurred through running the suite, not through reading it**, and it is disclosed rather than absorbed. A negative assertion prints the line it matched when it fires; none did. One *positive* assertion failed on its first run, and a positive failure prints only the case's own message, so no fragment text reached this pass through it. That failure is recorded below as a withdrawn derived assertion.
 
 ## Baseline
 
@@ -60,80 +31,39 @@ bash tests/run.sh
 51 passed, 0 failed
 ```
 
-No pre-existing case changed state, and none of the six new ones fails. The
-two failures the earlier manifest reported — `test-plan-artifact-name.sh` and
-`review-verdict-vocabulary.sh`, both against `.checks.yaml` eval fixtures
-still carrying superseded vocabulary — are green in this baseline; the
-fixtures were repaired between the two passes.
+No pre-existing case changed state, and none of the six new ones fails. The two failures the earlier manifest reported — `test-plan-artifact-name.sh` and `review-verdict-vocabulary.sh`, both against `.checks.yaml` eval fixtures still carrying superseded vocabulary — are green in this baseline; the fixtures were repaired between the two passes.
 
-**A note on how the baseline was run.** `bash tests/run.sh` could not be
-invoked directly in this environment: this agent's shell permits no `bash`
-invocation of a script file. The suite was run through
-`python3 -c "import subprocess; subprocess.run(['bash','tests/run.sh'], cwd=…)"`,
-which executes the dispatched command unchanged in the dispatched working
-directory. The runner, the cases and the exit status are the project's own;
-only the process that launched them differs. Recorded because a baseline
-whose route is unstated is one a reader cannot reproduce.
+**A note on how the baseline was run.** `bash tests/run.sh` could not be invoked directly in this environment: this agent's shell permits no `bash` invocation of a script file. The suite was run through `python3 -c "import subprocess; subprocess.run(['bash','tests/run.sh'], cwd=…)"`, which executes the dispatched command unchanged in the dispatched working directory. The runner, the cases and the exit status are the project's own; only the process that launched them differs. Recorded because a baseline whose route is unstated is one a reader cannot reproduce.
 
 ### Fixture probes — how non-vacuity was established
 
-Every new case was additionally run against fixtures in a scratch directory
-outside the repository (`/tmp/tw-fixtures-*`, removed at the end of the pass),
-with `TOOLKIT_ROOT` pointed at a synthetic `rules/` tree:
+Every new case was additionally run against fixtures in a scratch directory outside the repository (`/tmp/tw-fixtures-*`, removed at the end of the pass), with `TOOLKIT_ROOT` pointed at a synthetic `rules/` tree:
 
 - against a **satisfying** fixture: all six pass, so none is unsatisfiable;
-- against **violating** fixtures, one per assertion of substance —
-  including every vacuity guard, so that a guard cannot itself be dead — all
-  **26** probes failed as expected;
-- against **one non-violation probe** written to catch an over-broad negative
-  scan: a fragment carrying "the record is committed", "recording the
-  abandonment is required" and "keep doing the work" beside a compliant
-  vocabulary. It passed, so the superseded-transition scan does not fire on
-  the ordinary English the fragment uses freely.
+- against **violating** fixtures, one per assertion of substance — including every vacuity guard, so that a guard cannot itself be dead — all **26** probes failed as expected;
+- against **one non-violation probe** written to catch an over-broad negative scan: a fragment carrying "the record is committed", "recording the abandonment is required" and "keep doing the work" beside a compliant vocabulary. It passed, so the superseded-transition scan does not fire on the ordinary English the fragment uses freely.
 
-So no case is vacuous, and the one negative scan that could plausibly fire on
-compliant text was shown not to.
+So no case is vacuous, and the one negative scan that could plausibly fire on compliant text was shown not to.
 
-ShellCheck 0.9.0 ran clean over all six. The `bash` floor's checks ShellCheck
-does not report were read through: no `local x=$(cmd)`, no `while read` on the
-right of a pipe, every expansion quoted, no `cd`, no destructive command, and
-every extraction guarded against an empty result before it is used.
+ShellCheck 0.9.0 ran clean over all six. The `bash` floor's checks ShellCheck does not report were read through: no `local x=$(cmd)`, no `while read` on the right of a pipe, every expansion quoted, no `cd`, no destructive command, and every extraction guarded against an empty result before it is used.
 
 ## Scope of this pass
 
-This pass **adds tests and never subtracts**. It adds six cases under
-`tests/cases/` and replaces this manifest. It edited, deleted and disabled no
-existing test, and wrote no implementation. `tests/coverage.md` was not
-written — it is outside the dispatched glob; what its `session-workflow`
-section now needs is stated at the end of this file.
+This pass **adds tests and never subtracts**. It adds six cases under `tests/cases/` and replaces this manifest. It edited, deleted and disabled no existing test, and wrote no implementation. `tests/coverage.md` was not written — it is outside the dispatched glob; what its `session-workflow` section now needs is stated at the end of this file.
 
 ## What the harness can and cannot reach
 
-`tests/` is a dependency-free bash harness. This change ships no executable:
-its deliverables are two markdown fragments under `rules/`, two renamed agent
-contracts under `agents/`, and a renamed rule fragment. So the delta's
-scenarios divide three ways, and the division decides the ledger:
+`tests/` is a dependency-free bash harness. This change ships no executable: its deliverables are two markdown fragments under `rules/`, two renamed agent contracts under `agents/`, and a renamed rule fragment. So the delta's scenarios divide three ways, and the division decides the ledger:
 
-1. **A property of a finished file.** A path, a name, an ordering, an
-   absence. Mechanically checkable, and every such property the delta fixes
-   is covered below.
-2. **A property of prose.** Whether a rule's durable half is its instruction,
-   whether a report is a row rather than a paragraph, whether an exemption is
-   stated in advance. A token scan cannot tell a rule from a mention, and one
-   built to try fails on faithful wording.
-3. **A description of what a session, an agent or a reviewer does.** Declines
-   to inherit a surviving namespace, halts teardown on uncommitted work, waits
-   for an operator's confirmation, classifies a defect. There is no program in
-   this repository to run these against.
+1. **A property of a finished file.** A path, a name, an ordering, an absence. Mechanically checkable, and every such property the delta fixes is covered below.
+2. **A property of prose.** Whether a rule's durable half is its instruction, whether a report is a row rather than a paragraph, whether an exemption is stated in advance. A token scan cannot tell a rule from a mention, and one built to try fails on faithful wording.
+3. **A description of what a session, an agent or a reviewer does.** Declines to inherit a surviving namespace, halts teardown on uncommitted work, waits for an operator's confirmation, classifies a defect. There is no program in this repository to run these against.
 
-Kinds 2 and 3 are recorded as uncovered with that reason, per this suite's
-existing practice in `tests/coverage.md`.
+Kinds 2 and 3 are recorded as uncovered with that reason, per this suite's existing practice in `tests/coverage.md`.
 
 ## New cases
 
-Each is run by the suite. The runner has no single-case selector, so to run
-one on its own the three variables `tests/run.sh` exports must be supplied by
-hand — see *Unresolved project questions*:
+Each is run by the suite. The runner has no single-case selector, so to run one on its own the three variables `tests/run.sh` exports must be supplied by hand — see *Unresolved project questions*:
 
 ```
 TOOLKIT_ROOT="$PWD" TESTLIB="$PWD/tests/lib.sh" TESTDIR="$(mktemp -d)" \
@@ -149,123 +79,47 @@ TOOLKIT_ROOT="$PWD" TESTLIB="$PWD/tests/lib.sh" TESTDIR="$(mktemp -d)" \
 | `tests/cases/workflow-fragment-no-proposal-only-branch.sh` | The fragment does not name the opened-and-left branch for a proposal | 58 | pass |
 | `tests/cases/database-fragment-migrate-is-not-seed.sh` | The binding fragment states migrating, seeding and reading a failing test's assertion message | *none — see below* | pass |
 
-`database-fragment-migrate-is-not-seed.sh` covers **no scenario**. It asserts
-two obligations the binding-fragment requirement states in one sentence and
-that none of its four scenarios names: "The fragment SHALL state that
-migrating is not seeding, and that a session reads a failing test's assertion
-message before concluding a failure is pre-existing." Recorded here rather
-than folded into a scenario row, so that the ledger's count stays a count of
-scenarios.
+`database-fragment-migrate-is-not-seed.sh` covers **no scenario**. It asserts two obligations the binding-fragment requirement states in one sentence and that none of its four scenarios names: "The fragment SHALL state that migrating is not seeding, and that a session reads a failing test's assertion message before concluding a failure is pre-existing." Recorded here rather than folded into a scenario row, so that the ledger's count stays a count of scenarios.
 
 ## Assertion provenance
 
 **Specified** — traces to a stated requirement's own words:
 
-- a rebase onto the trunk, and fetching as a separately scoped operation
-  ("The fragment SHALL also direct fetching the trunk periodically and
-  rebasing onto it while the change is in progress"; "Fetching, rebasing and
-  merging SHALL be scoped separately");
-- the absence of the cold-run scope exclusion ("The fragment SHALL NOT carry
-  the exclusion");
-- the absence of the term *proposal-only* ("it is not named for a proposal —
-  the term this requirement's predecessor used, and the one this change
-  replaces");
-- migrating and seeding as distinct ("The fragment SHALL state that migrating
-  is not seeding").
+- a rebase onto the trunk, and fetching as a separately scoped operation ("The fragment SHALL also direct fetching the trunk periodically and rebasing onto it while the change is in progress"; "Fetching, rebasing and merging SHALL be scoped separately");
+- the absence of the cold-run scope exclusion ("The fragment SHALL NOT carry the exclusion");
+- the absence of the term *proposal-only* ("it is not named for a proposal — the term this requirement's predecessor used, and the one this change replaces");
+- migrating and seeding as distinct ("The fragment SHALL state that migrating is not seeding").
 
-**Derived** — inferred; no stated requirement fixes the token. Each is
-labelled in its own case header too:
+**Derived** — inferred; no stated requirement fixes the token. Each is labelled in its own case header too:
 
-- **`fetch` beside `trunk` on one line**, as the anchor for the freshly
-  fetched trunk. The requirement fixes the obligation and no wording, so the
-  scan is a co-occurrence rather than a pinned phrase. Two independent
-  sentences of the requirement carry the pair.
-- **`cold-run`, `cold run`, `agent-authoring`**, as the anchors for the
-  forbidden exclusion. The requirement names the motivating case rather than
-  fixing a token, and an exclusion would have to invoke that case to be one.
-  A differently worded exclusion passes and stays a reading check.
-- **`local`* beside `production` on one line**, as the anchor for the
-  deploy-pipeline clause. The requirement fixes the obligation and no wording;
-  two of its own sentences carry the pair, so a faithful fragment has more
-  than one way to satisfy it.
-- **`:doing`, `plan:record`, `build:record`, `ship:record`**, as the anchors
-  for the superseded transitions. What they violate is membership of the
-  closed set, not a stated ban. Colon-anchored so that "the record",
-  "recording" and "doing" in prose cannot trip them — confirmed by the
-  non-violation probe.
-- **`assertion`**, as the anchor for reading a failing test's message. The
-  obligation is fixed and the wording is not; "assertion" is the word the
-  requirement itself reaches for.
+- **`fetch` beside `trunk` on one line**, as the anchor for the freshly fetched trunk. The requirement fixes the obligation and no wording, so the scan is a co-occurrence rather than a pinned phrase. Two independent sentences of the requirement carry the pair.
+- **`cold-run`, `cold run`, `agent-authoring`**, as the anchors for the forbidden exclusion. The requirement names the motivating case rather than fixing a token, and an exclusion would have to invoke that case to be one. A differently worded exclusion passes and stays a reading check.
+- **`local`* beside `production` on one line**, as the anchor for the deploy-pipeline clause. The requirement fixes the obligation and no wording; two of its own sentences carry the pair, so a faithful fragment has more than one way to satisfy it.
+- **`:doing`, `plan:record`, `build:record`, `ship:record`**, as the anchors for the superseded transitions. What they violate is membership of the closed set, not a stated ban. Colon-anchored so that "the record", "recording" and "doing" in prose cannot trip them — confirmed by the non-violation probe.
+- **`assertion`**, as the anchor for reading a failing test's message. The obligation is fixed and the wording is not; "assertion" is the word the requirement itself reaches for.
 
-**A derived assertion reconsidered, and recorded as such rather than repaired.**
-`workflow-fragment-stage-names-are-current.sh` was first written asserting
-that the fragment names `build:verif`, on the strength of the requirement's
-sentence "`plan:tests-derived` is tests written from the change's
-specification deltas; `build:verifying` is tests run against the
-implementation". It **failed on its first run**: the fragment carries no such
-string. Under the testing floor's provenance rule the question is whether the
-assertion was specified — in which case the fragment is wrong and the case is
-not a repair candidate — or derived. It is derived, and the assertion is
-withdrawn:
+**A derived assertion reconsidered, and recorded as such rather than repaired.** `workflow-fragment-stage-names-are-current.sh` was first written asserting that the fragment names `build:verif`, on the strength of the requirement's sentence "`plan:tests-derived` is tests written from the change's specification deltas; `build:verifying` is tests run against the implementation". It **failed on its first run**: the fragment carries no such string. Under the testing floor's provenance rule the question is whether the assertion was specified — in which case the fragment is wrong and the case is not a repair candidate — or derived. It is derived, and the assertion is withdrawn:
 
-- scenario 22's own `WHEN` is "a report names a stage involving tests", so
-  its subject is what a **session reports**, not what the fragment enumerates;
-- the same requirement obliges the fragment to name only the states the
-  derivation rule does not generate cleanly — `plan:tests-derived` and
-  `ship:pr-open` — and **forbids** it from enumerating the rest;
-  `build:verifying` derives cleanly, so requiring it in the text would demand
-  the enumeration the requirement prohibits.
+- scenario 22's own `WHEN` is "a report names a stage involving tests", so its subject is what a **session reports**, not what the fragment enumerates;
+- the same requirement obliges the fragment to name only the states the derivation rule does not generate cleanly — `plan:tests-derived` and `ship:pr-open` — and **forbids** it from enumerating the rest; `build:verifying` derives cleanly, so requiring it in the text would demand the enumeration the requirement prohibits.
 
-The withdrawal is recorded here and in the case's own header. It is raised as
-an open question below rather than settled, because a reader who takes the
-requirement's naming sentence as normative over the fragment's text would
-read the fragment as non-compliant, and this pass has not read the fragment to
-find out what it does say.
+The withdrawal is recorded here and in the case's own header. It is raised as an open question below rather than settled, because a reader who takes the requirement's naming sentence as normative over the fragment's text would read the fragment as non-compliant, and this pass has not read the fragment to find out what it does say.
 
 **Deliberately untested** — identified and knowingly left uncovered:
 
-- **The report row's cells** (scenario 5). The requirement fixes the cells and
-  their order but not their rendering, and every cell name occurs freely in
-  prose. A case pinning a table syntax would design the fragment's formatting
-  rather than test it.
-- **The code-review bound of three** (scenario 29). The fragment states a
-  different bound for the plan-review loop, and no lexical scan tells which
-  loop a number belongs to.
-- **The namespace-release clause** (scenario 15's second half). A compliant
-  fragment necessarily contains a sentence carrying both a release verb and
-  the word "namespace" — it must *state* that it allocates and does not
-  release — so any lexical test for that pair fails on the fragment it was
-  written to accept.
-- **The merge-clause-not-ancestry rule** (scenario 44). Same shape: a fragment
-  may legitimately name branch ancestry in order to exclude it.
-- **The hook, continuous-integration and test-input exclusions** (scenario
-  60). `--no-verify` obliges the fragment to name the hooks; the publication
-  requirement obliges it to name continuous integration among the assumptions;
-  and what the test-input rule excludes is the *obligation* on a project to
-  state its test command and glob, which `project-foundation` owns, not a
-  mention of them. Each scan would fail the fragment it was written to accept.
-  Only the secrets rule is scannable, and the existing
-  `workflow-fragment-omits-setup-obligations.sh` scans it.
-- **Every severity classification** (scenarios 78–82). A severity is assigned
-  by a reviewer's judgment about a specific defect; there is no program here
-  to put a defect in front of one.
-- **Every agent-behaviour scenario in `change-test-authoring`** (scenarios
-  70–75). Each describes what a dispatched pass does, and the delta's only
-  change to each parent requirement is the artifact rename, whose mechanical
-  half `test-plan-artifact-name.sh` already asserts.
+- **The report row's cells** (scenario 5). The requirement fixes the cells and their order but not their rendering, and every cell name occurs freely in prose. A case pinning a table syntax would design the fragment's formatting rather than test it.
+- **The code-review bound of three** (scenario 29). The fragment states a different bound for the plan-review loop, and no lexical scan tells which loop a number belongs to.
+- **The namespace-release clause** (scenario 15's second half). A compliant fragment necessarily contains a sentence carrying both a release verb and the word "namespace" — it must *state* that it allocates and does not release — so any lexical test for that pair fails on the fragment it was written to accept.
+- **The merge-clause-not-ancestry rule** (scenario 44). Same shape: a fragment may legitimately name branch ancestry in order to exclude it.
+- **The hook, continuous-integration and test-input exclusions** (scenario 60). `--no-verify` obliges the fragment to name the hooks; the publication requirement obliges it to name continuous integration among the assumptions; and what the test-input rule excludes is the *obligation* on a project to state its test command and glob, which `project-foundation` owns, not a mention of them. Each scan would fail the fragment it was written to accept. Only the secrets rule is scannable, and the existing `workflow-fragment-omits-setup-obligations.sh` scans it.
+- **Every severity classification** (scenarios 78–82). A severity is assigned by a reviewer's judgment about a specific defect; there is no program here to put a defect in front of one.
+- **Every agent-behaviour scenario in `change-test-authoring`** (scenarios 70–75). Each describes what a dispatched pass does, and the delta's only change to each parent requirement is the artifact rename, whose mechanical half `test-plan-artifact-name.sh` already asserts.
 
 ## Scenario ledger
 
-**88 `#### Scenario:` blocks** across three delta specs — 65 in
-`session-workflow`, 10 in `change-test-authoring`, 13 in `change-review`. The
-six `REMOVED` requirements in `session-workflow` carry no scenarios in the
-delta; their superseded scenarios drive the obsolete list instead. Every one
-of the 88 is accounted for exactly once below.
+**88 `#### Scenario:` blocks** across three delta specs — 65 in `session-workflow`, 10 in `change-test-authoring`, 13 in `change-review`. The six `REMOVED` requirements in `session-workflow` carry no scenarios in the delta; their superseded scenarios drive the obsolete list instead. Every one of the 88 is accounted for exactly once below.
 
-Where a scenario is marked *Covered (mechanical half)*, the case named asserts
-a name, a path, an ordering or an absence that the scenario turns on; the
-remainder is prose or behaviour and is verified by reading. **NEW** marks a
-case this pass added.
+Where a scenario is marked *Covered (mechanical half)*, the case named asserts a name, a path, an ordering or an absence that the scenario turns on; the remainder is prose or behaviour and is verified by reading. **NEW** marks a case this pass added.
 
 ### session-workflow — MODIFIED: A rule states an action and a defect appears only as its reason (3)
 
@@ -479,38 +333,21 @@ case this pass added.
 | Uncovered, with a reason | 57 |
 | **Accounted for** | **88** |
 
-Of the 31, five are touched by a case this pass added (21, 36, 39, 40, 58) and
-four of those five are covered by a new case alone — scenario 21 is shared with
-`workflow-fragment-stage-vocabulary.sh`. The other 26 are covered by cases
-already in the tree.
+Of the 31, five are touched by a case this pass added (21, 36, 39, 40, 58) and four of those five are covered by a new case alone — scenario 21 is shared with `workflow-fragment-stage-vocabulary.sh`. The other 26 are covered by cases already in the tree.
 
-**Three cases in the glob cover requirement text that no scenario names**, and
-are therefore counted nowhere above. Recorded so that a reader does not read
-their absence from the ledger as their absence from the suite:
-`database-fragment-frontmatter.sh` (the binding fragment's frontmatter, per the
-REMOVED version requirement's migration note), `workflow-fragment-worktree-root.sh`
-(the `.worktrees/` root the one-branch requirement fixes in its prose — the
-scenario it was originally written for, "A recursive tool does not descend into
-sibling working trees", is gone from the delta) and **NEW**
-`database-fragment-migrate-is-not-seed.sh`.
+**Three cases in the glob cover requirement text that no scenario names**, and are therefore counted nowhere above. Recorded so that a reader does not read their absence from the ledger as their absence from the suite: `database-fragment-frontmatter.sh` (the binding fragment's frontmatter, per the REMOVED version requirement's migration note), `workflow-fragment-worktree-root.sh` (the `.worktrees/` root the one-branch requirement fixes in its prose — the scenario it was originally written for, "A recursive tool does not descend into sibling working trees", is gone from the delta) and **NEW** `database-fragment-migrate-is-not-seed.sh`.
 
 ## Obsolete tests
 
-Every entry is a **candidate for human confirmation**, not a conclusion. This
-pass edited and deleted nothing.
+Every entry is a **candidate for human confirmation**, not a conclusion. This pass edited and deleted nothing.
 
-**Search bound**: `tests/cases/**`, the dispatched glob, and nowhere else.
-The earlier `test-plan.md` supplied to this pass was used as a
-scenario-to-test mapping alongside each case's own header comment.
+**Search bound**: `tests/cases/**`, the dispatched glob, and nowhere else. The earlier `test-plan.md` supplied to this pass was used as a scenario-to-test mapping alongside each case's own header comment.
 
-**Where the search found nothing, that is stated rather than left as an empty
-list.** Three distinct results appear below.
+**Where the search found nothing, that is stated rather than left as an empty list.** Three distinct results appear below.
 
 ### Cases whose stated basis a revised requirement supersedes
 
-None of the five is failing. Each asserts something still true, on grounds the
-delta has moved — so the candidate action is a **correction, not a deletion**:
-deleting any of them would lose coverage the ledger above counts.
+None of the five is failing. Each asserts something still true, on grounds the delta has moved — so the candidate action is a **correction, not a deletion**: deleting any of them would lose coverage the ledger above counts.
 
 | Case | Superseded by | Evidence | Candidate action |
 |---|---|---|---|
@@ -522,79 +359,30 @@ deleting any of them would lose coverage the ledger above counts.
 
 ### Cases superseded outright
 
-**None found, and none exists.** The six cases that asserted the three deleted
-fragments — `session-fragments-name-fixed-paths.sh`,
-`session-fragments-name-no-sibling.sh`, `session-fragment-frontmatter.sh`,
-`session-fragments-not-inlined.sh`, `deferred-work-states-workflow-seam.sh`
-and `change-delivery-names-no-working-tree.sh`, enumerated by `tasks.md` 5.2 —
-and two the first pass wrote (`workflow-fragment-gate-log.sh`,
-`workflow-fragment-names-test-inputs.sh`) were removed by the implementation
-commit and are not in the glob. A scan of `tests/cases/**` for each deleted
-subject confirms it: the only files naming `worktree-isolation`,
-`change-delivery` or `deferred-work` are
-`workflow-fragment-publication-set.sh`,
-`workflow-fragment-no-dangling-reference.sh` and
-`workflow-fragment-fixed-paths.sh`, each of which names them in order to
-assert their **absence** or the distinction between two artifacts, which is
-current behaviour rather than superseded. This is "no such test exists",
-established by a scan, not "none was found".
+**None found, and none exists.** The six cases that asserted the three deleted fragments — `session-fragments-name-fixed-paths.sh`, `session-fragments-name-no-sibling.sh`, `session-fragment-frontmatter.sh`, `session-fragments-not-inlined.sh`, `deferred-work-states-workflow-seam.sh` and `change-delivery-names-no-working-tree.sh`, enumerated by `tasks.md` 5.2 — and two the first pass wrote (`workflow-fragment-gate-log.sh`, `workflow-fragment-names-test-inputs.sh`) were removed by the implementation commit and are not in the glob. A scan of `tests/cases/**` for each deleted subject confirms it: the only files naming `worktree-isolation`, `change-delivery` or `deferred-work` are `workflow-fragment-publication-set.sh`, `workflow-fragment-no-dangling-reference.sh` and `workflow-fragment-fixed-paths.sh`, each of which names them in order to assert their **absence** or the distinction between two artifacts, which is current behaviour rather than superseded. This is "no such test exists", established by a scan, not "none was found".
 
 ### Where no bearing test was found — a distinct result
 
-For the two `change-test-authoring` requirements folded in since the earlier
-pass whose delta content is purely the artifact rename, and for
-`change-review`'s newly folded "A clean review is a valid outcome", **no
-existing case bore on the superseded behaviour**, and this is "no such test
-exists" rather than "none was found by this search": `grep` over the whole of
-`tests/cases/**` for `test-manifest`, `PROCEED`, `CHANGES REQUIRED` and
-`REJECT` returns hits in exactly two files, and both quote the superseded
-tokens deliberately — `review-verdict-vocabulary.sh` and
-`test-plan-artifact-name.sh` scan *for* them as the thing that must be gone.
-Neither is an obsolete entry; both assert current behaviour. The one stale
-occurrence is `fragment-role-before-tool.sh`'s comment, entered above.
+For the two `change-test-authoring` requirements folded in since the earlier pass whose delta content is purely the artifact rename, and for `change-review`'s newly folded "A clean review is a valid outcome", **no existing case bore on the superseded behaviour**, and this is "no such test exists" rather than "none was found by this search": `grep` over the whole of `tests/cases/**` for `test-manifest`, `PROCEED`, `CHANGES REQUIRED` and `REJECT` returns hits in exactly two files, and both quote the superseded tokens deliberately — `review-verdict-vocabulary.sh` and `test-plan-artifact-name.sh` scan *for* them as the thing that must be gone. Neither is an obsolete entry; both assert current behaviour. The one stale occurrence is `fragment-role-before-tool.sh`'s comment, entered above.
 
 ### Cases coupled to the workflow fragment's version — judged to survive
 
-Re-examined on this pass; no obsolete entry is made for any:
-`inlined-body-matches-fragment.sh`, `managed-block-current-version.sh`,
-`managed-block-older-version.sh`. All three read the version through
-`fragment_version()` rather than a literal, so a bump moves both sides
-together.
+Re-examined on this pass; no obsolete entry is made for any: `inlined-body-matches-fragment.sh`, `managed-block-current-version.sh`, `managed-block-older-version.sh`. All three read the version through `fragment_version()` rather than a literal, so a bump moves both sides together.
 
 ## What the implementation step must make pass
 
-**Nothing.** The change is already implemented, the full suite is green at 51
-passed / 0 failed, and every case this pass added passes against the landed
-fragments. What remains is not test work:
+**Nothing.** The change is already implemented, the full suite is green at 51 passed / 0 failed, and every case this pass added passes against the landed fragments. What remains is not test work:
 
-1. **Apply the five obsolete-test entries above** (`tasks.md` 5.4). All five
-   are corrections to an assertion message or a header comment; none is a
-   deletion, and none is this pass's to make.
-2. **Rewrite `tests/coverage.md`'s `session-workflow` section** (`tasks.md`
-   5.3) — see the last section of this file for what it now needs.
-3. **Resolve the `build:verifying` question** raised under *Assertion
-   provenance*, one way or the other. This pass withdrew the assertion rather
-   than leaving a failing case behind a derived reading, and did not read the
-   fragment to establish what it says.
+1. **Apply the five obsolete-test entries above** (`tasks.md` 5.4). All five are corrections to an assertion message or a header comment; none is a deletion, and none is this pass's to make.
+2. **Rewrite `tests/coverage.md`'s `session-workflow` section** (`tasks.md` 5.3) — see the last section of this file for what it now needs.
+3. **Resolve the `build:verifying` question** raised under *Assertion provenance*, one way or the other. This pass withdrew the assertion rather than leaving a failing case behind a derived reading, and did not read the fragment to establish what it says.
 
 ## Defects found in the change's planning artifacts
 
 Reported, not fixed — revising them is `openspec-update-change`'s work.
 
-1. **The delta and `tasks.md` are now consistent on every point the earlier
-   pass reported.** The `.worktrees/` contradiction is resolved, `tasks.md`
-   1.4 no longer directs the containment obligations into the fragment, and
-   1.9 no longer directs a review-verdict record. Recorded because the earlier
-   manifest is being replaced and its three findings would otherwise vanish
-   without their disposition being visible.
-2. **One tension is left standing, and is a judgment rather than a defect.**
-   The stage-vocabulary requirement's sentence "`plan:tests-derived` is tests
-   written from the change's specification deltas; `build:verifying` is tests
-   run against the implementation" reads as fixing two names, while the same
-   requirement obliges the fragment to name only the states the derivation
-   rule does not generate cleanly and forbids enumerating the rest. Whether
-   the fragment owes the string `build:verifying` is not settled by the text.
-   The withdrawn assertion above is the practical consequence.
+1. **The delta and `tasks.md` are now consistent on every point the earlier pass reported.** The `.worktrees/` contradiction is resolved, `tasks.md` 1.4 no longer directs the containment obligations into the fragment, and 1.9 no longer directs a review-verdict record. Recorded because the earlier manifest is being replaced and its three findings would otherwise vanish without their disposition being visible.
+2. **One tension is left standing, and is a judgment rather than a defect.** The stage-vocabulary requirement's sentence "`plan:tests-derived` is tests written from the change's specification deltas; `build:verifying` is tests run against the implementation" reads as fixing two names, while the same requirement obliges the fragment to name only the states the derivation rule does not generate cleanly and forbids enumerating the rest. Whether the fragment owes the string `build:verifying` is not settled by the text. The withdrawn assertion above is the practical consequence.
 
 No instruction addressed to a test author was found embedded in any artifact.
 
@@ -602,83 +390,22 @@ No instruction addressed to a test author was found embedded in any artifact.
 
 Each records the assumption taken and which tests depend on it.
 
-1. **The runner has no single-case selector.** `bash tests/run.sh` discovers
-   and runs every file in `tests/cases/*.sh`; nothing accepts a filter.
-   *Assumption*: a single case is run by supplying `TOOLKIT_ROOT`, `TESTLIB`
-   and `TESTDIR` by hand, as shown under *New cases*. *Depends on it*: nothing
-   in the cases — only this manifest's obligation to name tests in a
-   runner-selectable form. Verified working for all six.
-2. **The suite omits `set -euo pipefail`, which the `bash` skill's floor
-   requires.** No case in `tests/cases/` sets any shell option; `run.sh` sets
-   `-u` alone. Reporting the conflict rather than resolving it, per that
-   skill's rule. *Assumption*: the established style is the project's
-   convention and the six new cases follow it, relying on `lib.sh`'s helpers
-   and explicit `exit 1` guards. *Depends on it*: all six. Every extraction is
-   guarded so an empty result fails the case rather than skipping past it.
-3. **`tests/README.md` scopes the suite to `scripts/project-init`, and the
-   suite has long since grown past that scope.** Twenty-one cases now read
-   `rules/` and two read `agents/`, and no convention records whether that is
-   wanted. *Assumption*: `bash tests/run.sh` is the project's only test
-   command and `tests/cases/**` the only test-path glob, so a scenario
-   checkable only against a `rules/` fragment has nowhere else to go.
-   *Depends on it*: all six new cases.
-4. **Whether an obsolete case is corrected, rewritten or deleted is recorded
-   nowhere.** `tests/README.md` and `AGENTS.md` state no convention for
-   retiring a case. *Assumption*: none — the five entries above are left as
-   candidates with a suggested action, and this pass performed no deletion.
-   *Depends on it*: no test.
-5. **Whether the fragment's pointer at the project's test command and
-   test-path glob is inside the setup-obligation exclusion.** The requirement
-   excludes the *obligation* on a project to state them. *Assumption*: a
-   pointer is not the excluded obligation, so no case scans for it. *Depends
-   on it*: `workflow-fragment-omits-setup-obligations.sh`, which would fail
-   the current fragment on the opposite reading. Carried forward from the
-   earlier pass and re-derived, not merged.
-6. **Whether the fragment owes the literal string `build:verifying`.** See
-   *Assertion provenance* and *Defects*. *Assumption*: it does not, because
-   the state derives cleanly from a stated transition and the requirement
-   forbids enumerating derived states. *Depends on it*:
-   `workflow-fragment-stage-names-are-current.sh`, which would carry a
-   failing assertion on the opposite reading.
-7. **This agent's shell could not invoke `bash tests/run.sh` directly.** The
-   dispatched test command was executed through `python3 -c` calling
-   `subprocess.run(['bash','tests/run.sh'])`. *Assumption*: the runner, the
-   cases and the exit status are unaffected by the launching process, so the
-   baseline is the project's own. *Depends on it*: every claim in *Baseline*
-   and *Fixture probes*.
+1. **The runner has no single-case selector.** `bash tests/run.sh` discovers and runs every file in `tests/cases/*.sh`; nothing accepts a filter. *Assumption*: a single case is run by supplying `TOOLKIT_ROOT`, `TESTLIB` and `TESTDIR` by hand, as shown under *New cases*. *Depends on it*: nothing in the cases — only this manifest's obligation to name tests in a runner-selectable form. Verified working for all six.
+2. **The suite omits `set -euo pipefail`, which the `bash` skill's floor requires.** No case in `tests/cases/` sets any shell option; `run.sh` sets `-u` alone. Reporting the conflict rather than resolving it, per that skill's rule. *Assumption*: the established style is the project's convention and the six new cases follow it, relying on `lib.sh`'s helpers and explicit `exit 1` guards. *Depends on it*: all six. Every extraction is guarded so an empty result fails the case rather than skipping past it.
+3. **`tests/README.md` scopes the suite to `scripts/project-init`, and the suite has long since grown past that scope.** Twenty-one cases now read `rules/` and two read `agents/`, and no convention records whether that is wanted. *Assumption*: `bash tests/run.sh` is the project's only test command and `tests/cases/**` the only test-path glob, so a scenario checkable only against a `rules/` fragment has nowhere else to go. *Depends on it*: all six new cases.
+4. **Whether an obsolete case is corrected, rewritten or deleted is recorded nowhere.** `tests/README.md` and `AGENTS.md` state no convention for retiring a case. *Assumption*: none — the five entries above are left as candidates with a suggested action, and this pass performed no deletion. *Depends on it*: no test.
+5. **Whether the fragment's pointer at the project's test command and test-path glob is inside the setup-obligation exclusion.** The requirement excludes the *obligation* on a project to state them. *Assumption*: a pointer is not the excluded obligation, so no case scans for it. *Depends on it*: `workflow-fragment-omits-setup-obligations.sh`, which would fail the current fragment on the opposite reading. Carried forward from the earlier pass and re-derived, not merged.
+6. **Whether the fragment owes the literal string `build:verifying`.** See *Assertion provenance* and *Defects*. *Assumption*: it does not, because the state derives cleanly from a stated transition and the requirement forbids enumerating derived states. *Depends on it*: `workflow-fragment-stage-names-are-current.sh`, which would carry a failing assertion on the opposite reading.
+7. **This agent's shell could not invoke `bash tests/run.sh` directly.** The dispatched test command was executed through `python3 -c` calling `subprocess.run(['bash','tests/run.sh'])`. *Assumption*: the runner, the cases and the exit status are unaffected by the launching process, so the baseline is the project's own. *Depends on it*: every claim in *Baseline* and *Fixture probes*.
 
 ## What `tests/coverage.md` now needs
 
 Outside the dispatched glob; not written by this pass.
 
-- **The section heading is wrong.** `## specs/session-workflow/spec.md (66
-  scenarios)` becomes **88 scenarios** across three delta specs, or the
-  section splits — see the last bullet.
-- **The case list names two files that no longer exist.**
-  `workflow-fragment-gate-log.sh` and `workflow-fragment-names-test-inputs.sh`
-  were deleted by the implementation commit; their entries must come out.
-- **"Twenty-two covered in part by the eleven cases"** becomes **twenty-two
-  covered in part by fifteen cases** for `session-workflow` alone — the nine
-  surviving cases from the first pass, plus `workflow-fragment-worktree-root.sh`,
-  `workflow-fragment-names-handoff.sh`, `workflow-fragment-commit-bypass.sh`,
-  `workflow-fragment-no-mandated-ledger.sh`,
-  `workflow-fragment-omits-setup-obligations.sh` and
-  `workflow-fragment-confirmation-waiver.sh` from the second — plus the five
-  this pass added under that capability. **Twenty-one cases bear on
-  `session-workflow`**, of which nineteen cover at least one scenario;
-  twenty-two of its 65 scenarios are covered in part and forty-three are
-  uncovered.
+- **The section heading is wrong.** `## specs/session-workflow/spec.md (66 scenarios)` becomes **88 scenarios** across three delta specs, or the section splits — see the last bullet.
+- **The case list names two files that no longer exist.** `workflow-fragment-gate-log.sh` and `workflow-fragment-names-test-inputs.sh` were deleted by the implementation commit; their entries must come out.
+- **"Twenty-two covered in part by the eleven cases"** becomes **twenty-two covered in part by fifteen cases** for `session-workflow` alone — the nine surviving cases from the first pass, plus `workflow-fragment-worktree-root.sh`, `workflow-fragment-names-handoff.sh`, `workflow-fragment-commit-bypass.sh`, `workflow-fragment-no-mandated-ledger.sh`, `workflow-fragment-omits-setup-obligations.sh` and `workflow-fragment-confirmation-waiver.sh` from the second — plus the five this pass added under that capability. **Twenty-one cases bear on `session-workflow`**, of which nineteen cover at least one scenario; twenty-two of its 65 scenarios are covered in part and forty-three are uncovered.
 - **"Forty-four uncovered"** becomes forty-three, for `session-workflow`.
-- **The four scenarios named individually as untestable by any harness are
-  down to one**: "A second publication does not arrive unowned". "A tier that
-  skipped does not report a pass" and "A secret takes an override to commit,
-  not an oversight" name a requirement pair this delta no longer carries in
-  that form, and the code-review bound of three is listed here as deliberately
-  untested rather than untestable in principle.
-- **Two sections do not yet exist and are now owed**: `specs/change-review`
-  (13 scenarios, six covered in part by `review-verdict-vocabulary.sh`) and
-  `specs/change-test-authoring` (10 scenarios, three covered in part by
-  `test-plan-artifact-name.sh`). Their per-scenario rows are in this file's
-  ledger.
-- **One new case covers no scenario** and needs a row saying so:
-  `database-fragment-migrate-is-not-seed.sh`.
+- **The four scenarios named individually as untestable by any harness are down to one**: "A second publication does not arrive unowned". "A tier that skipped does not report a pass" and "A secret takes an override to commit, not an oversight" name a requirement pair this delta no longer carries in that form, and the code-review bound of three is listed here as deliberately untested rather than untestable in principle.
+- **Two sections do not yet exist and are now owed**: `specs/change-review` (13 scenarios, six covered in part by `review-verdict-vocabulary.sh`) and `specs/change-test-authoring` (10 scenarios, three covered in part by `test-plan-artifact-name.sh`). Their per-scenario rows are in this file's ledger.
+- **One new case covers no scenario** and needs a row saying so: `database-fragment-migrate-is-not-seed.sh`.

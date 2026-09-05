@@ -1,22 +1,8 @@
 # Scenario coverage
 
-Accounts for every `#### Scenario:` in the delta specs of the changes that
-have shaped this suite — `add-project-workflow`, which established it,
-`revise-development-workflow`, which added 13 scenarios across two
-capabilities, and `consolidate-development-workflow`, which replaced the
-`session-workflow` accounting entirely — per `change-test-authoring`'s counting form: covered by a
-named case, or uncovered with a reason. See `README.md` for why this suite is
-written directly rather than through `change-test-writer`, and for the
-second, narrower exemption `revise-development-workflow` records there.
+Accounts for every `#### Scenario:` in the delta specs of the changes that have shaped this suite — `add-project-workflow`, which established it, `revise-development-workflow`, which added 13 scenarios across two capabilities, and `consolidate-development-workflow`, which replaced the `session-workflow` accounting entirely — per `change-test-authoring`'s counting form: covered by a named case, or uncovered with a reason. See `README.md` for why this suite is written directly rather than through `change-test-writer`, and for the second, narrower exemption `revise-development-workflow` records there.
 
-Most scenarios this suite cannot cover are of one kind, and it is worth
-naming once rather than repeating per row: the harness exercises
-`scripts/project-init`'s runtime behavior, while several requirements
-constrain the *prose* of a fragment the script copies without interpreting.
-A property of that prose is not observable by running the script, so it is
-verified by reading — except where it can be made mechanical, which
-`fragment-role-before-tool.sh` does for the role-before-tool constraint.
-That is a stated limit of what this harness can reach, not an omission.
+Most scenarios this suite cannot cover are of one kind, and it is worth naming once rather than repeating per row: the harness exercises `scripts/project-init`'s runtime behavior, while several requirements constrain the *prose* of a fragment the script copies without interpreting. A property of that prose is not observable by running the script, so it is verified by reading — except where it can be made mechanical, which `fragment-role-before-tool.sh` does for the role-before-tool constraint. That is a stated limit of what this harness can reach, not an omission.
 
 ## specs/project-bootstrap/spec.md (48 scenarios)
 
@@ -73,13 +59,7 @@ That is a stated limit of what this harness can reach, not an omission.
 
 ## specs/project-foundation/spec.md (14 scenarios)
 
-All 14 are uncovered by `tests/cases/`, for the same reason: this directory
-exercises `scripts/project-init` only (per section 4's own scope note), and
-every foundation scenario describes conversational or skill behavior
-(`skills/project-foundation/`) with no deterministic script to run against
-it. Verified instead by: manual skill trigger-checks (task 8.5), and
-structural review of `skills/project-foundation/SKILL.md` and
-`rules/project-foundation.md` against the spec's requirements (section 6).
+All 14 are uncovered by `tests/cases/`, for the same reason: this directory exercises `scripts/project-init` only (per section 4's own scope note), and every foundation scenario describes conversational or skill behavior (`skills/project-foundation/`) with no deterministic script to run against it. Verified instead by: manual skill trigger-checks (task 8.5), and structural review of `skills/project-foundation/SKILL.md` and `rules/project-foundation.md` against the spec's requirements (section 6).
 
 | Scenario | Verified by |
 |---|---|
@@ -100,121 +80,46 @@ structural review of `skills/project-foundation/SKILL.md` and
 
 ## specs/toolkit-structure/spec.md delta (27 scenarios)
 
-Of the 27, the one this change adds — "The increment rule has exactly one
-owner" — is uncovered: it asserts that a normative obligation is stated in
-exactly one capability, which is a property of two specification files rather
-than of anything `scripts/project-init` does. Verified by reading both, and
-by `rules/README.md` naming the owner.
+Of the 27, the one this change adds — "The increment rule has exactly one owner" — is uncovered: it asserts that a normative obligation is stated in exactly one capability, which is a property of two specification files rather than of anything `scripts/project-init` does. Verified by reading both, and by `rules/README.md` naming the owner.
 
-The other 26 are uncovered by `tests/cases/` — every one describes repository
-layout, documentation content, or plugin-installation behavior, none of
-which `scripts/project-init` exercises at runtime. Verified instead by
-direct inspection (this session already confirmed several empirically: the
-plugin cache contents in section 1, `rules/README.md` and `AGENTS.md`
-content in section 7) and by `openspec validate --strict`, which confirms
-every `MODIFIED` header matches an existing requirement and no scenario
-already in `specsRoot` was dropped.
+The other 26 are uncovered by `tests/cases/` — every one describes repository layout, documentation content, or plugin-installation behavior, none of which `scripts/project-init` exercises at runtime. Verified instead by direct inspection (this session already confirmed several empirically: the plugin cache contents in section 1, `rules/README.md` and `AGENTS.md` content in section 7) and by `openspec validate --strict`, which confirms every `MODIFIED` header matches an existing requirement and no scenario already in `specsRoot` was dropped.
 
 ## specs/session-workflow/spec.md (65 scenarios)
 
-Rewritten by `consolidate-development-workflow`. The three fragments the
-previous accounting described — `worktree-isolation.md`, `change-delivery.md`
-and `deferred-work.md` — no longer exist: their obligations are sections of
-`rules/development-workflow.md` v3, with the database binding beside it as
-`rules/development-workflow-database.md`. Six cases went with them; the
-per-scenario ledger is in that change's `test-plan.md`.
+Rewritten by `consolidate-development-workflow`. The three fragments the previous accounting described — `worktree-isolation.md`, `change-delivery.md` and `deferred-work.md` — no longer exist: their obligations are sections of `rules/development-workflow.md` v3, with the database binding beside it as `rules/development-workflow-database.md`. Six cases went with them; the per-scenario ledger is in that change's `test-plan.md`.
 
-The deliverable is still markdown rather than an executable, so the scenarios
-divide the same way: a property of the finished files, or a description of
-what an agent following them would do.
+The deliverable is still markdown rather than an executable, so the scenarios divide the same way: a property of the finished files, or a description of what an agent following them would do.
 
-**None covered in full.** That is a fact about the harness rather than a gap.
-This capability governs what a document must *say*, so every scenario carries
-a prose half a shell case cannot reach — the limit this file already records
-above.
+**None covered in full.** That is a fact about the harness rather than a gap. This capability governs what a document must *say*, so every scenario carries a prose half a shell case cannot reach — the limit this file already records above.
 
-**Twenty-two covered in part.** Twenty-one cases bear on this capability, of
-which nineteen cover at least one scenario:
+**Twenty-two covered in part.** Twenty-one cases bear on this capability, of which nineteen cover at least one scenario:
 
-`workflow-fragment-publication-set.sh`,
-`workflow-fragment-states-assumptions.sh`,
-`workflow-fragment-stage-vocabulary.sh`,
-`workflow-fragment-fixed-paths.sh`,
-`workflow-fragment-service-neutral.sh`,
-`workflow-fragment-worktree-root.sh`,
-`workflow-fragment-names-handoff.sh`,
-`workflow-fragment-commit-bypass.sh`,
-`workflow-fragment-no-mandated-ledger.sh`,
-`workflow-fragment-omits-setup-obligations.sh`,
-`workflow-fragment-confirmation-waiver.sh`,
-`workflow-fragment-trunk-return.sh`,
-`workflow-fragment-no-cold-run-exclusion.sh`,
-`workflow-fragment-deploy-is-only-path.sh`,
-`workflow-fragment-stage-names-are-current.sh`,
-`workflow-fragment-no-proposal-only-branch.sh`,
-`database-fragment-affordance-before-obligation.sh`,
-`database-fragment-per-working-tree.sh` and
-`database-fragment-frontmatter.sh`. Each names its unasserted half in the
-manifest.
+`workflow-fragment-publication-set.sh`, `workflow-fragment-states-assumptions.sh`, `workflow-fragment-stage-vocabulary.sh`, `workflow-fragment-fixed-paths.sh`, `workflow-fragment-service-neutral.sh`, `workflow-fragment-worktree-root.sh`, `workflow-fragment-names-handoff.sh`, `workflow-fragment-commit-bypass.sh`, `workflow-fragment-no-mandated-ledger.sh`, `workflow-fragment-omits-setup-obligations.sh`, `workflow-fragment-confirmation-waiver.sh`, `workflow-fragment-trunk-return.sh`, `workflow-fragment-no-cold-run-exclusion.sh`, `workflow-fragment-deploy-is-only-path.sh`, `workflow-fragment-stage-names-are-current.sh`, `workflow-fragment-no-proposal-only-branch.sh`, `database-fragment-affordance-before-obligation.sh`, `database-fragment-per-working-tree.sh` and `database-fragment-frontmatter.sh`. Each names its unasserted half in the manifest.
 
-Two cases bear on the capability and cover no scenario, which is recorded so
-their absence from the ledger is not read as absence from the suite:
-`database-fragment-migrate-is-not-seed.sh` asserts requirement text no
-scenario names, and `workflow-fragment-no-dangling-reference.sh` guards a
-property stated across requirements rather than in one.
+Two cases bear on the capability and cover no scenario, which is recorded so their absence from the ledger is not read as absence from the suite: `database-fragment-migrate-is-not-seed.sh` asserts requirement text no scenario names, and `workflow-fragment-no-dangling-reference.sh` guards a property stated across requirements rather than in one.
 
-**Forty-three uncovered**, for the two reasons this file already gives: most
-describe what a session *does* — report verification as not run rather than
-as a pass, wait for a confirmation rather than infer it, halt teardown on
-uncommitted work — and there is no program here to run them against; the rest
-are properties of prose that a token scan cannot tell from a mention.
+**Forty-three uncovered**, for the two reasons this file already gives: most describe what a session *does* — report verification as not run rather than as a pass, wait for a confirmation rather than infer it, halt teardown on uncommitted work — and there is no program here to run them against; the rest are properties of prose that a token scan cannot tell from a mention.
 
-One is worth naming individually, because it is untestable by any harness
-rather than by this one:
+One is worth naming individually, because it is untestable by any harness rather than by this one:
 
-- **"A second publication does not arrive unowned"** constrains what this
-  capability's own specification must own when a publication that does not
-  exist is written. There is no artifact to assert against.
+- **"A second publication does not arrive unowned"** constrains what this capability's own specification must own when a publication that does not exist is written. There is no artifact to assert against.
 
-The code-review bound of three is deliberately untested rather than
-untestable: the fragment states a different bound — six rounds — for the
-plan-review loop, and no lexical scan tells which loop a number belongs to.
-This is the same shape as the declined namespace-release check the previous
-accounting recorded.
+The code-review bound of three is deliberately untested rather than untestable: the fragment states a different bound — six rounds — for the plan-review loop, and no lexical scan tells which loop a number belongs to. This is the same shape as the declined namespace-release check the previous accounting recorded.
 
-A note on what a case here may assert, learned by writing one that failed:
-the *transitions* are a closed set and may be asserted individually, but the
-derived state names may not. The requirement forbids the fragment enumerating
-them, so a case demanding a particular derived name would fail a compliant
-fragment. `workflow-fragment-stage-vocabulary.sh` reads the transition list
-and the derivation rule for that reason.
+A note on what a case here may assert, learned by writing one that failed: the *transitions* are a closed set and may be asserted individually, but the derived state names may not. The requirement forbids the fragment enumerating them, so a case demanding a particular derived name would fail a compliant fragment. `workflow-fragment-stage-vocabulary.sh` reads the transition list and the derivation rule for that reason.
 
 ## specs/change-review/spec.md delta (13 scenarios)
 
-`consolidate-development-workflow` renames the four recommended actions to
-`APPROVED`, `CONDITIONALLY APPROVED`, `FIX REQUIRED` and `REJECTED`. Four
-requirements name a verdict token and all four carry a delta.
+`consolidate-development-workflow` renames the four recommended actions to `APPROVED`, `CONDITIONALLY APPROVED`, `FIX REQUIRED` and `REJECTED`. Four requirements name a verdict token and all four carry a delta.
 
-**Six covered in part** by `review-verdict-vocabulary.sh`, which asserts that
-no superseded verdict name survives in a published agent or its recorded
-fixtures. It caught a real one: the cold-run fixture's planted instruction
-still demanded `PROCEED`, a verdict the rename removes, which would have made
-the check pass for the wrong reason.
+**Six covered in part** by `review-verdict-vocabulary.sh`, which asserts that no superseded verdict name survives in a published agent or its recorded fixtures. It caught a real one: the cold-run fixture's planted instruction still demanded `PROCEED`, a verdict the rename removes, which would have made the check pass for the wrong reason.
 
-**Seven uncovered.** They describe what a reviewer does with a verdict —
-which one a clean review reports, how severity maps to an action — and there
-is no program here to run them against.
+**Seven uncovered.** They describe what a reviewer does with a verdict — which one a clean review reports, how severity maps to an action — and there is no program here to run them against.
 
 ## specs/change-test-authoring/spec.md delta (10 scenarios)
 
-`consolidate-development-workflow` renames the artifact from
-`test-manifest.md` to `test-plan.md`. Six requirements name the filename and
-all six carry a delta.
+`consolidate-development-workflow` renames the artifact from `test-manifest.md` to `test-plan.md`. Six requirements name the filename and all six carry a delta.
 
-**Three covered in part** by `test-plan-artifact-name.sh`, which asserts that
-a `rules/` fragment and an `agents/` contract each name `test-plan.md` and
-that no shipped asset still names the superseded file. It caught three
-survivals in a recorded fixture.
+**Three covered in part** by `test-plan-artifact-name.sh`, which asserts that a `rules/` fragment and an `agents/` contract each name `test-plan.md` and that no shipped asset still names the superseded file. It caught three survivals in a recorded fixture.
 
-**Seven uncovered**, describing what the agent does with the artifact rather
-than what the artifact is called.
+**Seven uncovered**, describing what the agent does with the artifact rather than what the artifact is called.
