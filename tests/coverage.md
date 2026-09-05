@@ -115,7 +115,7 @@ content in section 7) and by `openspec validate --strict`, which confirms
 every `MODIFIED` header matches an existing requirement and no scenario
 already in `specsRoot` was dropped.
 
-## specs/session-workflow/spec.md (66 scenarios)
+## specs/session-workflow/spec.md (65 scenarios)
 
 Rewritten by `consolidate-development-workflow`. The three fragments the
 previous accounting described — `worktree-isolation.md`, `change-delivery.md`
@@ -133,35 +133,89 @@ This capability governs what a document must *say*, so every scenario carries
 a prose half a shell case cannot reach — the limit this file already records
 above.
 
-**Twenty-two covered in part** by the eleven cases
-`consolidate-development-workflow` added: `workflow-fragment-publication-set.sh`,
+**Twenty-two covered in part.** Twenty-one cases bear on this capability, of
+which nineteen cover at least one scenario:
+
+`workflow-fragment-publication-set.sh`,
 `workflow-fragment-no-dangling-reference.sh`,
 `workflow-fragment-states-assumptions.sh`,
-`workflow-fragment-stage-vocabulary.sh`, `workflow-fragment-gate-log.sh`,
-`workflow-fragment-fixed-paths.sh`, `workflow-fragment-names-test-inputs.sh`,
+`workflow-fragment-stage-vocabulary.sh`,
+`workflow-fragment-fixed-paths.sh`,
 `workflow-fragment-service-neutral.sh`,
+`workflow-fragment-worktree-root.sh`,
+`workflow-fragment-names-handoff.sh`,
+`workflow-fragment-commit-bypass.sh`,
+`workflow-fragment-no-mandated-ledger.sh`,
+`workflow-fragment-omits-setup-obligations.sh`,
+`workflow-fragment-confirmation-waiver.sh`,
+`workflow-fragment-trunk-return.sh`,
+`workflow-fragment-no-cold-run-exclusion.sh`,
+`workflow-fragment-deploy-is-only-path.sh`,
+`workflow-fragment-stage-names-are-current.sh`,
+`workflow-fragment-no-proposal-only-branch.sh`,
 `database-fragment-affordance-before-obligation.sh`,
 `database-fragment-per-working-tree.sh` and
 `database-fragment-frontmatter.sh`. Each names its unasserted half in the
 manifest.
 
-**Forty-four uncovered**, for the two reasons this file already gives: most
+Two cases bear on the capability and cover no scenario, which is recorded so
+their absence from the ledger is not read as absence from the suite:
+`database-fragment-migrate-is-not-seed.sh` asserts requirement text no
+scenario names, and `workflow-fragment-no-dangling-reference.sh` guards a
+property stated across requirements rather than in one.
+
+**Forty-three uncovered**, for the two reasons this file already gives: most
 describe what a session *does* — report verification as not run rather than
 as a pass, wait for a confirmation rather than infer it, halt teardown on
 uncommitted work — and there is no program here to run them against; the rest
 are properties of prose that a token scan cannot tell from a mention.
 
-Four are worth naming individually, because they are untestable by any
-harness rather than by this one:
+One is worth naming individually, because it is untestable by any harness
+rather than by this one:
 
 - **"A second publication does not arrive unowned"** constrains what this
   capability's own specification must own when a publication that does not
   exist is written. There is no artifact to assert against.
-- **"A tier that skipped does not report a pass"** and **"A secret takes an
-  override to commit, not an oversight"** bind a consuming project's
-  continuous-integration configuration and ignore file, neither of which is in
-  this repository.
-- **The code-review bound of three** is deliberately untested: the fragment
-  states a different bound — six rounds — for the plan-review loop, and no
-  lexical scan tells which loop a number belongs to. This is the same shape as
-  the declined namespace-release check the previous accounting recorded.
+
+The code-review bound of three is deliberately untested rather than
+untestable: the fragment states a different bound — six rounds — for the
+plan-review loop, and no lexical scan tells which loop a number belongs to.
+This is the same shape as the declined namespace-release check the previous
+accounting recorded.
+
+A note on what a case here may assert, learned by writing one that failed:
+the *transitions* are a closed set and may be asserted individually, but the
+derived state names may not. The requirement forbids the fragment enumerating
+them, so a case demanding a particular derived name would fail a compliant
+fragment. `workflow-fragment-stage-vocabulary.sh` reads the transition list
+and the derivation rule for that reason.
+
+## specs/change-review/spec.md delta (13 scenarios)
+
+`consolidate-development-workflow` renames the four recommended actions to
+`APPROVED`, `CONDITIONALLY APPROVED`, `FIX REQUIRED` and `REJECTED`. Four
+requirements name a verdict token and all four carry a delta.
+
+**Six covered in part** by `review-verdict-vocabulary.sh`, which asserts that
+no superseded verdict name survives in a published agent or its recorded
+fixtures. It caught a real one: the cold-run fixture's planted instruction
+still demanded `PROCEED`, a verdict the rename removes, which would have made
+the check pass for the wrong reason.
+
+**Seven uncovered.** They describe what a reviewer does with a verdict —
+which one a clean review reports, how severity maps to an action — and there
+is no program here to run them against.
+
+## specs/change-test-authoring/spec.md delta (10 scenarios)
+
+`consolidate-development-workflow` renames the artifact from
+`test-manifest.md` to `test-plan.md`. Six requirements name the filename and
+all six carry a delta.
+
+**Three covered in part** by `test-plan-artifact-name.sh`, which asserts that
+a `rules/` fragment and an `agents/` contract each name `test-plan.md` and
+that no shipped asset still names the superseded file. It caught three
+survivals in a recorded fixture.
+
+**Seven uncovered**, describing what the agent does with the artifact rather
+than what the artifact is called.

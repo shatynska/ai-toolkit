@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # Scenarios (mechanical half only): A resuming session names the stage without
-# interpreting prose; Writing tests and running tests are not one word; A
-# change waiting on a deploy is distinguishable from one waiting on a merge.
+# interpreting prose; A change waiting on a deploy is distinguishable from one
+# waiting on a merge.
 #
-# The vocabulary is closed and its members are fixed by the specification, so
-# a case can assert every one of them is stated. That is what makes the
-# report readable by a session that was not present: a name absent from the
-# fragment is a state a resuming session has to describe in prose instead.
+# The *transitions* are the closed set and a case can assert every one is
+# stated. The derived state names are not: the requirement forbids the
+# fragment enumerating them, so a case asserting a particular derived name
+# would fail a compliant fragment. That is why this case reads the transition
+# list and the derivation rule, not a roster of states.
 #
 # What a case cannot reach: whether each name is classified transient or
 # persistent, and whether each persistent one has its trace named. Those are

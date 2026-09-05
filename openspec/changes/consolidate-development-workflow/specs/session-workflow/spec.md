@@ -248,7 +248,7 @@ Where a transition name matches a command the same session drives — `apply`, `
 
 Both families SHALL share one review loop — `reviewing → fixing → reviewing` — since applying what a review returned is one act in two families, and stating it twice under two words would present two settings of one mechanism as two mechanisms.
 
-The vocabulary SHALL NOT reuse one word for writing tests and running them. `plan:tests-derived` is tests written from the change's specification deltas; `build:verifying` is tests run against the implementation.
+The vocabulary SHALL NOT reuse one word for writing tests and running them: the `plan` transition producing tests from the change's specification deltas and the `build` transition running them against the implementation SHALL carry different words, so the states deriving from them cannot collapse into one. `plan:tests-derived` and `build:verifying` are given here to fix that distinction, not as names the fragment must write out — which state names it writes is governed by the enumeration prohibition above.
 
 `plan:exploring` SHALL name a change with no proposal yet, whose auxiliary artifacts — a handoff — may exist.
 

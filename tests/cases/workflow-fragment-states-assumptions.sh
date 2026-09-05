@@ -2,9 +2,11 @@
 # Scenario (mechanical half only): A project without a deploy is not served by
 # a conditional.
 #
-# The workflow fragment assumes a remote, a forge that reports a pull
-# request's merged state, continuous integration, and that merging to the
-# trunk deploys — and states no conditional for their absence. The half a
+# The workflow fragment assumes a remote, pull requests, continuous
+# integration, and that merging to the trunk deploys. The forge is not a
+# fifth assumption: pull requests imply it, and teardown's merge clause is
+# where what it must report gets stated. Scanning for `forge` here passed
+# vacuously against a line naming the forge as a source for the report — and states no conditional for their absence. The half a
 # shell case can reach is that each of the four is named, so that a reader
 # meeting a rule which rests on one can find the assumption stated rather
 # than inferring it. That a project of another shape is served by a
@@ -21,7 +23,7 @@ source "$TESTLIB"
 fragment="$TOOLKIT_ROOT/rules/development-workflow.md"
 assert_file "$fragment" "the fragment this case reads"
 
-for token in "remote" "forge" "continuous integration" "deploy"; do
+for token in "remote" "pull request" "continuous integration" "deploy"; do
   if ! grep -q -i -F -- "$token" "$fragment"; then
     echo "FAIL: $fragment does not name the assumption: $token" >&2
     exit 1

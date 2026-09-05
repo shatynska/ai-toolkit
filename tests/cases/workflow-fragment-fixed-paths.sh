@@ -14,8 +14,7 @@
 # entry swept on being fixed — which it cannot do while naming only one.
 #
 # The obligations attached to each path are prose and are verified by
-# reading: the containment obligations on `.claude/worktrees/`, the
-# create-it-if-absent direction on `docs/change-queue.md`, and that
+# reading: the create-it-if-absent direction on `docs/change-queue.md`, and that
 # `docs/deferred-work.md` is named for the distinction and not as a
 # destination for identified work (tasks 1.4, 1.14).
 # shellcheck disable=SC1090 # $TESTLIB is set by tests/run.sh at runtime, not statically resolvable
@@ -24,8 +23,8 @@ source "$TESTLIB"
 fragment="$TOOLKIT_ROOT/rules/development-workflow.md"
 assert_file "$fragment" "the fragment this case reads"
 
-assert_contains "$fragment" ".claude/worktrees/" \
-  "the working-tree location is a fixed path, so the containment obligations have a checkable subject"
+assert_contains "$fragment" ".worktrees/" \
+  "the working-tree location is a fixed path, so a requirement stated against it has a checkable subject"
 assert_contains "$fragment" "docs/change-queue.md" \
   "identified work is routed to the queue at the path the specification fixes"
 assert_contains "$fragment" "docs/deferred-work.md" \

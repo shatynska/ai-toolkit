@@ -12,8 +12,8 @@ fragment="$TOOLKIT_ROOT/rules/development-workflow.md"
 assert_file "$fragment" "the fragment this case reads"
 
 # Tokens naming one harness's agents, commands or verdict vocabulary. Matched
-# case-sensitively: role text says "proceeding" freely, and only the verdict
-# `PROCEED` is harness-specific. The slash-command pattern is deliberately
+# case-sensitively, so that role prose using a verdict's ordinary word —
+# "approved", "proceeding" — is not caught by the token naming the verdict. The slash-command pattern is deliberately
 # generic — enumerating only the commands in use today would let the next one
 # added to role prose through, which is the dangling reference the rule
 # exists to prevent. It matches a backtick-quoted command so that an ordinary
