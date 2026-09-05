@@ -1,0 +1,84 @@
+# Recorded check fixtures for agents/change-code-reviewer.md
+#
+# Inputs only. No outcomes, no dates: a description edit invalidates the
+# trigger check and a body edit invalidates the cold-run check, so a stored
+# result is only ever valid against a surface that may no longer exist.
+#
+# The consumer is a later authoring session re-running a check after the
+# library changed. Nothing in this repository reads this file — toolkit-structure
+# bars repository tooling.
+
+trigger_check:
+  evaluator: >-
+    A fresh context holding the candidate prompt and the name and description of
+    every library asset (skills/*/SKILL.md, agents/*.md) plus every asset
+    committed under .claude/ (.claude/skills/*/SKILL.md, .claude/commands/**/*.md),
+    and nothing from the authoring conversation. Derive both sets by glob rather
+    than from a list — the .claude/ assets are installed by an external tool and
+    a fixed enumeration goes stale without an edit here to signal it.
+  positive:
+    prompt: >-
+      The add-payment-retry change is implemented and the tests pass. Can you
+      review the diff against what the change actually specified before I open
+      the PR?
+    expected_routing: change-code-reviewer
+  negative:
+    prompt: >-
+      Can you review the add-payment-retry change before I start implementing
+      it? I want to know whether the proposal, design and tasks actually agree
+      with each other, and whether it breaks anything we already specced.
+    expected_routing: change-plan-reviewer
+    why_this_prompt: >-
+      The two reviewers sit on either side of the same change and both answer
+      to "review this change", so the plan/diff boundary is the one place this
+      agent can misfire. Both prompts name the same change deliberately, so
+      that only the artifact under review distinguishes them.
+  displacement_probe:
+    prompt: >-
+      Have a look at this function and tell me if the error handling is right.
+    expected_routing: none
+    why_this_prompt: >-
+      This agent's contract is scoped to a change's diff. An unscoped review
+      request naming no change, no language and no file should reach no asset
+      at all rather than being absorbed by the nearest reviewer. Recorded
+      outcome from the live run: the evaluator routed it to none and named what
+      would have changed that — a file extension would have pulled in `python`
+      or `bash`.
+  also_verified: >-
+    Adding this agent invalidates the recorded trigger checks of the assets it
+    competes with, per agent-authoring. The same live run therefore re-ran the
+    existing fixtures against the three-agent roster: change-plan-reviewer's
+    positive and negative, and change-test-writer's positive, all still route as
+    their own files record.
+
+cold_run_check:
+  status: >-
+    NOT RUN. Owed. This body is a placeholder that delegates to the code-review
+    skill and carries none of the library's own review emphases, so a cold run
+    against it would verify a body that add-change-code-reviewer is expected to
+    replace outright. The check belongs to the change that writes the real body;
+    until then this agent is not reported complete, which is what
+    agent-authoring requires of an agent whose fixtures record no run.
+  payload_recipe_when_written:
+    - Needs a change whose implementation is committed and whose delta specs
+      state what that implementation was supposed to do, so that "each
+      requirement implemented" and "the derived tests cover what changed" are
+      both falsifiable. An ADDED-only change with no tests cannot exercise
+      either.
+    - Plant one defect the diff shows and the specs forbid, and one change that
+      is correct but out of the change's stated scope, so the report has to
+      distinguish a defect from scope.
+    - Dispatch for real — `claude -p --plugin-dir <repo>` — since the grant
+      includes Bash and Skill and a simulation would not enforce it.
+    - Launch with edits permitted only if the target requires writing; this
+      agent reports and never applies, so a denied write is a finding rather
+      than a broken run.
+  pass_criteria_when_written:
+    - Invoked the code-review skill rather than reviewing from its own judgment,
+      verified in the tool trace.
+    - Reported findings and applied none; no file modified, verified by diffing
+      the target against its pre-dispatch state.
+    - Distinguished a finding that bears on a stated requirement from one that
+      bears on the code in general, where the change name was supplied.
+    - Terminated because the body directed it to, not because a budget ran out.
+  not_graded: The quality of the review the agent produced.

@@ -64,15 +64,15 @@ The first three want a home: `project-foundation`'s checklist, `scripts/project-
 
 ## `add-change-code-reviewer`
 
-An agent wrapping `/code-review` with this library's own emphases, completing the pair `change-plan-reviewer` / `change-code-reviewer`. New authoring rather than a rename, so `skills/create-agent`'s trigger check and cold-run check apply.
+**A placeholder has landed.** `agents/change-code-reviewer.md` exists and dispatches the `code-review` skill against the target it is given, so `rules/development-workflow.md`'s binding now names an agent that answers. It carries none of this library's own review emphases, which is what this entry still owes.
 
-Once it exists, the workflow fragment's code-review binding names it instead of `/code-review`, and the negative binding on the plan-review gate can be re-examined: it currently excludes `/code-review` because that command sounds general enough to reach for before any diff exists.
+What the real agent adds, and the placeholder does not: the emphases that make a code review this library's rather than a generic one — a diff read against the change's own delta specs requirement by requirement, the derived tests checked for the scenarios they were written from, unrelated scope reported as scope rather than as a defect, and a severity vocabulary that maps onto the review loop's exits. `skills/create-agent`'s cold-run check applies to that body and has not been run; the placeholder's own `.checks.yaml` records the trigger check that was, and states the cold-run check as owed.
 
-**Argued in**: `consolidate-development-workflow`, alongside the rename of `openspec-change-reviewer` to `change-plan-reviewer`.
+Once the real body exists, the negative binding on the plan-review gate can be re-examined: it currently excludes `/code-review` because that command sounds general enough to reach for before any diff exists.
 
-**Blocks nothing, but the fragment already names it.** `rules/development-workflow.md`'s code-review binding reads `ai-toolkit:change-code-reviewer`, so until this change lands that binding points at an agent that does not exist. Deliberate: the alternative was naming `/code-review` and rewriting the line twice. In the interval a session reaching `build`'s review gate has to improvise, which is the cost being accepted.
+**Argued in**: `consolidate-development-workflow`, alongside the rename of `openspec-change-reviewer` to `change-plan-reviewer`. The placeholder was landed separately, at the operator's request, once that change had archived.
 
-**Extend the dangling-reference case when the agent lands.** `tests/cases/workflow-fragment-no-dangling-reference.sh` scans for `rules/` paths, fragment filenames and `@` imports; it does not scan for an `ai-toolkit:` agent name with no file behind it, which is why nothing in the suite reports this gap or would report its recurrence. The check cannot be added before the agent exists without failing the suite on a state this change intends, so it belongs to this change rather than to that one.
+**Extend the dangling-reference case.** `tests/cases/workflow-fragment-no-dangling-reference.sh` scans for `rules/` paths, fragment filenames and `@` imports; it does not scan for an `ai-toolkit:` agent name with no file behind it. That gap is why nothing in the suite reported the binding while it dangled, and nothing would report its recurrence. It is addable now that the agent exists, and belongs here.
 
 ## `evaluate-an-openspec-schema-for-our-artifacts`
 
