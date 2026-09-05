@@ -3,7 +3,7 @@ kind: standing-constraint
 version: 1
 ---
 
-# Read the test manifest before implementing
+# Read the test plan before implementing
 
 If an OpenSpec change has been passed to `change-test-writer`, its change
 root carries a `test-plan.md` alongside `proposal.md`, `design.md`, and

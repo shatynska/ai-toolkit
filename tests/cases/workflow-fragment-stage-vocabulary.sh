@@ -24,22 +24,39 @@ assert_file "$fragment" "the fragment this case reads"
 # states derive from them, so the fragment states the transitions, the rule,
 # examples, the two states whose derivation reorders, and the off-path names.
 # It deliberately does not enumerate every derived state.
-stages="explore draft review fix approve commit apply verify merge deploy confirm archive
-plan:tests-derived ship:pr-open
-blocked: abandoned"
+# The transitions are read from the fenced block that states them, not from
+# the document at large: every one of them — `review`, `fix`, `apply`,
+# `merge`, `confirm` — is also an ordinary English word the fragment's prose
+# uses freely, so a whole-file scan passes even if the block is deleted
+# outright, which is the one thing this case exists to catch.
+block="$(awk '/^```$/{n++; next} n==1' "$fragment")"
+
+if [ -z "$block" ]; then
+  echo "FAIL: $fragment states no fenced transition block" >&2
+  exit 1
+fi
 
 missing=""
-for stage in $stages; do
-  if ! grep -q -F -- "$stage" "$fragment"; then
+for stage in explore draft review fix approve commit apply verify merge deploy confirm archive; do
+  if ! printf '%s\n' "$block" | grep -q -F -- "$stage"; then
     missing="$missing $stage"
   fi
 done
 
 if [ -n "$missing" ]; then
-  echo "FAIL: $fragment does not state every transition, derived-state exception and off-path name" >&2
+  echo "FAIL: the transition block in $fragment does not state every transition" >&2
   echo "      missing:$missing" >&2
   exit 1
 fi
+
+# The derived-state exceptions and the off-path names are stated in prose
+# beside the block rather than inside it, so these are read from the file.
+for token in "plan:tests-derived" "ship:pr-open" "blocked:" "abandoned"; do
+  if ! grep -q -F -- "$token" "$fragment"; then
+    echo "FAIL: $fragment does not state the derived-state exception or off-path name: $token" >&2
+    exit 1
+  fi
+done
 
 # `plan:tests-derived` is tests written from the specification deltas and
 # `build:verifying` is tests run against the implementation. Neither name may be

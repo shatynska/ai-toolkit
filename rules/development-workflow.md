@@ -27,6 +27,7 @@ Provisioning is complete when every step this project names has been reached, no
 
 **Where verification writes to a shared service, take your own namespace within it**, named deterministically from your working tree, and bring it to the project's initial state whether or not one already exists under that name. Check for the service before reporting it unavailable. Nothing here reclaims a namespace; they accumulate.
 
+Where this project binds these two rules to a particular service, the binding is an adjacent section of this file; read it as part of them.
 
 ## Reporting where the change stands
 
@@ -38,7 +39,7 @@ The entering report carries one further cell, the verification result.
 
 Derive the report from the repository where you can — artifacts, commit log, forge. Where a fact is in neither, ask rather than assume it.
 
-**The stage names a state, never an act.** The acts are the transitions between them, and they are the sections below:
+**The stage names a state, never an act.** The acts are the transitions between them, and the sections below walk them in order — some together, where one act follows another with no decision in between:
 
 ```
 plan:   explore · draft · review · fix · approve · commit · derive tests
@@ -56,7 +57,7 @@ Always write the family prefix: `plan:reviewing` and `build:reviewing` dispatch 
 
 **draft** — use a specification-driven change process for non-trivial features, changes and significant architectural decisions. Do not begin implementing without a proposal recording what is intended and why. A change's artifacts are read before implementation, not written afterwards to describe what was done.
 
-**review → fix** — dispatch review against the complete artifact set, never a package still being written. Fix and re-review until the verdict permits proceeding, bounded at six rounds. A conditional pass is permission conditional on the fixes it names: apply them and continue without a further round. Where the reviewer judges the concept unsound rather than the artifacts defective, stop and raise it immediately, whatever the count.
+**review → fix → approve** — dispatch review against the complete artifact set, never a package still being written. Fix and re-review until the verdict permits proceeding, bounded at six rounds; on reaching it, report where the loop stands and what is outstanding, and ask before continuing. A conditional pass is permission conditional on the fixes it names: apply them and continue without a further round. Where the reviewer judges the concept unsound rather than the artifacts defective, stop and raise it immediately, whatever the count.
 
 _Claude Code binding:_ dispatch `ai-toolkit:change-plan-reviewer` once every artifact the change calls for is complete. Do not use `/code-review` for this gate — it reads a diff, and at this point there is none. On `FIX REQUIRED` fix and re-dispatch; on `CONDITIONALLY APPROVED` apply the `[MINOR]` fixes and continue; on `APPROVED` continue; on `REJECTED` stop and raise it.
 
@@ -76,7 +77,7 @@ _Claude Code binding:_ dispatch `ai-toolkit:change-test-writer` after the verdic
 
 **review → fix** — have an independent reviewer read the diff against the change's own specification: each requirement implemented, the implementation matching what the specification describes, the derived tests covering what changed, no unrelated scope, this project's conventions followed. This review reads code; the review in `plan` reads artifacts.
 
-Dispatch against a diff that already passes verification. Re-review only where the fixes were substantial enough to warrant it, bounded at three rounds. A review judging the implemented change unsound rather than defective exits immediately and is raised.
+Dispatch against a diff that already passes verification. Re-review only where the fixes were substantial enough to warrant it, bounded at three rounds; past three, report where the loop stands and ask rather than dispatching a fourth. A review judging the implemented change unsound rather than defective exits immediately and is raised.
 
 _Claude Code binding:_ run `ai-toolkit:change-code-reviewer` over the change's diff.
 
@@ -90,7 +91,7 @@ Every change reaches the trunk through pull requests, and takes at least two. Be
 
 **confirm** — a healthy deploy is not the change working. Propose how the effect can be observed — what to look at, what provokes it, what result would mean it worked — and wait for the operator's confirmation.
 
-Two classes cannot answer that gate and are waivable. Say so plainly, name the class, and record the waiver in the change's own artifacts — the record is archived on the strength of it:
+Two classes cannot answer that gate and are waivable. Say so plainly, name the class, and wait for the operator to waive it; record the waiver in the change's own artifacts — the record is archived on the strength of it, and waiving your own gate is not the confirmation this step exists to obtain. Where a successor is intended, the waiver names its change-queue entry or the branch it was opened on:
 
 - a change with no observable effect — a refactor, a dependency bump, an internal cleanup;
 - a change that was the wrong change: its observation was made, its effect is absent, and it is not to be corrected in place.

@@ -47,7 +47,11 @@ carrier=""
 for candidate in "$agents"/*.md; do
   [ -e "$candidate" ] || continue
   complete=1
-  for verdict in "APPROVED" "CONDITIONALLY APPROVED" "FIX REQUIRED" "REJECTED"; do
+  # Backticked, because a plain scan for APPROVED is satisfied by the
+  # substring inside CONDITIONALLY APPROVED — an agent that dropped the
+  # standalone clean-review verdict would still pass all four iterations.
+  # shellcheck disable=SC2016 # the backticks are literal markdown, not a command substitution
+  for verdict in '`APPROVED`' '`CONDITIONALLY APPROVED`' '`FIX REQUIRED`' '`REJECTED`'; do
     if ! grep -q -F -- "$verdict" "$candidate"; then
       complete=0
       break
