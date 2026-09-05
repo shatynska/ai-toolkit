@@ -22,6 +22,12 @@ wherever the plugin is installed. Two paths reach a fragment from there:
   with no `@` import and no harness involved. `scripts/project-init` does
   this: it inlines `development-workflow.md` into a project's `AGENTS.md`.
 
+Both paths reach any fragment under `rules/`, a binding fragment such as
+`rules/development-workflow-database.md` included. What a binding fragment
+lacks until tooling catches up is not a route but a *tool* route: it is
+imported or copied by hand, where the workflow fragment is written into a
+managed block.
+
 ## Fragment kind
 
 Every fragment declares its kind in YAML frontmatter:
@@ -29,7 +35,7 @@ Every fragment declares its kind in YAML frontmatter:
 ```yaml
 ---
 kind: standing-constraint    # or: procedural-checklist
-version: 1                   # only if the fragment is ever inlined
+version: 1                   # only if the fragment is inlined, now or later
 ---
 ```
 

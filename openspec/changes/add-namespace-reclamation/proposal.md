@@ -3,8 +3,10 @@
 A session that runs a project's verification against a shared service takes
 its own namespace within it — its own database, typically — so that two
 parallel sessions do not write over each other. `add-session-workflow-fragments`
-specifies that allocation and deliberately stops there: `worktree-isolation.md`
-allocates and does not release. This change owns the release.
+specified that allocation and deliberately stopped there, and
+`consolidate-development-workflow` carried it into
+`rules/development-workflow.md` unchanged: the rules allocate and do not
+release. This change owns the release.
 
 The gap is not theoretical. Seven `commerce_ops*` databases sit on that
 project's container and three are orphans whose worktrees are gone. Nothing
@@ -79,7 +81,7 @@ predicates compose, belongs in an artifact that can be executed and tested.
   tool resolves this once — the same value at allocation and at reclamation —
   instead of each project inventing a binding that may not.
 
-- **Allocation may come with it.** `worktree-isolation.md` leaves
+- **Allocation may come with it.** The workflow rules leave
   provisioning to the project. A tool owning both ends is what makes the
   names it reclaims the names it created, which is the property the whole
   scheme rests on.
@@ -108,9 +110,8 @@ question for the design, not the proposal.
 - `tests/` — cases derived from the six rounds' failure matrix above.
 - `openspec/specs/namespace-reclamation/spec.md` — new, via this change's
   deltas.
-- `rules/worktree-isolation.md` — possibly one clause naming the tool, once
-  it exists. Not this change's to write if `add-session-workflow-fragments`
-  has not landed.
+- `rules/development-workflow.md` — possibly one clause naming the tool, once
+  it exists.
 - `commerce-ops` — the first consumer, and the place the three existing
   orphans are. Whether the tool collects them or whether they are the stated
   manual cleanup is an open question below.
@@ -142,6 +143,6 @@ the questions above — each changes what the tool is, and answering them by
 inference is what six rounds of this exact subject argue against.
 
 This change does not block `add-session-workflow-fragments`, and that change
-does not block this one. `worktree-isolation.md` is complete and adoptable
+does not block this one. The workflow rules are complete and adoptable
 without reclamation; what an adopting project carries in the interval is
 namespace accumulation, which is today's state in every project already.

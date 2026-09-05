@@ -12,18 +12,18 @@ fragment="$TOOLKIT_ROOT/rules/development-workflow.md"
 assert_file "$fragment" "the fragment this case reads"
 
 # Tokens naming one harness's agents, commands or verdict vocabulary. Matched
-# case-sensitively: role text says "proceeding" freely, and only the verdict
-# `PROCEED` is harness-specific. The slash-command pattern is deliberately
+# case-sensitively, so that role prose using a verdict's ordinary word —
+# "approved", "proceeding" — is not caught by the token naming the verdict. The slash-command pattern is deliberately
 # generic — enumerating only the commands in use today would let the next one
 # added to role prose through, which is the dangling reference the rule
 # exists to prevent. It matches a backtick-quoted command so that an ordinary
 # "and/or" in prose does not trip it.
 offenders="$(awk '
-  /^_Claude Code binding:_/ { binding = 1 }
+  /^_(Claude Code|Tooling) binding:_/ { binding = 1 }
   /^[[:space:]]*$/          { binding = 0 }
   binding                   { next }
-  /ai-toolkit:/ || /PROCEED/ || /CHANGES REQUIRED/ || /REJECT/ ||
-  /\[MINOR\]/ || /openspec-/ || /`\/[a-z][a-z-]*/ { printf "  line %d: %s\n", NR, $0 }
+  /ai-toolkit:/ || /APPROVED/ || /FIX REQUIRED/ || /REJECTED/ ||
+  /\[MINOR\]/ || /openspec[- ]/ || /`\/[a-z][a-z-]*/ { printf "  line %d: %s\n", NR, $0 }
 ' "$fragment")"
 
 if [ -n "$offenders" ]; then
@@ -33,7 +33,7 @@ if [ -n "$offenders" ]; then
 fi
 
 # The constraint is only meaningful if binding paragraphs exist to hold them.
-bindings="$(grep -c '^_Claude Code binding:_' "$fragment")"
+bindings="$(grep -cE '^_(Claude Code|Tooling) binding:_' "$fragment")"
 if [ "$bindings" -lt 1 ]; then
   echo "FAIL: no binding paragraph found — the check above would pass vacuously" >&2
   exit 1

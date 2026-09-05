@@ -54,13 +54,18 @@ from there:
   this: it inlines `rules/development-workflow.md` into a project's
   `AGENTS.md`.
 
+Both reach any fragment under `rules/`. What a binding fragment such as
+`rules/development-workflow-database.md` lacks until tooling catches up is a
+*tool* route, not a route: it is imported or copied by hand rather than written
+into a managed block.
+
 A `rules/` fragment is one of two kinds, declared in its own YAML
 frontmatter:
 
 ```yaml
 ---
 kind: standing-constraint    # or: procedural-checklist
-version: 1                   # only if the fragment is ever inlined
+version: 1                   # only if the fragment is inlined, now or later
 ---
 ```
 

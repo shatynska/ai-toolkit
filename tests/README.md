@@ -6,7 +6,7 @@ first thing in this library verified by running code rather than by review.
 ## Why these cases are written directly, not dispatched
 
 The development workflow this change ships requires tests be derived from a
-change's specification by an independent author (`ai-toolkit:openspec-test-writer`)
+change's specification by an independent author (`ai-toolkit:change-test-writer`)
 before implementation. This suite does not follow that path. The agent's
 dispatch contract requires a test command and a test-path glob as essential
 inputs — and neither exists until this harness creates them. Deriving this
@@ -16,14 +16,14 @@ records for the foundation change's test-authoring exemption. This is
 recorded as a stated exemption for this one suite, not a precedent: the very
 next change to this repository has a real test command
 (`bash tests/run.sh`) and a real test-path glob (`tests/cases/**`), and
-`openspec-test-writer` applies normally to it.
+`change-test-writer` applies normally to it.
 
 ## The exemption's second use, and why
 
 `revise-development-workflow` added three cases to this suite
 (`fragment-role-before-tool.sh`, `inlined-body-matches-fragment.sh`, and the
 `fragment_version` helper the version-coupled cases now use) without
-dispatching `ai-toolkit:openspec-test-writer`. That is a second stated
+dispatching `ai-toolkit:change-test-writer`. That is a second stated
 exemption, recorded here rather than decided silently, because the paragraph
 above forecloses the silent option.
 
@@ -31,8 +31,9 @@ The reason is not the circularity that excused the first use — this suite has
 a real test command and a real test-path glob now. It is that the agent's own
 dispatch contract requires a change that "has passed review and is ready for
 implementation", and this change had no such verdict: its review returned
-`CHANGES REQUIRED` on its third round and implementation proceeded on the
-maintainer's explicit direction instead. Dispatching a test author against a
+`CHANGES REQUIRED` on its third round — the verdict set of the day, quoted as
+it was recorded — and implementation proceeded on the maintainer's explicit
+direction instead. Dispatching a test author against a
 plan no verdict had cleared is the precondition failure the workflow rules
 this very change introduces forbid. The exemption is therefore narrower than
 the first: it does not say test authoring was impossible, only that its

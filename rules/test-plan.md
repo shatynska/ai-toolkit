@@ -1,15 +1,15 @@
 ---
 kind: standing-constraint
-version: 1
+version: 2
 ---
 
-# Read the test manifest before implementing
+# Read the test plan before implementing
 
-If an OpenSpec change has been passed to `openspec-test-writer`, its change
-root carries a `test-manifest.md` alongside `proposal.md`, `design.md`, and
+If an OpenSpec change has been passed to `change-test-writer`, its change
+root carries a `test-plan.md` alongside `proposal.md`, `design.md`, and
 `tasks.md`. Read it before implementing.
 
-`test-manifest.md` is not an artifact the OpenSpec schema defines, so it is
+`test-plan.md` is not an artifact the OpenSpec schema defines, so it is
 not among the files `openspec instructions apply` surfaces automatically —
 finding it takes a deliberate look at the change root, not a step the
 tooling takes for you.

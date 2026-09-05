@@ -8,3 +8,7 @@ Thumbs.db
 
 # Machine-local Claude Code state
 .claude/settings.local.json
+
+# Session working trees
+.claude/worktrees/
+.worktrees/
