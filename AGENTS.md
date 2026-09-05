@@ -38,6 +38,12 @@ version: 1                   # only if the fragment is inlined, now or later
 
 A **standing constraint** is meant to reach a project's `CLAUDE.md` or `AGENTS.md` and remain in force there — by either path above. A **procedural checklist** describes a one-time procedure, read on demand, and is never inlined into a project's conventions file — inlining it would leave permanent instructions for work already finished.
 
+## Markdown prose is not hard-wrapped
+
+Prose in this repository's markdown is written one paragraph per line, not wrapped at a column. A wrapped paragraph makes every later edit reflow the lines around it, so an edit and a reflow become indistinguishable in the diff — which is the property one-line-per-paragraph keeps.
+
+This binds prose. Frontmatter, code blocks, tables and link-reference definitions are untouched by it, and a list item is one line per item on the same reasoning.
+
 ## Tags
 
 `metadata.tags` is the only classification an asset carries: a list of free-form, lowercase kebab-case labels. Multi-valued, and structurally inert — no directory or name depends on it.

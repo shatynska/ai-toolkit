@@ -90,20 +90,6 @@ So the change is: evaluate adopting or forking a schema, not adding files. Decid
 
 **Depends on**: nothing, but best after `consolidate-development-workflow` lands, since it would reshape the artifacts that change is defining.
 
-## `unwrap-markdown-prose`
-
-Every markdown file in this repository hard-wraps its prose at 75–81 columns, and nothing requires it to. There is no `.editorconfig`, no markdownlint or prettier configuration, no clause in `AGENTS.md` and no requirement in any specification. The convention propagated by imitation: each file copied the shape of the last.
-
-It is mentioned exactly once, in `revise-development-workflow`'s design, which decided not to rewrap carried sections because "in every consuming project's diff a reflowed line is indistinguishable from an edited one". That is a good reason not to rewrap *while editing* and no reason to keep wrapping; it entrenched the habit without arguing for it.
-
-The change is: unwrap every markdown file to one sentence per line, which keeps diffs line-scoped — the only real benefit hard wrapping had — and record the convention so the next file written by imitation does not wrap again. It must be a change that does nothing else, so that every line in its diff is reflow and no edit hides in the noise, which is the failure the archived decision was avoiding.
-
-`rules/development-workflow.md` is already unwrapped, in `consolidate-development-workflow`, at the operator's direction. Every other file is outstanding: `README.md`, `AGENTS.md`, `rules/`, `skills/`, `agents/`, `docs/`, `tests/` and `openspec/specs/`.
-
-**Argued in**: `consolidate-development-workflow`'s implementation, on the operator's finding that the wrapping is undocumented and unwanted.
-
-**Depends on**: nothing. Best done when no other change is in flight, since it touches every file.
-
 ## The suite's own gaps
 
 Three questions the test-writing pass raised and did not resolve, recorded here because each is a change rather than a deferral:
