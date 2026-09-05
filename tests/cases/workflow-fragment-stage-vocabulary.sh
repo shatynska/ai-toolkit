@@ -19,9 +19,12 @@ source "$TESTLIB"
 fragment="$TOOLKIT_ROOT/rules/development-workflow.md"
 assert_file "$fragment" "the fragment this case reads"
 
-stages="plan:draft plan:review plan:revise plan:approved plan:committed plan:tests
-build:doing build:verify build:review build:fix build:clear
-ship:pr ship:merged ship:deployed ship:confirmed ship:record ship:done
+# The vocabulary is generative: the transitions are the closed set and the
+# states derive from them, so the fragment states the transitions, the rule,
+# examples, the two states whose derivation reorders, and the off-path names.
+# It deliberately does not enumerate every derived state.
+stages="explore draft review fix approve commit apply verify merge deploy confirm archive
+plan:tests-derived ship:pr-open
 blocked: abandoned"
 
 missing=""
@@ -32,13 +35,13 @@ for stage in $stages; do
 done
 
 if [ -n "$missing" ]; then
-  echo "FAIL: $fragment does not state every name in the stage vocabulary" >&2
+  echo "FAIL: $fragment does not state every transition, derived-state exception and off-path name" >&2
   echo "      missing:$missing" >&2
   exit 1
 fi
 
-# `plan:tests` is tests written from the specification deltas and
-# `build:verify` is tests run against the implementation. Neither name may be
+# `plan:tests-derived` is tests written from the specification deltas and
+# `build:verifying` is tests run against the implementation. Neither name may be
 # used for the other, so the crossed forms must not appear at all.
 for crossed in "plan:verify" "build:tests"; do
   hits="$(grep -n -F -- "$crossed" "$fragment")"

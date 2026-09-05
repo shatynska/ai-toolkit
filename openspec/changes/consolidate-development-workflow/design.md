@@ -146,127 +146,84 @@ states first that a real database is running and that integration tests run
 against it, and only then what must be provisioned before a result means
 anything.
 
-### 6. Three stage families, and every stage derivable
+### 6. Three stage families, generative, and no ledger behind them
 
 The report exists to be read by a session that was not present. Prose is
-re-interpreted at every hand-off; a name from a closed set is read once.
+re-interpreted at every hand-off; a name from a closed set is read once. A
+stage names a state, never an act — an act is what someone did, which a
+resuming session cannot read off the repository.
 
-Three families rather than two, because `ship:` is where a session *waits* — on
-a merge, on a deploy, on a confirmation it cannot make itself — and the only
-actionable content of a waiting state is which one it is.
+Three families rather than two, because `ship:` is where a session *waits*, and
+the only actionable content of a waiting state is which one it is.
 
-Each family carries its own review and its own relation to tests, and the
-vocabulary spends two words rather than one on the difference: `plan:tests` is
-tests written from the delta specs, `build:verify` is tests run against the
-implementation. One word for both is ambiguous exactly where a resuming session
-needs precision.
+**The transitions are the closed set and the states derive from them**, so the
+fragment states a rule and examples rather than nineteen names. An enumeration
+beside a generating rule is a second source that drifts from the first.
 
-**Derivability is what forces a change beyond naming**, and it does not hold
-uniformly across the vocabulary. Two kinds of name are in it:
+**Decision: nothing requires that every stage be derivable, and no ledger is
+mandated to make one so.** An earlier draft required both, and built
+a named ledger to hold eight kinds of record — dispatches, verdicts,
+dispositions, operator confirmations, waivers, blocks, abandonments and pull
+requests — with commit rules for the four that arrive when no further commit is
+coming. Two review rounds went into it.
 
-- a **transient** stage names an activity in progress — `plan:draft`,
-  `plan:revise`, `build:doing`, `build:verify`, `build:fix`. A session stopping
-  inside one leaves the artifacts and the tree it had reached; the next session
-  re-enters the activity rather than reading that it was in it. Safe, because
-  each is idempotent.
-- a **persistent** stage names something that happened, and every one of them
-  must leave a trace or it is unreportable by whoever comes next.
+It was over-built, and the operator's question is what showed it: the stage is
+reported for their information, so a stage that is one step off costs a sentence
+of correction. Six of the eight records were bought to make the stage exactly
+derivable, and that precision buys nothing anyone depends on.
 
-Three classes of persistent stage leave none today: a review in flight, a
-verdict received, and an operator's confirmation of what the repository does not
-show — a deploy's health or a production effect.
+Two records survive because each gates a decision rather than a report: **the
+review verdict and its disposition**, which the implementation gate checks and
+whose absence makes a session re-dispatch a real agent run; and **the
+production-confirmation waiver**, which the archive proceeds on and which is the
+only trace of why the trunk's specification describes behavior production does
+not have. Both go to the change's own artifacts, needing no named ledger. The
+abandonment record is a third, already obliged by the teardown gate as its own
+second route.
 
-A merge is deliberately not in that third class, and the distinction is worth
-keeping straight because a first draft got it wrong. The merge *stage* is
-traced: the forge reports it, and the teardown gate reads it. The operator's
-*confirmation* of the merge is still recorded, because a session may not infer a
-merge and because the deploy gate needs to know the confirmation was given — but
-`ship:merged` itself is derived from the forge, not from the record.
+`ship:waived` went with it. The waiver had no state of its own, so an earlier
+draft said a recorded waiver "satisfies `ship:confirmed`" — reporting a state
+that is not true so the change could move on. With the derivability requirement
+gone the patch has nothing to patch.
 
-**Decision: the dispatching or asking session records the dispatch, the verdict,
-what it did about the verdict, and each operator confirmation, in the change's
-own artifacts** — as `test-manifest.md` already records the one gate that does
-leave a trace. The dispatch is recorded when made, not when it returns, or the
-in-flight case stays lost.
+### 7. A change keeps one branch, brought back to the trunk after each merge
 
-A first draft of this decision recorded verdicts alone and asserted every stage
-derivable. That was false for half the vocabulary, and the transient/persistent
-split is what makes the remaining claim true rather than merely stated.
+Delivery merges a change's branch more than once — the work, then the record —
+so a session needs somewhere to put the record's commit. The obvious answer is a
+second branch, and three review rounds were spent on where to cut it from, what
+teardown covers when a change holds several, and how a later session enumerates
+a set it did not create.
 
-**Alternative rejected: amend the reviewer's output contract to write a file.**
-Wider blast radius, and wrong on ownership — what a session did with a verdict
-is the session's fact, not the reviewer's. A reviewer writing its own verdict to
-disk still would not record whether anything was done about it.
+**Decision: a change keeps one branch, and it is brought back to the freshly
+fetched trunk after each merge before work continues on it.** The remote branch
+is deleted on merge and the local one survives, so reusing it costs nothing; the
+property the multi-branch rule was actually buying — *start from the trunk* —
+is kept, since returning to the trunk is what stops the record's pull request
+re-presenting the work diff under a squash or rebase merge, and what keeps the
+archive applying to the specifications as they now are.
 
-### 7. The branch topology is its own requirement, because delivery is where a
-change stops having one branch
+The branch is also rebased onto the trunk periodically while the change is in
+progress, not only when it is cut: a change spanning several sessions otherwise
+first meets the trunk at its pull request.
 
-Every other phase holds exactly one branch. Delivery does not: the record takes
-one of its own, and each remedial cycle takes another. That makes three
-questions live that are dead everywhere else — where the post-merge commits are
-made, from what the record's branch is cut, and what teardown covers.
+**What this deletes** is the reason to record it here: a whole requirement, the
+branch records, teardown's coverage of a branch set and its
+enumeration, the reconciliation between the one-branch rule and delivery, and
+the proposal-only-branch exclusion — roughly 35 lines of a file every session in
+every adopting project reads. Three of the plan review's majors and one
+code-review high lived in that apparatus; the complexity was generating the
+defects rather than answering them.
 
-The post-merge commits are not incidental. Each operator confirmation, and a
-waiver where one is given, is written *after* the work merges, and is exactly
-what decision 6's recording obligation exists to produce.
+**The invariant is the change's, not the session's.** A change outlives the
+sessions that work on it, which is what the orientation report exists for, so
+binding branch and working tree to the session would let a change acquire
+another of each whenever a new session picked it up. Sessions on one change run
+one after another, never concurrently — concurrent ones would share a working
+tree.
 
-**Decision: every branch a change creates, the record's included, is cut from
-the freshly fetched trunk, and the record's branch carries the operator
-confirmations, any waiver, and the archive commit.** A remedial cycle keeps its
-own gate records on its own branch, with the code they gate — a rule over every
-post-merge commit would put a fix's diff in the record's pull request, which is
-the defect this route was chosen to avoid. This is the branch-creation rule the fragment already states for a
-session's first branch, applied unchanged — delivery adds branches, not an
-exception.
-
-**A first draft cut the record's branch from the work branch's tip**, reasoning
-that confirmations written before the merge would otherwise be stranded on a
-branch teardown deletes. That reasoning is self-refuting: the record's branch is
-created *after* the work merges, so everything on the work tip is already on the
-trunk and nothing can be stranded. What the draft actually did was reintroduce
-the defect it cited to reject its own alternative — cut from a squash-merged or
-rebase-merged work branch, the record's branch shares no commit with the trunk's
-version of that work, so the record's pull request re-presents the entire work
-diff. It also left the record branch cut from a trunk-that-was, so an archive
-applied to specifications another change had edited in the interval conflicts.
-
-**Teardown therefore covers every branch the change created**, not "the branch",
-and each is checked on its own pull request rather than derived from another's
-state — they are siblings now, not a chain. Which means the set must be
-enumerable by a session that created none of it, so each branch is recorded in
-`gate-log.md` when cut and each pull request when opened. The branch is recorded
-at the earlier moment because the record's branch can exist for several sessions
-before its pull request does, and a change abandoned in that window would
-otherwise hold a branch no enumeration reaches.
-
-The set is the branches carrying the change's own work — work, remedial, record.
-A proposal-only branch belongs to the change it proposes and is excluded, or
-teardown would enumerate a branch that will never have a pull request to check
-it against.
-
-**The topology is its own requirement rather than a block inside delivery.**
-It churned across three review rounds, teardown depends on it, and a requirement
-headed on a pull-request count is the wrong place for a rule about where
-branches come from — the same mismatch that made three predecessor requirements
-replaceable rather than modifiable in this change.
-
-**Teardown's merge clause requires at least one merged pull request, not merely
-that every one merged.** A change abandoned before any pull request was opened
-satisfies the universal vacuously, and a gate passed by having done nothing
-would authorise deleting unmerged work on exactly the class of change the
-abandonment route exists to serve.
-
-**And the clause is stated against the pull request, not against ancestry.** A squash or rebase merge puts a branch's changes on the trunk
-without making it an ancestor, so `git branch --merged` reports every branch of
-every change unmerged in such a project and teardown never happens — the
-accumulation the gate exists to prevent, produced by the check that authorises
-removal. This exposure predates the change; what the change adds is a gate
-covering three branches instead of one, which is what made it worth fixing here.
-
-**Alternative rejected: keep the record commit on the work branch and re-push
-it.** Fewer branches, but it contradicts the delivery requirement's own "a
-commit of its own, on a branch of its own", and the record's pull request would
-carry the work's diff a second time — the same defect, reached another way.
+**Alternative rejected: a second branch cut from the trunk.** Correct, and what
+this change carried through six review rounds. It buys nothing the reuse does
+not, and costs the enumeration machinery above.
 
 ### 8. A healthy deploy is not the change working
 
@@ -344,7 +301,29 @@ a session arriving does not know and a session leaving does — and because,
 arriving, it must come from a real run made after provisioning or be reported as
 *not run, and why*.
 
-### 10. The change queue is a separate artifact from the deferred-work file
+### 10. An identified change is opened with a handoff, not a proposal
+
+A session that identifies a change it will not work on may open it on a branch
+of its own. What it puts there was a `proposal.md`, and that is wrong twice: a
+proposal is the artifact the workflow reviews before anything is built, so one
+written in passing draws a review round it has not earned; and it is a formed
+document, which a session with no time for it either writes badly or does not
+write at all.
+
+**Decision: the identified change carries a `handoff.md` and no proposal.** It
+holds what the originating session knows and the next will not — why the change
+was identified, what the originating work established that bears on it, and what
+it must not undo. The session that takes the change up writes the proposal, with
+the handoff as input.
+
+This is not a lighter proposal. A proposal states what will be built and is
+reviewed; a handoff states what was learned and is read. Naming them apart is
+what stops the second being treated as the first.
+
+**Alternative rejected: `brief.md` or `notes.md`.** Both read as a proposal in
+draft, which invites exactly the treatment the decision exists to prevent.
+
+### 11. The change queue is a separate artifact from the deferred-work file
 
 `docs/deferred-work.md` exists in this repository and in `commerce-ops`, holding
 what the project deliberately has not done, deleted when it stops being true.
@@ -380,15 +359,9 @@ Reversible — a path in one fragment and one requirement.
   The reasoning survives in the requirements, which are retargeted rather than
   rewritten. What is discarded is the conditionals, which is the intent.
 
-- **`gate-log.md` is a new artifact at every change's root.** → Named rather
-  than left to "the change's artifacts", for the reason every other path in this
-  capability is named: an unlocated record is one a resuming session searches
-  for and two sessions file in two places. Its entries are committed with the
-  next commit the session proposes where one is coming in that session, so the
-  fragment's suggest-before-committing rule does not make every gate cost two
-  confirmations. Four cases commit on their own, because for them no next commit
-  arrives: every post-merge entry, the record's own pull request, an abandonment
-  record, and a block written by a session that is ending.
+- **Two records land in every change's artifacts.** → Each gates a decision a
+  later session must make. An earlier draft required six more, to make the
+  stage exactly derivable; that went with the derivability requirement.
 
 - **Recording dispatches, verdicts and confirmations adds an artifact to every
   change, and adds writes mid-flow.** → Each write is a line, and it replaces a

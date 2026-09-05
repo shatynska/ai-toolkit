@@ -1,9 +1,9 @@
 # Test manifest — consolidate-development-workflow
 
-Written by `ai-toolkit:openspec-test-writer` against the change's delta
+Written by `ai-toolkit:change-test-writer` against the change's delta
 specs, before implementation. Not an artifact the OpenSpec schema defines,
 so `openspec instructions apply` does not surface it — see
-`rules/test-manifest.md`.
+`rules/test-plan.md`.
 
 Test command: `bash tests/run.sh`. Test-path glob: `tests/cases/**`.
 
@@ -92,7 +92,7 @@ TOOLKIT_ROOT="$PWD" TESTLIB="$PWD/tests/lib.sh" TESTDIR="$(mktemp -d)" \
 | `tests/cases/workflow-fragment-no-dangling-reference.sh` | Neither fragment's body names a `rules/` path, a fragment filename, or an `@` import; `docs/deferred-work.md` scrubbed first as a project file the fragment is obliged to name | 1.16, 2.4 |
 | `tests/cases/workflow-fragment-states-assumptions.sh` | The workflow fragment names the remote, the forge, continuous integration and the deploy, and states the delivery route; the two predecessor conditionals do not reappear verbatim | 1.2 |
 | `tests/cases/workflow-fragment-stage-vocabulary.sh` | All nineteen stage names are stated; `plan:verify` and `build:tests` appear nowhere | 1.8 |
-| `tests/cases/workflow-fragment-gate-log.sh` | The fragment names `gate-log.md` and `test-manifest.md` | 1.8, 1.9 |
+| `tests/cases/workflow-fragment-gate-log.sh` | The fragment names `gate-log.md` and `test-plan.md` | 1.8, 1.9 |
 | `tests/cases/workflow-fragment-fixed-paths.sh` | The fragment names `.claude/worktrees/`, `docs/change-queue.md` and `docs/deferred-work.md` | 1.4, 1.14 |
 | `tests/cases/workflow-fragment-names-test-inputs.sh` | The fragment states the test-design gate and asks the project for a `test command` and a `test-path glob` | 1.15 |
 | `tests/cases/workflow-fragment-service-neutral.sh` | The fragment states the namespace obligation and names no concrete engine or container runtime | 1.6 |
@@ -238,7 +238,7 @@ Every one is accounted for exactly once.
 | An operator's confirmation is not lost with the conversation | Covered in part — `workflow-fragment-gate-log.sh` |
 | A transient stage is re-entered rather than recovered | Uncovered — prose property; the transient/persistent classification is verified by reading (tasks 1.8, 6.7) |
 | Writing tests and running tests are not one word | Covered in part — `workflow-fragment-stage-vocabulary.sh` asserts both names exist and neither crossed form (`plan:verify`, `build:tests`) appears. What each name *means* is prose |
-| A change waiting on a deploy is distinguishable from one waiting on a merge | Covered in part — `workflow-fragment-stage-vocabulary.sh` asserts `ship:merged`, `ship:pr`, `ship:deployed` and `build:clear` are distinct stated names |
+| A change waiting on a deploy is distinguishable from one waiting on a merge | Covered in part — `workflow-fragment-stage-vocabulary.sh` asserts `ship:merged`, `ship:pr-open`, `ship:deployed` and `build:cleared` are distinct stated names |
 
 ### ADDED — A change is delivered through at least two pull requests, the last carrying its record (11)
 
@@ -260,7 +260,7 @@ Every one is accounted for exactly once.
 
 | Scenario | Status |
 |---|---|
-| The merge confirmation is committed on the record's branch | Uncovered — session behavior |
+| The merge confirmation is committed on the change's branch | Uncovered — session behavior |
 | A record branch does not re-present the work's diff | Uncovered — session behavior |
 | A later session can enumerate a change's branches | Covered in part — `workflow-fragment-gate-log.sh` asserts the enumeration's artifact is named. That each branch and pull request is recorded is prose (task 1.12) |
 
@@ -327,7 +327,7 @@ Every entry below is a **candidate for human confirmation**, not a
 conclusion. This pass edited and deleted nothing. Task 5.4 applies these.
 
 Search bound: `tests/cases/**`, the dispatched glob, and nowhere else. No
-earlier `test-manifest.md` was supplied to this pass, so the mapping from
+earlier `test-plan.md` was supplied to this pass, so the mapping from
 requirement to case was reconstructed from each case's own header comment
 and from `tests/coverage.md`'s `session-workflow` section. A case whose
 header names no scenario would not have been found by this search.

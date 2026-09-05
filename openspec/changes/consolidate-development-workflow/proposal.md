@@ -73,15 +73,17 @@ The expensive property was never universality. It was independence.
 
 - **A change's stage is named from a fixed vocabulary of three families**, and
   every stage is derivable from the repository. `plan:` and `build:` each carry
-  their own review and their own relation to tests — `plan:tests` is tests being
-  written from the delta specs, `build:verify` is tests being run against the
+  their own review and their own relation to tests — `plan:tests-derived` is tests being
+  written from the delta specs, `build:verifying` is tests being run against the
   implementation. `ship:` is where a session waits, and is a family of its own
   because the only actionable content of a waiting state is which one it is.
 
-- **A review's verdict, and what was done about it, is recorded in the change's
-  artifacts.** This is what makes the middle of the vocabulary derivable. The
-  recording is the dispatching session's obligation; `change-review` owns the
-  reviewer's output contract and is not amended.
+- **Two records are required, and only two.** A review's verdict and what was
+  done about it, because the implementation gate checks it; and a
+  production-confirmation waiver, because the record is archived on the strength
+  of it. Both to the change's own artifacts. An earlier draft mandated a ledger
+  holding eight kinds of record so every stage would be exactly derivable; that
+  precision buys nothing anyone depends on, and it went.
 
 - **Delivery is at least two pull requests, unconditionally.** The work merges
   and deploys; the deploy is confirmed healthy; the change's intended effect is
@@ -110,21 +112,14 @@ The expensive property was never universality. It was independence.
 - **Identified work is routed to `docs/change-queue.md`**, distinct from
   `docs/deferred-work.md`, with each artifact's deletion condition stated.
 
-- **Four rules are taken from the two projects already running this workflow**,
-  where they were found by hand and are absent from the library: a check that
-  did not run is never counted as one that passed, so continuous integration is
-  configured to fail on a dependency it cannot reach rather than skip; a commit
-  or push hook that was never installed is not an authority a completion claim
-  may rest on; a secret is kept out of version control by the ignore file rather
-  than by vigilance at commit time; and **the project states its test command and
-  its test-path glob** in its own conventions, because the fragment's own
-  test-authoring step dispatches an author that requires both and the fragment
-  never asked for them.
-
-  Two of these reach past the fragment's own text: adopting v3 obliges a project
-  to configure its continuous integration and to state two values in its
-  conventions file. That is a wider obligation than the other bullets carry, and
-  it is named here rather than left to be discovered at adoption.
+- **Four rules found in the two projects already running this workflow are
+  recorded rather than added.** Continuous integration failing rather than
+  skipping, a hook not being an authority, secrets excluded by the ignore file,
+  and the project stating its test command and glob are each one-time setup
+  obligations a session never performs — and the last is already
+  `project-foundation`'s. They go to `docs/change-queue.md`, and a requirement
+  states that a setup obligation found while writing the fragment is recorded,
+  not added.
 
 - **One thing does not go into v3: the database.** `rules/development-workflow-database.md`
   binds v3's service-neutral provisioning and namespace obligations to a
@@ -157,17 +152,17 @@ The expensive property was never universality. It was independence.
   fragment. Most requirements survive with their subject retargeted and their
   independence conditionals dropped; the requirement fixing the set at three is
   removed, as is the one forbidding a version on a fragment nothing inlines.
-  Eight requirements are ADDED. Three — teardown, delivery and the change queue
+  Seven requirements are ADDED. Three — teardown, delivery and the change queue
   — are renamed replacements for REMOVED ones, replaced rather than modified
-  because their existing scenarios encode properties this change drops. Five are
-  genuinely new: the publication shape, the stage vocabulary, the branch
-  topology and post-merge commit placement, the gates-that-did-not-run rules,
-  and the database binding. Of the five MODIFIED requirements, three
-  retarget their subject from the three fragments to the workflow fragment and
-  drop the independence conditionals with their substance otherwise unchanged.
-  Two gain substance: the report requirement adds the fixed row, the departure
-  report and two cells, and the one-branch requirement adds a paragraph
-  reconciling its rule with the further branches delivery creates.
+  because their existing scenarios encode properties this change drops. Four are
+  genuinely new: the publication shape, the stage vocabulary, the
+  gates-that-did-not-run rules, and the database binding. Of the five MODIFIED requirements, two
+  retarget their subject from the three fragments to the workflow fragment with
+  their substance otherwise unchanged. Three gain substance: the report
+  requirement adds the fixed row, the departure report and two cells; the
+  one-branch requirement restates the invariant as the change's rather than the
+  session's and adds the return to the trunk and the periodic rebase; and the
+  rule-phrasing requirement adds the brevity rules and the precedence clause.
 
 `project-bootstrap` owns how the workflow fragment reaches a project — the
 managed block, the version, the ordered sequence and the dispatch bound. Those
@@ -195,15 +190,13 @@ managed block the database fragment needs belongs to the follow-up change.
 - `docs/deferred-work.md` — gains a cross-reference to the change queue, and its
   two entries argued from `add-session-workflow-fragments` name a fragment this
   change deletes.
-- A `gate-log.md` at every change's root — the artifact the recording rules
-  write to.
+- The change's own artifacts gain two records: a review verdict with its
+  disposition, and a production-confirmation waiver where one is given.
 - `tests/` — the cases asserting the three fragments' content, their frontmatter
   and their fixed paths, plus the inlined-body and version-coupled cases that
   now cover a changed fragment.
-- **Every project adopting v3** — its continuous-integration configuration must
-  fail rather than skip on an unreachable dependency, and its conventions file
-  must state a test command and a test-path glob. This is the only obligation in
-  this change that reaches outside the library's own files.
+- No obligation in this change reaches outside the library's own files. The
+  four that would have are queued for the capability that owns project setup.
 - `commerce-ops` — first consumer. Adopting v3 means deleting its hand-written
   session rules and reconciling `docs/proposed-change-order.md` against
   `docs/change-queue.md`. That project's work, not this change's.

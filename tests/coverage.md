@@ -1,11 +1,12 @@
 # Scenario coverage
 
 Accounts for every `#### Scenario:` in the delta specs of the changes that
-have shaped this suite — `add-project-workflow`, which established it, and
+have shaped this suite — `add-project-workflow`, which established it,
 `revise-development-workflow`, which added 13 scenarios across two
-capabilities — per `change-test-authoring`'s counting form: covered by a
+capabilities, and `consolidate-development-workflow`, which replaced the
+`session-workflow` accounting entirely — per `change-test-authoring`'s counting form: covered by a
 named case, or uncovered with a reason. See `README.md` for why this suite is
-written directly rather than through `openspec-test-writer`, and for the
+written directly rather than through `change-test-writer`, and for the
 second, narrower exemption `revise-development-workflow` records there.
 
 Most scenarios this suite cannot cover are of one kind, and it is worth
@@ -58,7 +59,7 @@ That is a stated limit of what this harness can reach, not an omission.
 | Discovery is named, not started | Covered — `empty-directory-new-project.sh` (asserts no foundation change directory exists) |
 | Behavior is identical on a system shipping an older bash | Uncovered by this suite — requires an actual bash 3.2 host, which this runner does not have; verified instead by hand-review for 4.x-only constructs (tasks 5.17, 5.19) and ShellCheck (5.16, 5.18) |
 | A plausible wrong tool is excluded by name | Covered — `fragment-role-before-tool.sh` (asserts a negative binding is stated) |
-| An excluded tool's own contract is what the exclusion rests on | Uncovered — the reason's *accuracy* against `agents/openspec-change-reviewer.md` is a judgment, not a string match; verified by reading |
+| An excluded tool's own contract is what the exclusion rests on | Uncovered — the reason's *accuracy* against `agents/change-plan-reviewer.md` is a judgment, not a string match; verified by reading |
 | A stage boundary names an observable rather than a stage | Uncovered — a property of the fragment's prose; verified by reading |
 | An obligation dispatched against incomplete inputs is prevented, not merely discouraged | Uncovered — prose property; verified by reading |
 | A missing precondition halts rather than annotates | Uncovered — prose property; verified by reading |
@@ -114,42 +115,53 @@ content in section 7) and by `openspec validate --strict`, which confirms
 every `MODIFIED` header matches an existing requirement and no scenario
 already in `specsRoot` was dropped.
 
-## specs/session-workflow/spec.md (37 scenarios)
+## specs/session-workflow/spec.md (66 scenarios)
 
-This change ships no executable. Its deliverable is three markdown fragments
-under `rules/`, so the scenarios divide by what a shell case can reach: a
-property of the finished files, or a description of what an agent following
-them would do.
+Rewritten by `consolidate-development-workflow`. The three fragments the
+previous accounting described — `worktree-isolation.md`, `change-delivery.md`
+and `deferred-work.md` — no longer exist: their obligations are sections of
+`rules/development-workflow.md` v3, with the database binding beside it as
+`rules/development-workflow-database.md`. Six cases went with them; the
+per-scenario ledger is in that change's `test-plan.md`.
 
-**One covered in full** — "A fragment carries no version claim"
-(`session-fragment-frontmatter.sh`).
+The deliverable is still markdown rather than an executable, so the scenarios
+divide the same way: a property of the finished files, or a description of
+what an agent following them would do.
 
-**Seven covered in part**, each with the unasserted half named in the
-change's `test-manifest.md`: the two adoptability scenarios and "The gate is
-checkable without a delivery fragment" (`session-fragments-name-no-sibling.sh`,
-`change-delivery-names-no-working-tree.sh`), "A recursive tool does not
-descend into sibling working trees" and "The deferred-work file does not yet
-exist" (`session-fragments-name-fixed-paths.sh`), "A project carrying both
-fragments has one rule to follow, not two"
-(`deferred-work-states-workflow-seam.sh`), and "A fragment is adopted without
-tooling" (`session-fragments-not-inlined.sh`).
+**None covered in full.** That is a fact about the harness rather than a gap.
+This capability governs what a document must *say*, so every scenario carries
+a prose half a shell case cannot reach — the limit this file already records
+above.
 
-**Twenty-nine uncovered**, for two reasons. Most describe what a session
-*does* — report verification as not run rather than as a pass, decline to
-inherit a surviving namespace, halt teardown on uncommitted work. There is no
-program in this repository to run them against, the same limit this file
-already records for `project-foundation` and the `toolkit-structure` delta.
-The rest are properties of prose: whether a rule's durable half is its
-instruction, whether creation and teardown are *stated* as one invariant,
-whether provisioning is phrased as a state rather than an act. A token scan
-cannot tell a rule from a mention, and one built to try would fail on a
-faithful wording. Tasks 4.1, 4.2, 4.4, 4.6 and 4.7 direct each of these by
-reading, and say so.
+**Twenty-two covered in part** by the eleven cases
+`consolidate-development-workflow` added: `workflow-fragment-publication-set.sh`,
+`workflow-fragment-no-dangling-reference.sh`,
+`workflow-fragment-states-assumptions.sh`,
+`workflow-fragment-stage-vocabulary.sh`, `workflow-fragment-gate-log.sh`,
+`workflow-fragment-fixed-paths.sh`, `workflow-fragment-names-test-inputs.sh`,
+`workflow-fragment-service-neutral.sh`,
+`database-fragment-affordance-before-obligation.sh`,
+`database-fragment-per-working-tree.sh` and
+`database-fragment-frontmatter.sh`. Each names its unasserted half in the
+manifest.
 
-Two candidates were declined rather than approximated, and the reasoning is
-in `test-manifest.md` under *Deliberately untested*. The namespace-release
-check (task 4.6) is the sharper one: requirement 6 obliges
-`worktree-isolation.md` to *state* that it allocates and does not release, so
-a correct fragment necessarily contains a sentence carrying both a release
-verb and the word "namespace" — any lexical scan for that pair fails on a
-compliant fragment.
+**Forty-four uncovered**, for the two reasons this file already gives: most
+describe what a session *does* — report verification as not run rather than
+as a pass, wait for a confirmation rather than infer it, halt teardown on
+uncommitted work — and there is no program here to run them against; the rest
+are properties of prose that a token scan cannot tell from a mention.
+
+Four are worth naming individually, because they are untestable by any
+harness rather than by this one:
+
+- **"A second publication does not arrive unowned"** constrains what this
+  capability's own specification must own when a publication that does not
+  exist is written. There is no artifact to assert against.
+- **"A tier that skipped does not report a pass"** and **"A secret takes an
+  override to commit, not an oversight"** bind a consuming project's
+  continuous-integration configuration and ignore file, neither of which is in
+  this repository.
+- **The code-review bound of three** is deliberately untested: the fragment
+  states a different bound — six rounds — for the plan-review loop, and no
+  lexical scan tells which loop a number belongs to. This is the same shape as
+  the declined namespace-release check the previous accounting recorded.

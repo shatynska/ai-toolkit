@@ -34,6 +34,14 @@
 
 ### Requirement: A rule states an action and a defect appears only as its reason
 
+**A rule SHALL state what to do, and reasoning SHALL appear only where it changes what a reader does.** The fragment is inlined into a consuming project's conventions file and read by every session there, so its length is paid for on every read — brevity is the reason for the obligations below, not itself an obligation whose satisfaction anyone can test.
+
+Three kinds of text SHALL NOT appear in the fragment, because each is written for this library rather than for the project holding the file: an argument against an alternative the fragment does not adopt, a statement about what other project shapes would need, and a justification for the fragment's own structure. Where such reasoning is worth keeping, it belongs in the change that decided it.
+
+**Where this rule and a requirement obliging the fragment to state a particular reason conflict, the obliged reason wins.** A requirement that names a reason has decided that the reason changes what a reader does; brevity governs what is left. Unstated, the conflict is resolved by whoever edits last, which is how six mandated statements were dropped in a single compression pass.
+
+Where such reasoning is additionally published so a session can seek it out — a skill, say — that publication SHALL carry reasoning only: an instruction, a gate, an exemption, or an edge case whose answer differs SHALL stay in the fragment, because a separately published document is loaded when something judges it relevant and there is no guarantee that happens at the moment it is needed. The fragment SHALL remain sufficient on its own. This binds any such publication when one is written; none exists today.
+
 Each session-derived rule in the workflow fragment, and each rule in the database binding fragment, SHALL be phrased as an action to take. A defect, incident, or current shortcoming MAY appear only as the reason a stated action matters, never as a standing entry of its own.
 
 Each rule SHALL be phrased so that its durable half is the instruction and its perishable half is the consequence. A rule built around a defect goes stale when the defect is fixed and, until someone notices, contradicts the fix.
@@ -44,6 +52,11 @@ A rule SHALL NOT be omitted on the grounds that the defect motivating it is bein
 
 - **WHEN** the defect a rule cites as its reason is subsequently fixed, or is enforced more strictly
 - **THEN** the rule's instruction is unchanged and still correct, and only the consequence it names is out of date
+
+#### Scenario: The fragment carries no argument written for the library
+
+- **WHEN** a rule is written into the fragment
+- **THEN** it states what to do and, where reasoning changes what a reader does, states it in as few words as carry it — and carries no argument against a rejected alternative, no account of what another project shape would need, and no justification for the fragment's own structure
 
 #### Scenario: An incident does not become a standing entry
 
@@ -60,9 +73,11 @@ The workflow fragment SHALL require a session, on entering a working tree, to re
 
 The fixed row is required rather than recommended because the report's whole purpose is to be read by a session that was not present. Prose is re-interpreted at every hand-off; a row in a known shape is read at a glance, and a missing cell shows as a gap rather than passing as an omission nobody notices.
 
-That report SHALL be derived from the repository — the change's own artifacts, the commit log, and, except as the composition clause below provides, an actual run of the verification — and SHALL NOT be assembled from recalled conversation. A session entering a working tree is resuming work some other session left there, and the working tree is the only party that knows how far it got.
+That report SHALL be derived from the repository where the repository holds the fact — the change's own artifacts, the commit log, the forge, and an actual run of the verification. Where a fact is in none of them, the fragment SHALL direct asking rather than assuming.
 
-The fragment SHALL state how this composes with provisioning, because the two do not compose on their own. The stage and the committed state are readable from the repository immediately. A verification result is not: a working tree that has not been provisioned produces a run that skips and reports success, so an orientation report assembled before provisioning states that verification passes on exactly the evidence the provisioning requirement below says is worthless. The fragment SHALL therefore require that the verification cell come either from a run made after provisioning is complete, or be reported as *not run, and why* — never from a run made against an unprovisioned tree.
+**The obligation SHALL NOT be stated as a prohibition on recalled conversation.** An earlier form did, and it was true only while a ledger recorded every gate. With that removed, an operator's confirmation of a merge or a deploy is in no artifact, so a session that may not recall and has nothing to read is left with no route at all. Asking is the route, and it is stated.
+
+The fragment SHALL state how this composes with provisioning, because the two do not compose on their own. The stage and the committed state are readable from the repository immediately. A verification result is not: a working tree that has not been provisioned produces a run that skips and reports success, so an orientation report assembled before provisioning states that verification passes on exactly the evidence the provisioning requirement below says is worthless. The fragment SHALL therefore require, at the provisioning rule and not at the report, that verification be reported as *not run, and why* until provisioning is complete. Stating it in both places puts a sentence about provisioning inside the description of a table cell, where the reason cannot fit and the rule is already stated a page earlier.
 
 Nothing here licenses skipping the report. Orientation still precedes the work; what it may not do is present an unprovisioned tree's green as a result.
 
@@ -93,29 +108,45 @@ Nothing here licenses skipping the report. Orientation still precedes the work; 
 
 ### Requirement: One session works in one branch and one working tree
 
-The workflow fragment SHALL state what its working-tree rules govern before stating them: a working tree in which a session is doing a change's work. A working tree whose lifetime is bounded by the single act of tooling that created it, and which carries no branch destined for the trunk — a cold-run check of an agent under authoring, for example — is outside them.
+**Every working-tree rule SHALL be keyed to the change**, not to the session or to working trees in general: a change's branch, a change's working tree, the change's record. So phrased, the rules bind nothing that is not a change's, and a working tree tooling creates for a single act — a cold-run check of an agent under authoring, for example — falls outside them without an exclusion being written.
 
-The discriminator is the branch and the lifetime, not the contents. A working tree created from a committed ref carries whatever that commit held, a change's own artifacts included, so "holds no change" would exclude nothing and would leave the exemplar named here inside the rules it is named to be outside of.
+An earlier form keyed the rules to a session's working tree and needed such an exclusion, since a cold-run tree is also a session's. It also needed a clause saying that contents do not decide the question, because a working tree created from a committed ref carries whatever that commit held, a change's own artifacts included. Keying to the change removes both.
 
-Without that scope the rules bind every working tree there is, including ones that can satisfy neither the one-tree rule nor either route of the teardown gate, because they hold no change in whose artifacts an abandonment could be recorded. This repository's own `agent-authoring` capability already mandates such a working tree, so the collision is present rather than hypothetical.
+The fragment SHALL NOT carry the exclusion. A scope statement defending against a reading the text no longer invites is text a reader must understand before discovering it is inert, and the case that motivated it — `agent-authoring`'s mandated cold-run working tree — exists in this library and not in the projects the fragment is written for.
 
-The fragment SHALL require each session to work in a working tree of its own, on a branch of its own, created from the trunk freshly fetched from the remote.
+**The fragment SHALL state the invariant as one change, one branch, one working tree**, not as one session's. A change outlives the sessions that work on it — which is what the orientation report above exists for — so binding the branch and the working tree to the session says a change may acquire another of each whenever a new session picks it up.
 
-The rule governs the branch a session works on at any moment, not the number of branches a change accumulates over its life. Delivery creates further branches — a record's, and one per remedial cycle — each cut from the trunk in the same way, and the fragment SHALL state that here rather than leave a reader to meet the one-branch rule and the delivery sequence as two rules that disagree. The obligation that a session carries only one change at a time belongs to the change-queue requirement below and is not restated here.
+The fragment SHALL state that several sessions may work on one change, one after another and never concurrently, and that a session resuming a change enters the working tree that change already has. Two concurrent sessions on one change would share a working tree, which the containment reason below forbids.
 
-It SHALL name the location of a session's working tree as a single fixed path within the repository — `.claude/worktrees/`, one directory per working tree — rather than describing it as a path the project chooses. The path is named because the tooling that creates these working trees places them there; leaving it unnamed would put the containment obligations below out of reach of anyone checking them.
+**A change SHALL keep that one branch from proposal to record.** Delivery merges it more than once — the work, then the record — and the fragment SHALL direct bringing it back to the freshly fetched trunk after each merge before continuing on it.
 
-It SHALL state the two containment obligations that location carries:
+The fragment SHALL also direct fetching the trunk periodically and rebasing onto it while the change is in progress, not only when the branch is cut. A change that spans several sessions diverges from a trunk other changes are merging into, and a divergence first met at the pull request is one nobody chose the moment to deal with.
 
-- the working-tree root is named in the repository's ignore file; and
-- every recursive tool the project runs that does not read that ignore file — test collection, linters, type checkers, container build context — is scoped explicitly so it cannot descend into it.
+**Fetching, rebasing and merging SHALL be scoped separately, and the fragment SHALL give a route for each part of the change's life rather than stopping at one.** Fetching is not destructive and continues throughout. Before the branch is pushed, the trunk is brought in by rebasing. After, it is brought in by merging, since a rebase then needs a force push over a branch under review where a merge does not.
 
-Without both, one session's run silently includes every other session's copy of the source tree, and a forced clean of the parent destroys unmerged work in every session at once.
+Stated as a single instruction that stops at the push, the rule leaves a session with no way to stay current for the whole of `ship` — which is where a change waits longest and the trunk moves most. An incomplete route is worse than a stated one: a session that needs the trunk and has been told only what not to do will force-push.
+
+Reusing the branch is stated rather than left open because the alternative a session would otherwise reach for is a second branch, and the reasoning against it is not obvious: a branch left at its pre-merge tip re-presents the whole work diff in the record's pull request under a squash or rebase merge, and a trunk that advanced while the deploy ran is diverged from rather than fetched. Returning to the trunk answers both, and one branch per change makes the teardown gate a check on one branch rather than on a set no later session can enumerate.
+
+The obligation that a session carries only one change at a time belongs to the change-queue requirement below and is not restated here.
+
+It SHALL name the location of a change's working tree as a fixed path within the repository — `.worktrees/`, one directory per working tree — rather than describing it as a path the project chooses, since the containment obligations below are checks against a path and a path left to choice makes them uncheckable.
+
+The path SHALL be harness-neutral. Where a harness creates working trees at a path of its own and will not enter one elsewhere, that path SHALL be named beneath the rule as that harness's binding, and the containment obligations SHALL cover both roots. Naming a harness's directory in the rule itself would put one tool inside an obligation the fragment states tool-neutrally.
+
+**The containment obligations that location carries SHALL NOT be stated in the fragment.** Naming the working-tree root in the repository's ignore file, and scoping every recursive tool that does not read that file so it cannot descend into one, are discharged once when a project is set up and once when a tool is added — never by a session working a change. They belong to the capability that owns project setup, per the requirement below, and are recorded there.
+
+Naming them here would put two setup acts in a document read on every change, to prevent sibling trees filling `git status`, `git add -A` committing one as an embedded repository, and one session's run including another's source tree. Each is worth preventing; none is prevented by a session reading a rule.
 
 #### Scenario: A working tree carrying no change is not held by these rules
 
 - **WHEN** tooling creates a working tree that holds no change and no branch destined for the trunk — a cold-run check, say — and removes it when done
 - **THEN** the one-tree rule and the teardown gate do not bind it, because the fragment scopes its rules to a working tree carrying a session's change
+
+#### Scenario: A long-running change does not first meet the trunk at its pull request
+
+- **WHEN** a change spans several sessions while other changes merge to the trunk
+- **THEN** the fragment has directed fetching and rebasing onto the trunk periodically, so divergence is met while the work is in hand rather than at the pull request
 
 #### Scenario: Two sessions do not share a working tree
 
@@ -190,14 +221,20 @@ Reclaiming a namespace once its working tree is gone is **not** stated by the wo
 
 ### Requirement: The session obligations are published in the workflow fragment and one binding fragment
 
-The obligations this capability governs SHALL be published in two places and no more:
+The obligations this capability governs SHALL be published in two places, and in no further place that a session must read to act correctly:
 
 - `rules/development-workflow.md` — the workflow fragment, which states every obligation service-neutrally alongside the spec-driven gates it already carries, and which `scripts/project-init` inlines into a consuming project's conventions file;
 - `rules/development-workflow-database.md` — the binding fragment, which binds the workflow fragment's provisioning and namespace obligations to a containerized relational database.
 
 The workflow fragment SHALL state a role and name its binding beneath it, as it already does for specification tooling. The binding fragment SHALL NOT restate an obligation the workflow fragment states; it names the service, the naming form and the operations that reach the stated end state.
 
-**The workflow fragment SHALL assume a remote, a forge that reports a pull request's merged state, continuous integration, and that merging to the trunk deploys, and SHALL state no conditional for their absence.** Every project these rules are written for has all four. A conditional for a shape no consumer has is paid for by every reader of every project that does have one, and it is the class of text that made the previous publication expensive.
+**The fragment SHALL name its unit of work before stating any rule about it.** The unit is a change, and every rule below is a rule about a change's life; a document that never says so leaves a reader to infer it from the rules themselves.
+
+**It SHALL state what falls outside that unit and what happens to it.** Work too small to be a change skips `plan` — there is nothing to specify — and does not skip `ship`, since nothing reaches production except by merging. Unstated, the reader has two readings and neither is written down: that trivial work carries the whole process, or that it escapes the delivery rules too.
+
+The qualifier SHALL sit in the opening rather than inside a rule. It governs whether the document applies at all, and a scope condition met halfway through has already been read as unconditional by anyone who stopped earlier.
+
+**The workflow fragment SHALL assume a remote, pull requests, continuous integration, and that merging to the trunk deploys, and SHALL state no conditional for their absence.** Pull requests imply the forge whose merged-state report the teardown gate reads; naming it separately in the assumptions states twice what the gate states once. Every project these rules are written for has all of them. A conditional for a shape no consumer has is paid for by every reader of every project that does have one, and it is the class of text that made the previous publication expensive.
 
 A project of a shape these assumptions do not fit is served by a publication of its own rather than by a conditional here. A second publication is written when there is something to write it for; a conditional is carried forever whether or not anything needs it.
 
@@ -231,93 +268,97 @@ Where this capability states a loop, it SHALL state the value, what happens on r
 - **WHEN** a publication for another project shape is written
 - **THEN** this capability owns it alongside the workflow fragment and the binding fragment, and states each shared obligation once naming which publications it binds
 
-### Requirement: A change's stage is named from a fixed vocabulary, and every stage is derivable
+### Requirement: A change's stage is named from a fixed vocabulary
 
 The report of where a change stands SHALL name the stage from a fixed vocabulary rather than describing it in prose. A prose description is re-read and re-interpreted by every session that resumes the work; a name from a closed set is read once.
 
-The vocabulary SHALL be three prefixed families, ordered, corresponding to the three gates a change passes:
+**A stage SHALL name a state, never an act.** An act names what someone did or will do; a state names what is now true, which is what a report is for. The acts are the transitions between states, and the fragment SHALL state them, since the state names derive from them:
 
-- `plan:` — `draft`, `review`, `revise`, `approved`, `committed`, `tests`
-- `build:` — `doing`, `verify`, `review`, `fix`, `clear`
-- `ship:` — `pr`, `merged`, `deployed`, `confirmed`, `record`, `done`
+```
+plan:   explore · draft · review · fix · approve · commit · derive tests
+build:  apply · verify · review · fix
+ship:   open pr · merge · deploy · confirm · archive
+```
 
-Off the ordered path, two further names SHALL be available in any family: `blocked:<what>` and `abandoned`.
+A state SHALL be `<family>:<transition>ing` while that transition runs and `<family>:<transition>ed` once it has happened.
 
-A recorded waiver of the production-confirmation gate SHALL satisfy `ship:confirmed` for reporting. A waived change never truthfully observes its effect, yet it passes that stage on the way to its record; without this the one route the delivery requirement opens for it reports a stage the vocabulary says it cannot reach.
+**The transitions are the closed set; the states derive from them, and the fragment SHALL NOT enumerate every state.** An enumeration alongside a rule that generates the same names is a second source that drifts from the first, and it costs the fragment a paragraph on every read to say what one sentence already says.
 
-The families SHALL be three rather than two, because `ship:` is where a session *waits* — on a merge, on a deploy, on a confirmation it cannot make itself. The only actionable content of a waiting state is which one it is, and folding them into `build:` gives them one name.
+The fragment SHALL state the transitions, the derivation rule, and enough examples to fix the pattern. It SHALL name the states the rule does not generate cleanly — `plan:tests-derived` and `ship:pr-open`, where the derivation reorders the words — and the two off-path names available in any family, `blocked:<what>` and `abandoned`.
 
-Each of `plan:` and `build:` SHALL carry its own review and its own relation to tests, and the vocabulary SHALL NOT reuse one word across the two. `plan:tests` is tests being **written** from the change's specification deltas; `build:verify` is tests being **run** against the implementation. A single word for both makes a report ambiguous exactly where a resuming session needs precision.
+Where a transition name matches a command the same session drives — `apply`, `archive`, `verify`, `review` — the state derived from it SHALL keep that word, so the operation remains recoverable from the stage.
 
-**Every stage that persists across a session boundary SHALL be derivable from the repository**, since the report as a whole must be. A stage knowable only by having been present when it was reached is not reportable by the session that comes next.
+**The family prefix SHALL always be written, and the vocabulary SHALL say so.** `plan:reviewing` and `build:reviewing` dispatch different reviewers — one reads the plan and refuses diffs — and the bare word names neither.
 
-The vocabulary contains two kinds of name and the requirement SHALL distinguish them, because a single universal claim over both is false and was asserted before it was checked.
+Both families SHALL share one review loop — `reviewing → fixing → reviewing` — since applying what a review returned is one act in two families, and stating it twice under two words would present two settings of one mechanism as two mechanisms.
 
-**A transient stage names an activity in progress, not a state left behind.** `plan:draft`, `plan:revise`, `build:doing`, `build:verify` and `build:fix` are of this kind: a session that stops inside one leaves the artifacts, the task list and the working tree it had reached, and the next session re-enters the activity rather than reading that it was in it. This is safe because each is idempotent — re-running a verification, re-reading a draft, re-applying a finding costs a repetition and never a wrong result. A transient stage SHALL be reported from what the repository holds *now*, and the vocabulary SHALL NOT claim it is recoverable as a stage.
+The vocabulary SHALL NOT reuse one word for writing tests and running them. `plan:tests-derived` is tests written from the change's specification deltas; `build:verifying` is tests run against the implementation.
 
-**A persistent stage names something that happened**, and every one of them SHALL leave a trace. Three classes leave none today:
+`plan:exploring` SHALL name a change with no proposal yet, whose auxiliary artifacts — a handoff — may exist.
 
-- **A review in flight.** Dispatching a plan review or a code review ends in the conversation. A session that dispatched and then ended is indistinguishable from one that never dispatched — the loss this capability prevents for a dependency, one level up.
-- **A verdict received.** What a review returned, and what was done about it, ends in the conversation too.
-- **An operator's confirmation of something the repository does not show.** A deploy's health and a confirmed production effect are stated by the operator and written nowhere, so `ship:deployed` and `ship:confirmed` rest on a sentence the next session cannot see. A merge is not in this class — the forge reports it, and the teardown gate below already reads it — so `ship:merged` belongs with the stages traced from the repository. The delivery requirement's obligation to obtain the operator's confirmation of a merge stands regardless: what a session may not do is *infer* a merge, and reading the forge is not inferring.
+**No rule SHALL require that every stage be derivable from the repository, and no ledger SHALL be mandated to make one so.** The stage is reported for the operator's information; a stage reported imprecisely costs a sentence of correction. An artifact recording every gate so that a resuming session could name the stage exactly would be paid for on every change to buy a precision nothing depends on. What a later session must be able to check is covered by the requirement below, which is about decisions rather than about stages.
 
-**A review dispatch, the verdict it returns, what was done about that verdict, each operator confirmation, a production-confirmation waiver, a block, an abandonment, each branch the change cuts, and each pull request it opens SHALL therefore be recorded in a single named artifact at the change's root — `gate-log.md`** — as `test-manifest.md` already records the test gate at the same place.
+**The commit rules SHALL state what happens to a commit made while applying, because otherwise they contradict themselves there.** They direct running the verification relevant to what changed before committing; the tests derived before the implementation fail by design until the implementation is complete. So for the whole of `build:applying` the rule requires a check that cannot pass, and a project whose hooks run it cannot commit at all.
 
-A gate-log entry is written when the gate is passed and committed with the next commit the session proposes **where one is coming within the same session**. Otherwise the fragment's own rule that a commit is suggested and never made unasked would make every gate cost a second confirmation to record it, and a session asking twice per gate is answered less carefully each time.
+The fragment SHALL name the bypass — `--no-verify` — rather than describing one, and SHALL say that the failure is expected rather than a defect. A session that must work the bypass out for itself has been left to guess whether it is breaking a rule, at every commit of the longest stage.
 
-**Where no further commit is coming in that session, the entry is committed on its own.** The fragment SHALL name the cases, because each is one where the batching rule silently loses the record it was written to keep:
+The fragment SHALL state that the bypass suspends the pre-commit check and not the gate: verification still runs before any completion claim. A bypass stated without its bound is read as permission to skip the check it stands in for.
 
-- **Every post-merge entry** — the merge confirmation, the deploy's health, the effect or its waiver — committed on the record's branch when it is written rather than held for the archive commit. `ship:` is by design where a session waits and stops, so the interval between the merge confirmation and the archive commit routinely spans several session boundaries; batched, the record most likely to be written immediately before a session ends is the one left uncommitted.
-- **The record's own pull request**, opened after the archive commit is pushed, so nothing follows it in that session.
-- **An abandonment record**, which the teardown gate requires committed before it is evaluated. Deferred to a commit that never arrives, it trips the one teardown clause it does not displace, so the act authorising teardown blocks it.
-- **A block recorded by a session that is ending**, which is lost to the first clean or branch switch, leaving the next session to re-enter an activity that will block again.
+#### Scenario: A commit made while applying is not blocked by tests written to fail
 
-The file is named rather than left to the change's artifacts generally, for the reason `docs/change-queue.md` and `.claude/worktrees/` are named: a location stated only in a change's own artifacts is archived with them, and a resuming session that must search rather than read will find two sessions having filed the same kind of record in different places. The dispatch is recorded when it is made and not when it returns, or the in-flight case is exactly the one still lost.
-
-The recording is the dispatching or asking session's obligation and not the reviewer's: `change-review` owns the reviewer's output contract and is not amended by this, and an operator is not obliged to write anything.
-
-**A persistent stage whose trace is already the repository's or the forge's own state needs no recording rule for the stage itself**, and the requirement SHALL say which those are rather than leave a reader to assume every persistent stage owes a write. `plan:committed` is read from the commit log, `plan:tests` from the test manifest, `ship:pr` from a pushed branch with an open pull request, `ship:merged` from that pull request's merged state, `ship:record` from the record's branch and its pull request, and `ship:done` from the archive commit on the trunk. What none of those show, and what therefore must be recorded for a stage to be reportable, is a dispatch, a verdict, a disposition, and an operator's word.
-
-That list says which *stages* need a recorded trace. It does not bound what `gate-log.md` holds: a record may be owed for a reason other than naming a stage. The pull-request record the topology requirement obliges is one — the forge shows a pull request, so `ship:pr` needs no entry, but nothing tells a later session *which* pull requests belong to this change, and the teardown gate is stated over that set.
-
-**`blocked:<what>` and `abandoned` are persistent, and both are recorded in `gate-log.md`.** A session that ends blocked SHALL record what it is blocked on there — without it the next session reads a transient stage from the working tree and re-enters an activity that will block again. The abandonment record the teardown gate requires is written there too.
-
-Every record this capability obliges goes to that one file. A record kind left to "the change's artifacts" is one two sessions file in two places, which is the reason the file is named at all — and stating that reason while exempting two record kinds from it would defeat it.
+- **WHEN** a session commits partway through implementing, and the derived tests do not yet pass
+- **THEN** it bypasses the hooks that run them, and the verification gate before any completion claim still applies
 
 #### Scenario: A resuming session names the stage without interpreting prose
 
 - **WHEN** a session enters a working tree holding a change another session left
-- **THEN** it reads the stage from the change's artifacts and the commit log and names it from the vocabulary, rather than reconstructing a description
-
-#### Scenario: A dispatched review survives the session that dispatched it
-
-- **WHEN** a session dispatches a review, receives a verdict, and ends before acting on it
-- **THEN** the verdict is readable in the change's `gate-log.md`, so the next session can tell `plan:approved` from `plan:draft` and does not re-dispatch a review that already ran
-
-#### Scenario: A review still in flight survives the session that dispatched it
-
-- **WHEN** a session records a dispatch, dispatches the review, and ends before any verdict arrives
-- **THEN** the dispatch is readable in the change's `gate-log.md`, so the next session reports `plan:review` rather than finding a change indistinguishable from one that never dispatched
-
-#### Scenario: An operator's confirmation is not lost with the conversation
-
-- **WHEN** the operator confirms a merge, a deploy's health, or a confirmed production effect, and the session then ends
-- **THEN** each confirmation is recorded in the change's `gate-log.md`, so the next session reports the `ship:` stage reached rather than re-asking for a confirmation already given
-
-#### Scenario: A transient stage is re-entered rather than recovered
-
-- **WHEN** a session stops while running verification or applying a review's findings
-- **THEN** the next session reports what the repository holds now and re-enters the activity, because a transient stage names work in progress and re-entering it is idempotent
+- **THEN** it reads the stage from the change's artifacts, the commit log and the forge and names it from the vocabulary, rather than reconstructing a description
 
 #### Scenario: Writing tests and running tests are not one word
 
 - **WHEN** a report names a stage involving tests
-- **THEN** `plan:tests` names tests being derived from the specification deltas and `build:verify` names tests being run against the implementation, and neither name is used for the other
+- **THEN** `plan:tests-derived` names tests being derived from the specification deltas and `build:verifying` names tests being run against the implementation, and neither name is used for the other
 
-#### Scenario: A change waiting on a deploy is distinguishable from one waiting on a merge
+#### Scenario: The vocabulary is not enumerated beside the rule that generates it
 
-- **WHEN** a session reports a change that has been merged but whose deploy has not completed
-- **THEN** the stage is `ship:merged` and not `ship:pr` or `build:clear`, so what is being waited on is readable from the name alone
+- **WHEN** the fragment states the stage vocabulary
+- **THEN** it states the transitions, the derivation rule, examples, the two states whose derivation reorders and the off-path names, and does not list every derived state
+
+#### Scenario: An imprecise stage is not treated as a defect worth an artifact
+
+- **WHEN** a session reports a stage that turns out to be one step off
+- **THEN** the correction is a sentence, and no rule requires a ledger written on every change so that the case cannot arise
+
+### Requirement: A production-confirmation waiver is recorded
+
+**A production-confirmation waiver SHALL be recorded in the change's own artifacts**, and it is the only record these rules require beyond the artifacts a change already carries.
+
+The change's record is archived on the strength of the waiver, and the specification that archive writes to the trunk then describes behavior production does not have. The waiver is the only trace of why.
+
+No further record SHALL be required, and the requirement SHALL say so, because the obvious candidates each look load-bearing and are not:
+
+- **A review's verdict.** The rules already require the approved plan to be committed before tests are derived from it, so a committed plan is the marker that a verdict cleared it. A separate record states the same fact twice, and a session could write a false one as easily as it could commit an unapproved plan. What it would buy is the occasional re-dispatched review, which returns the same verdict.
+- **An operator's confirmation** of a merge or a deploy. It gates nothing a later session cannot ask about again.
+- **A dispatch in flight.** It matters only where a session ends mid-review.
+- **A pull request.** The forge reports it.
+- **An abandonment.** Required already, by the teardown gate below, as the condition of its own second route.
+
+The residual cost of requiring none of these is a conditional pass whose `[MINOR]` fixes a later session cannot see are outstanding. That is bounded by those fixes being minor, and it is smaller than a record written on every change forever.
+
+#### Scenario: A waived change carries the reason to the trunk
+
+- **WHEN** a change's production-confirmation gate is waived and its record archived
+- **THEN** the waiver is recorded in the change's artifacts, so a reader meeting the archived specification can find why it describes behavior production does not have
+
+#### Scenario: A verdict is not recorded, and the commit stands for it
+
+- **WHEN** a session resumes a change whose plan is committed and whose tests are derived
+- **THEN** it implements, taking the commit as the marker that a verdict permitted proceeding, rather than looking for a verdict record or re-dispatching the review
+
+#### Scenario: A confirmation nobody recorded is simply asked again
+
+- **WHEN** a session ends after the operator confirmed a merge, and the next session needs to know
+- **THEN** it asks, rather than the rules having required a record for it
 
 ### Requirement: A change is delivered through at least two pull requests, the last carrying its record
 
@@ -341,11 +382,11 @@ The fragment SHALL acknowledge that a session usually cannot make that observati
 
 **The gate SHALL state its own exemption, in advance and by class.** A change with no externally observable effect in production — a refactor, a dependency bump, an internal cleanup, a change to the repository's own conventions — cannot pass a gate that asks what to look at, and a gate stating no exemption forecloses it permanently: the record is never written, and the teardown gate below is conditioned on the record's pull request having merged, so the branch and working tree become unremovable. That is the accumulation this capability exists to prevent, reached in a class of change that did nothing wrong.
 
-The exemption SHALL be: where the session can propose no observation that can actually be made — including one it proposed and that turns out not to be performable — it says so plainly and names the class, and the operator waives the gate. The waiver SHALL be recorded in the change's `gate-log.md`, and it is what the record then rests on in place of a confirmed effect. It is a waiver stated in advance for a named class, not a gap discovered at the gate — the distinction `project-bootstrap` requires of every precondition this fragment states.
+The exemption SHALL be: where the session can propose no observation that can actually be made — including one it proposed and that turns out not to be performable — it says so plainly and names the class, and the operator waives the gate. The waiver SHALL be recorded in the change's own artifacts, and it is what the record then rests on in place of a confirmed effect. It is a waiver stated in advance for a named class, not a gap discovered at the gate — the distinction `project-bootstrap` requires of every precondition this fragment states.
 
 Saying so plainly is still owed. What the exemption removes is the stall, not the disclosure: a change whose effect nobody can observe is worth knowing about before it is archived as shipped.
 
-Only once the effect is confirmed, **or the waiver recorded**, SHALL the record be closed: the change's specification record archived in a commit of its own, on a branch of its own, through a pull request of its own — the last of the change's pull requests, however many the work took. The record's subject is that the change shipped, so it cannot precede the shipping.
+Only once the effect is confirmed, **or the waiver recorded**, SHALL the record be closed: the change's branch brought back to the freshly fetched trunk, its specification record committed there, and a pull request opened for it — the last of the change's pull requests, however many the work took. The record's subject is that the change shipped, so it cannot precede the shipping.
 
 Where the deploy is not healthy, the fragment SHALL state that the change is not delivered and the record is not written, and that the remedy re-enters the sequence at its review gate rather than continuing past it — carrying its own pull request, as any work reaching the trunk does.
 
@@ -353,9 +394,9 @@ Where the deploy is healthy and the intended effect is absent, the fragment SHAL
 
 **The wrong change is the confirmation gate's second waivable class**, named in advance on the same terms as the first: a change whose proposed observation was made, whose effect is absent, and which is **not to be corrected in place**. Being superseded by a new proposal is the typical case and SHALL NOT be a defining condition — a change judged wrong and reverted, or simply dropped, satisfies the class as fully, and a definition requiring a successor would leave it in neither class and back at the dead end this exemption exists to close.
 
-The session says so plainly and names the class, the operator waives, the waiver is recorded in `gate-log.md`, and the record proceeds on it. **Where a successor is intended, the waiver SHALL name its change-queue entry or its proposal branch.** This class is the one whose defining fact is a decision rather than an observation, so what it leaves behind is the only trace of why a change was archived as shipped while its effect was confirmed absent — and the specification the archive step writes to the trunk then describes behaviour production does not have. A reader meeting that specification later is owed the pointer.
+The session says so plainly and names the class, the operator waives, the waiver is recorded in the change's own artifacts, and the record proceeds on it. **Where a successor is intended, the waiver SHALL name its change-queue entry or its proposal branch.** This class is the one whose defining fact is a decision rather than an observation, so what it leaves behind is the only trace of why a change was archived as shipped while its effect was confirmed absent — and the specification the archive step writes to the trunk then describes behaviour production does not have. A reader meeting that specification later is owed the pointer.
 
-Without that terminal the path dead-ends. The record cannot be written, because the effect is unconfirmed. The first waivable class does not reach it, because an observation *was* proposed and made — and improvising an exemption at the gate is what stating exemptions in advance forbids. The abandonment route does not reach it either, because that record must assert the work on the change's branches is not wanted, and this work is merged, deployed and running. A compliant session would stop with a branch set and a working tree it can never remove, which is the accumulation this capability exists to prevent, reached down a path the fragment itself names.
+Without that terminal the path dead-ends. The record cannot be written, because the effect is unconfirmed. The first waivable class does not reach it, because an observation *was* proposed and made — and improvising an exemption at the gate is what stating exemptions in advance forbids. The abandonment route does not reach it either, because that record must assert the work on the change's branch is not wanted, and this work is merged, deployed and running. A compliant session would stop with a branch and a working tree it can never remove, which is the accumulation this capability exists to prevent, reached down a path the fragment itself names.
 
 The record is truthful on this route: the change shipped, and what it shipped did not do what was wanted. That is what the waiver records, and it is worth having on the trunk rather than lost with the session that discovered it.
 
@@ -363,7 +404,9 @@ The record is truthful on this route: the change shipped, and what it shipped di
 
 Without this, every gate above is optional. A session that can deploy from its own machine can reach production without a pull request, without continuous integration, and without the review that the pull request exists to obtain; the whole sequence becomes a convention rather than a constraint, and nothing reports the one time it was skipped.
 
-The archive step SHALL be stated as a role — closing the change's specification record — with the specification tooling named beneath it as one binding, exactly as `project-bootstrap` requires of every obligation in this fragment and as the fragment already does for its review dispatches. The tooling SHALL NOT appear in the role sentence.
+The archive step SHALL be stated as a role — closing the change's specification record — and SHALL name no command.
+
+The fragment names agents in its bindings and no command-line tool anywhere: it does not say which command applies a change, or verifies one, or opens a pull request. Naming one at the archive step alone would present the project's specification tooling as though the workflow turned on that one invocation, when every other step leaves the tool to the project. The tooling is named among the fragment's assumptions instead, which is where a project reads what these rules presuppose.
 
 The predecessor of this requirement permitted the opposite, and could: it governed a fragment `project-bootstrap` does not govern. Consolidation moves the obligation onto the file it does, so the permission is dropped rather than inherited.
 
@@ -390,7 +433,7 @@ The predecessor of this requirement permitted the opposite, and could: it govern
 #### Scenario: A change with no observable effect reaches its record
 
 - **WHEN** a session reaches the confirmation gate for a refactor, dependency bump or internal cleanup and can identify no way for its effect to be observed in production
-- **THEN** it says so plainly and names the class, the operator waives the gate, the waiver is recorded in the change's `gate-log.md`, and the record proceeds on the waiver — rather than the change stalling with an unremovable branch and working tree
+- **THEN** it says so plainly and names the class, the operator waives the gate, the waiver is recorded in the change's own artifacts, and the record proceeds on the waiver — rather than the change stalling with an unremovable branch and working tree
 
 #### Scenario: The record follows the confirmed effect
 
@@ -420,46 +463,13 @@ The predecessor of this requirement permitted the opposite, and could: it govern
 #### Scenario: The wrong change reaches its record rather than stalling
 
 - **WHEN** a change's effect is absent and the session and operator agree the change was the wrong change, to be superseded by a new proposal rather than corrected
-- **THEN** the operator waives the confirmation gate, the waiver is recorded in `gate-log.md` naming that class, and the record proceeds — rather than the change stalling with a branch set and working tree that no route can remove
-
-### Requirement: A change's branches are cut from the trunk, and its post-merge commits have one home
-
-Delivery is the one phase in which a change holds more than one branch: the record takes one of its own, and each remedial cycle takes another. The workflow fragment SHALL state where each is cut from and where the commits made after the work merges are made. An act whose execution context is undefined is resolved by whoever implements first, and this is the act with the most branches to be wrong about.
-
-**The branch set a change creates is the branches carrying its own work: the work branch, each remedial cycle's branch, and the record's branch.** A proposal-only branch opened under the change-queue requirement is not in it — that branch belongs to the change it proposes, is created and left, and takes no pull request here. It is recorded as **that** change's first branch, in that change's `gate-log.md`, and writing that record is within the "nothing further" the change-queue requirement permits. Excluded from one set and recorded in no other, it would appear in no enumeration at all, which is the state the recording rule exists to prevent. The set SHALL be delimited rather than left to a universal, because the rules below oblige a record for each member and the teardown gate is stated over the whole set: included, a proposal-only branch would be enumerated at teardown and checked against a pull request it will never have.
-
-**Every branch in that set, the record's included, SHALL be cut from the freshly fetched trunk.** This is the rule the branch-creation requirement already states for a session's first branch, applied unchanged; delivery introduces further branches and no exception.
-
-The record's branch carries the operator confirmations, a waiver where one is given, and the archive commit. A remedial cycle carries its own gate records — its branch, its pull request, its review dispatch and verdict — on its own branch alongside the work they concern, exactly as the first cycle did. The fragment SHALL state that split rather than a rule over every post-merge commit: a cycle's records belong with the code they gate, and a rule sending every post-merge commit to the record's branch would put a fix's diff in the record's pull request — the defect this route was chosen to avoid.
-
-Nothing is lost by cutting from the trunk rather than from the work branch's tip. Every gate record written before the merge is a commit on the work branch and reaches the trunk with it; every record written after the merge — the merge confirmation, the deploy's health, the effect or its waiver — is written once the record's branch exists and is made there. No interval exists in which a record sits on a branch the trunk does not have.
-
-Cutting from the trunk is also the only form that survives every merge strategy. Cut from a work branch that was squash-merged or rebase-merged, the record's branch shares no commit with the trunk's version of that work, so the record's pull request re-presents the entire work diff — the defect for which re-pushing the record on the work branch was rejected, reappearing in the route that replaced it. And a trunk that advanced while the deploy ran is fetched rather than diverged from, so the archive step applies the change's deltas to the specifications as they now are.
-
-**The record's branch becomes the session's working branch**, unlike the proposal-only branch the change-queue requirement permits, which is created and left. The one-branch rule the branch-creation requirement states governs the branch a session works on at any moment; a change accumulates branches over its life and a session still holds one at a time.
-
-**Each branch SHALL be recorded in `gate-log.md` when it is cut — or, for the change's first branch, when the change's root is created — and each pull request when it is opened**, the pull request naming the branch it was opened from. The first branch is cut before the change exists, so before the file does; recording it at the moment the root appears is the earliest satisfiable form of the same obligation. The branch is recorded at the earlier moment because the record's branch exists from the merge confirmation onward and its pull request may not open for several sessions; a change abandoned in that window would otherwise hold a branch that appears in no enumeration. Delivery makes a change's branch set unbounded, and the teardown gate below is stated over that set; without a recorded enumeration the set is knowable only to the session that created it, which is what the recording obligations exist to prevent. The reason the file is named applies here unchanged.
-
-#### Scenario: The merge confirmation is committed on the record's branch
-
-- **WHEN** the operator confirms a merge and the session records it
-- **THEN** the record's branch has been cut from the freshly fetched trunk and the confirmation is committed on it, so it reaches the trunk with the archive commit
-
-#### Scenario: A record branch does not re-present the work's diff
-
-- **WHEN** a change's work is squash-merged and the record's branch is then created
-- **THEN** it is cut from the freshly fetched trunk, so its pull request carries the record alone and not the work diff a second time
-
-#### Scenario: A later session can enumerate a change's branches
-
-- **WHEN** a session reaches teardown for a change delivered through more than one pull request, none of which it opened
-- **THEN** each pull request and the branch it was opened from are readable in `gate-log.md`, so the teardown gate can be checked over the whole set rather than over the one branch the session can see
+- **THEN** the operator waives the confirmation gate, the waiver is recorded in the change's own artifacts naming that class, and the record proceeds — rather than the change stalling with a branch set and working tree that no route can remove
 
 ### Requirement: A session's branch and working tree are removed only against an observable gate
 
 This gate governs a working tree in which a session is doing a change's work, per the scope stated above. A working tree outside that scope is not held by it; the workflow fragment SHALL state that as an exclusion and SHALL NOT assert that something else removes it, since no capability in this repository obliges anyone to.
 
-The fragment SHALL state the condition under which a session's branches and working tree are removed as an observable one: **the change's record has reached the trunk through its own pull request, every other pull request the change opened is merged**, nothing uncommitted remains in the working tree, and nothing unpushed remains.
+The fragment SHALL state the condition under which a change's branch and working tree are removed as an observable one: **the change's record has reached the trunk through its own pull request, every other pull request the change opened is merged**, nothing uncommitted remains in the working tree, and nothing unpushed remains.
 
 The record's pull request SHALL be named as its own conjunct rather than left to the universal over pull requests. A change whose work has merged but whose record does not yet exist satisfies "every pull request is merged" — it has one and it merged — so a gate stated that way passes at `ship:merged`, and teardown removes the working tree and every branch before the deploy is confirmed, before the effect is observed, and before the record exists. It also removes the record's branch, which is where the remaining post-merge commits were owed. The delivery requirement states that teardown waits for the record; a gate that does not say so is one an agent satisfies by reading the clause rather than the sequence.
 
@@ -469,20 +479,18 @@ The universal is likewise not enough on its own for the opposite reason. A chang
 
 The gate SHALL admit a second route, because a merge is not the only way a change legitimately ends: an abandonment the operator recorded satisfies it as a merge does. Stated with a merge as the only route, the gate can never be passed by an abandoned change, and its working tree and branch accumulate — the outcome this requirement exists to prevent, reached in the one case it forecloses.
 
-That route SHALL be as observable as the first, or it is not a second route but a hole. The fragment SHALL name where the record lives — in the abandoned change's `gate-log.md`, with every other gate record — and SHALL require it to state that the change is abandoned and that the work on **every branch the change created** is not wanted. It is committed on the branch the session holds; the record's subject is the whole set, so which member carries it does not change what it says. A session entering a working tree left by another session cannot see the exchange in which an operator said so; a record it can read is what separates this route from the inference the requirement forbids.
+That route SHALL be as observable as the first, or it is not a second route but a hole. The fragment SHALL name where the record lives — in the abandoned change's own artifacts — and SHALL require it to state that the change is abandoned and that the work on its branch is not wanted. A session entering a working tree left by another session cannot see the exchange in which an operator said so; a record it can read is what separates this route from the inference the requirement forbids.
 
 The fragment SHALL state which clauses the record displaces, rather than leaving "satisfies it as a merge does" to be read either way:
 
-- It displaces **both merge conjuncts** — the record's own pull request and the universal over the change's other pull requests — and the unpushed clause. All three concern commits on the abandoned branches, and the record is the operator's decision that those commits are not wanted. Stated as one "merge clause", the narrow reading leaves the record conjunct standing, so an abandoned change could never pass the gate and its branches accumulate — the unremovability this route exists to remove.
+- It displaces **both merge conjuncts** — the record's own pull request and the universal over the change's other pull requests — and the unpushed clause. All three concern commits on the abandoned branch, and the record is the operator's decision that those commits are not wanted. Stated as one "merge clause", the narrow reading leaves the record conjunct standing, so an abandoned change could never pass the gate and its branches accumulate — the unremovability this route exists to remove.
 - It does **not** displace the uncommitted clause. Uncommitted changes in the working tree are not what the operator recorded a decision about — they may be unrelated or accidental — so teardown still halts and reports them, and the operator extends the decision or does not.
 
 The record SHALL be committed before the gate is evaluated. Written and left uncommitted, it trips the one clause it does not displace, so the act that authorises teardown blocks it — and the stated remedy of extending the decision would then discard the record the route rests on.
 
 Left unstated, the narrow reading blocks an abandoned branch that was never pushed, which is the permanent unremovability this route exists to remove; the broad reading silently discards uncommitted work on the strength of a decision that did not mention it.
 
-Teardown SHALL cover **every branch the change created** — the work branch, each remedial cycle's branch, and the record's branch — locally and on the remote, and the working tree. A change delivered through more than one pull request holds more than one branch, and a gate written in the singular leaves every branch after the first outside its coverage, accumulating on the remote exactly as this requirement exists to prevent.
-
-Each branch is checked on its own pull request, enumerated from `gate-log.md` where the requirement above records each one as it is opened. The branches are cut from the trunk rather than from one another, so no branch's state can be inferred from another's, and the gate SHALL require each to be observed rather than derived. The fragment SHALL state from where the working tree's removal is performed, since the tree the gate authorises removing is ordinarily the one the session is running in; an act whose execution context is undefined is resolved by the first implementer's guess. It does not cover the shared-service namespace the session allocated: reclaiming that belongs to a separate proposed capability, named in this requirement rather than in the fragment, and stating half of it in the fragment would leave a rule whose safety depends on clauses the fragment does not carry.
+Teardown SHALL cover the change's branch, locally and on the remote, and the working tree. Because a change keeps one branch, the gate checks one branch against the set of pull requests opened from it, and no enumeration of branches is owed. The fragment SHALL state from where the working tree's removal is performed, since the tree the gate authorises removing is ordinarily the one the session is running in; an act whose execution context is undefined is resolved by the first implementer's guess. It does not cover the shared-service namespace the session allocated: reclaiming that belongs to a separate proposed capability, named in this requirement rather than in the fragment, and stating half of it in the fragment would leave a rule whose safety depends on clauses the fragment does not carry.
 
 #### Scenario: Teardown is refused while work is unmerged
 
@@ -502,16 +510,16 @@ Each branch is checked on its own pull request, enumerated from `gate-log.md` wh
 #### Scenario: The abandonment record does not block the teardown it authorises
 
 - **WHEN** a session records an abandonment and then evaluates the teardown gate in the same session
-- **THEN** the record is already committed in `gate-log.md` on the branch the session holds, so it does not itself trip the uncommitted clause the record does not displace
+- **THEN** the record is already committed in the change's own artifacts on the branch the session holds, so it does not itself trip the uncommitted clause the record does not displace
 
 #### Scenario: An abandoned change's working tree can be removed
 
-- **WHEN** a change is abandoned rather than merged, and the operator's decision is recorded in the change's `gate-log.md` stating that the work on every branch the change created is not wanted
+- **WHEN** a change is abandoned rather than merged, and the operator's decision is recorded in the change's own artifacts stating that the work on its branch is not wanted
 - **THEN** the teardown gate is satisfied by that record in place of the merge, rather than leaving the branch and working tree permanently unremovable because a merge that will never happen is the only stated route
 
 #### Scenario: An abandoned branch that was never pushed is still removable
 
-- **WHEN** teardown runs on an abandoned change and one of its branches holds commits that were never pushed
+- **WHEN** teardown runs on an abandoned change whose branch holds commits that were never pushed
 - **THEN** the record displaces the unpushed clause as well as the merge clause, because both concern commits the operator recorded as unwanted
 
 #### Scenario: Abandonment does not authorise discarding uncommitted work
@@ -533,7 +541,17 @@ Each branch is checked on its own pull request, enumerated from `gate-log.md` wh
 
 The workflow fragment SHALL state that a session works on one change, and SHALL state what happens when a second change is identified while the first is in progress.
 
-Where the change in progress depends on the identified change, the fragment SHALL require that the dependency and the wait it implies are recorded in the artifacts of the change in progress, before anything else is done about it. It MAY then permit offering a proposal for the identified change on a branch of its own and nothing further, and recommending that the work continue in a separate session.
+Where the change in progress depends on the identified change, the fragment SHALL require that the dependency and the wait it implies are recorded in the artifacts of the change in progress, before anything else is done about it. It MAY then permit opening the identified change on a branch of its own and nothing further, and recommending that the work continue in a separate session.
+
+**An identified change SHALL be opened with a `handoff.md` and no proposal.** A proposal is the artifact the workflow reviews before anything is built. Written in passing by a session that will not do the work, it draws that review before it has earned it — and a review round spent on a proposal nobody has thought through is a round spent, not a round passed.
+
+`handoff.md` SHALL carry what the originating session knows and the next will not: why the change was identified, what the originating work established that bears on it, and what it must not undo. The session that takes the change up writes its proposal.
+
+`handoff.md` SHALL sit at the identified change's root, where the change's own artifacts sits.
+
+**The fragment SHALL direct proposing a commit on that branch as soon as it is opened**, and SHALL state what happens where that commit is declined: report that the handoff is unsaved and stop, as the plan-commit rule does, rather than continuing and leaving it to be lost. The session that opened it is by definition not returning to it, so no later commit will carry the handoff and an uncommitted one is lost with the session. It is proposed rather than made, per the fragment's commit rule.
+
+The path SHALL be fixed here, at the identified change's root, for the reason `docs/change-queue.md` and `.claude/worktrees/` are fixed: a location stated only in a change's own artifacts is archived with them.
 
 Where the change in progress does not depend on the identified change, the fragment SHALL require that it is recorded either as a proposal on a branch of its own or as an entry in the project's **change queue**.
 
@@ -579,6 +597,16 @@ The fragment SHALL state that recording is the obligation and branching is the o
 - **WHEN** a project carrying these rules has no file at the named path
 - **THEN** the fragment directs creating it, rather than leaving the independent path with one route where it stated two
 
+#### Scenario: An identified change is opened without a proposal
+
+- **WHEN** a session opens a change it has identified but will not work on
+- **THEN** the change carries a `handoff.md` naming why it was identified, what bears on it and what it must not undo, and no `proposal.md` — which the session that takes it up writes
+
+#### Scenario: A handoff is not left uncommitted on a branch the session leaves
+
+- **WHEN** a session opens an identified change on a branch of its own and then continues with its own change
+- **THEN** it has proposed a commit on that branch already, because no later commit of its own will carry the handoff
+
 #### Scenario: A proposal-only branch does not become the session's working branch
 
 - **WHEN** a session creates a proposal-only branch for work it identified but will not do here
@@ -589,41 +617,23 @@ The fragment SHALL state that recording is the obligation and branching is the o
 - **WHEN** a change that recorded a deferral inside its own artifacts is archived
 - **THEN** the fragment has already directed the deferral into the project's change queue, so archiving the change does not remove it from view
 
-### Requirement: A gate that did not run does not pass, and the project names what runs it
+### Requirement: A one-time setup obligation does not belong in the fragment
 
-The workflow fragment SHALL require that a check which did not run is never counted as a check that passed, and SHALL require the project to make that structural rather than a matter of a session noticing.
+The fragment is read by every session in an adopting project, so it SHALL carry only obligations a session acts on. An obligation discharged once when a project is set up — configuring continuous integration, choosing an ignore pattern, writing a value into the project's conventions — SHALL NOT appear in it, however sound the obligation is.
 
-**A skipped check SHALL fail the run that contains it, wherever the project can make it.** A verification that cannot reach what it needs skips and reports success, so a suite whose tier silently skipped is indistinguishable from one that passed — and a pull request has already been merged claiming a tier that had skipped. Session discipline is not the remedy: the session reading the result is the party the result deceives. The workflow fragment SHALL require the project to configure its continuous integration so that a dependency the verification requires but cannot reach fails the run rather than skipping it.
+Four such rules were drawn from two consuming projects and placed in the fragment before this was stated: continuous integration failing rather than skipping on a dependency it cannot reach, a commit or push hook not being an authority a completion claim may rest on, secrets excluded by the ignore file rather than by vigilance, and the project stating its test command and test-path glob. Each is worth keeping and none belongs here. Where such an obligation is found while working on the fragment, it SHALL be recorded for the capability that owns project setup rather than added.
 
-The clause is scoped to that cause deliberately. A skip a test declares for a reason of its own — a platform it does not apply to, an optional dependency the project genuinely treats as optional — is a stated decision, not a gate that failed to run, and a rule failing the run on every skip would oblige an adopting project either to delete legitimate skips or to carry a rule it knowingly violates.
+Two of the four were also already covered. `project-foundation` obliges a project to write its test command and test-path glob into a named section of its conventions, so the fragment restating it gave one obligation two owners. And the fragment's provisioning rule already states that verification which cannot reach what it needs skips and reports success — the principle the skipped-check rule was carrying, at the point a session meets it.
 
-**A local gate that was never installed SHALL NOT be relied on as one.** Commit hooks and push hooks exist only in a clone where someone installed them, so their silence is not a pass. The fragment SHALL require that whatever a completion claim rests on has an authority that runs regardless of a clone's local setup, and that a claim resting only on a local hook says so.
+#### Scenario: A setup obligation found while writing the fragment is recorded, not added
 
-**A secret is kept out of version control by the ignore file, not by vigilance at commit time.** The fragment already directs a session to check what it is committing; that check is the second line. The first is that files holding secrets match a pattern the ignore file already covers, so committing one takes an override rather than an oversight. Non-secret configuration may be committed and SHALL be separated from secrets by that pattern rather than by intention.
+- **WHEN** an obligation is identified that a project discharges once at setup rather than a session discharging per change
+- **THEN** it is recorded for the capability that owns project setup, and the fragment does not carry it
 
-**The workflow fragment SHALL require the project to state its test command and its test-path glob**, in its own conventions, as values a reader can copy. The fragment's own test-authoring step dispatches an independent author that requires both as inputs; a fragment that mandates the dispatch and never asks the project to supply what the dispatch needs states a gate no project can pass without inventing the inputs itself. Where a project has no test layer, it states that instead, as the exemption the test-authoring rule already provides for.
+#### Scenario: The skipped-check principle is stated once
 
-`project-foundation` already routes both values into a named section of a project's conventions file. That section satisfies this clause rather than a second statement being owed; the clause exists because the workflow fragment is adoptable by a project that never ran foundation discovery, and it is stated as a demand the existing section meets rather than as a second place to write them.
-
-#### Scenario: A tier that skipped does not report a pass
-
-- **WHEN** a verification tier cannot reach a dependency it requires, in continuous integration
-- **THEN** the run fails rather than skipping, so no pull request is merged on the strength of a tier that did not execute
-
-#### Scenario: A claim resting on an uninstalled hook
-
-- **WHEN** a session reports verification as passing on the strength of a commit or push hook
-- **THEN** it establishes that the hook is installed in this clone, or says that the claim rests on a local gate whose presence it has not confirmed
-
-#### Scenario: A secret takes an override to commit, not an oversight
-
-- **WHEN** a file holding secrets is created in a project carrying these rules
-- **THEN** its name matches a pattern the ignore file already covers, so committing it requires deliberately overriding the ignore rather than failing to notice it
-
-#### Scenario: The test-authoring dispatch has the inputs it requires
-
-- **WHEN** a session reaches the test-design gate
-- **THEN** the project's own conventions state the test command and the test-path glob, so the dispatch supplies them rather than inventing them
+- **WHEN** a session reads a green verification result it has not provisioned for
+- **THEN** the provisioning rule has already told it that such a run skips and reports success, and no second rule states the same thing elsewhere in the fragment
 
 ### Requirement: The database binding fragment states the shared database as an affordance before an obligation
 

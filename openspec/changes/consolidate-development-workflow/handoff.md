@@ -74,7 +74,7 @@ artifact, in `openspec-reviewed-workflow`, and in this repository's own
 proposal, design and specs before any code exists. `build:review` is the
 one place the word means a diff.
 
-`agents/openspec-change-reviewer.md` enforces the other meaning: "Asked to
+`agents/change-plan-reviewer.md` enforces the other meaning: "Asked to
 review a diff or an implementation, say so and stop — you review the plan,
 not the code written from it." A session reading `build:review` in a gate
 log can dispatch the reviewer that refuses.
@@ -100,7 +100,7 @@ distinction is load-bearing, keep it — this is the weakest item here.
 
 ## Consider: align the reviewer's verdicts
 
-`agents/openspec-change-reviewer.md` emits `PROCEED`, `PROCEED WITH
+`agents/change-plan-reviewer.md` emits `PROCEED`, `PROCEED WITH
 CHANGES`, `CHANGES REQUIRED` and `REJECT`. The `anvil` reviewer emits
 `APPROVE`, `APPROVE_WITH_CHANGES` and `REVISE`.
 

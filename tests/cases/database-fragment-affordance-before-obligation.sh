@@ -45,7 +45,13 @@ if [ -z "$obligation" ]; then
   exit 1
 fi
 
-if [ "$affordance" -ge "$obligation" ]; then
+if [ "$affordance" -eq "$obligation" ]; then
+  echo "FAIL: $fragment states the affordance and the provisioning obligation on one line ($affordance)" >&2
+  echo "      The requirement is an order, so the two must be separable: a reader who stops after the" >&2
+  echo "      obligation must already have met the affordance, which one line cannot guarantee." >&2
+  exit 1
+fi
+if [ "$affordance" -gt "$obligation" ]; then
   echo "FAIL: $fragment states the provisioning obligation (line $obligation) before the affordance (line $affordance)" >&2
   echo "      The defensive statement does not imply the permissive one: stated in that order, a session may" >&2
   echo "      substitute something reachable for the real database and violate nothing the fragment says." >&2

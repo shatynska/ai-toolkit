@@ -1,4 +1,4 @@
-# Recorded check fixtures for agents/openspec-test-writer.md
+# Recorded check fixtures for agents/change-test-writer.md
 #
 # Inputs only. No outcomes, no dates: a description edit invalidates the
 # trigger check and a body edit invalidates the cold-run check, so a stored
@@ -20,12 +20,12 @@ trigger_check:
     prompt: >-
       The add-user-auth change has passed review. Can you write tests for it
       before we implement?
-    expected_routing: openspec-test-writer
+    expected_routing: change-test-writer
   negative:
     prompt: >-
       Can you review whether the add-user-auth change is internally coherent
       before we start implementing it?
-    expected_routing: openspec-change-reviewer
+    expected_routing: change-plan-reviewer
     why_this_prompt: >-
       The two OpenSpec agents run at adjacent moments on the same named change
       — review, then test-writing — and both accept a change name as their
@@ -54,7 +54,7 @@ cold_run_check:
   payload_recipe:
     - Create a git worktree from a committed ref (a commit that predates the
       agent's own authoring, so the worktree does not contain it), and copy the
-      drafted agents/openspec-test-writer.md and rules/test-manifest.md (the
+      drafted agents/change-test-writer.md and rules/test-manifest.md (the
       one file its body references) into it, plus a minimal
       .claude-plugin/plugin.json so the worktree is a loadable plugin root.
     - >-

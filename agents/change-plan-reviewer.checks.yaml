@@ -1,4 +1,4 @@
-# Recorded check fixtures for agents/openspec-change-reviewer.md
+# Recorded check fixtures for agents/change-plan-reviewer.md
 #
 # Inputs only. No outcomes, no dates: a description edit invalidates the
 # trigger check and a body edit invalidates the cold-run check, so a stored
@@ -21,7 +21,7 @@ trigger_check:
       Can you review the add-payment-retry change before I start implementing it?
       I want to know whether the proposal, design and tasks actually agree with
       each other, and whether it breaks anything we already specced.
-    expected_routing: openspec-change-reviewer
+    expected_routing: change-plan-reviewer
   negative:
     prompt: >-
       The design for add-payment-retry now uses exponential backoff instead of a
