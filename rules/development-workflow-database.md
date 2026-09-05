@@ -39,8 +39,9 @@ A working tree carries tracked files only, and the environment files naming a
 database are ignored — so `git worktree add` brings none. Before relying on any
 verification result: write this working tree's environment file, taking the
 connection string from the main checkout and pointing it at this working tree's
-own database; install dependencies; create that database; and bring it to the
-project's initial state.
+own database; install dependencies; create that database, or reset it where one
+already exists under that name, since a removed working tree leaves its database
+behind; and bring it to the project's initial state.
 
 **Migrating is not seeding.** Run this project's seed step as well as its
 migrations. A database carrying only the schema fails tests that say so in

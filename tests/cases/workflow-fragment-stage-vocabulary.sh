@@ -29,7 +29,10 @@ assert_file "$fragment" "the fragment this case reads"
 # `merge`, `confirm` — is also an ordinary English word the fragment's prose
 # uses freely, so a whole-file scan passes even if the block is deleted
 # outright, which is the one thing this case exists to catch.
-block="$(awk '/^```$/{n++; next} n==1' "$fragment")"
+# Anchored on the sentence that introduces the block: a bare `^```$` scan is
+# shifted by any language-tagged block added above it, and would then check
+# the wrong region while still passing the non-empty guard below.
+block="$(awk '/The acts are the transitions/{f=1} f&&/^```/{n++; next} f&&n==1' "$fragment")"
 
 if [ -z "$block" ]; then
   echo "FAIL: $fragment states no fenced transition block" >&2

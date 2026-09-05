@@ -61,7 +61,7 @@ Always write the family prefix: `plan:reviewing` and `build:reviewing` dispatch 
 
 _Claude Code binding:_ dispatch `ai-toolkit:change-plan-reviewer` once every artifact the change calls for is complete. Do not use `/code-review` for this gate — it reads a diff, and at this point there is none. On `FIX REQUIRED` fix and re-dispatch; on `CONDITIONALLY APPROVED` apply the `[MINOR]` fixes and continue; on `APPROVED` continue; on `REJECTED` stop and raise it.
 
-**commit** — suggest committing the approved plan before tests are derived from it; the tests map to that baseline.
+**commit** — suggest committing the approved plan before tests are derived from it; the tests map to that baseline. Where the commit is declined, report that the next step is blocked on it and stop there, rather than proceeding without it.
 
 **derive tests** — have an author other than whoever writes the implementation derive tests from the approved specification deltas, not from implementation code. That author needs this project's test command and test-path glob; both are in this project's own conventions.
 
@@ -71,7 +71,7 @@ _Claude Code binding:_ dispatch `ai-toolkit:change-test-writer` after the verdic
 
 ## build
 
-**apply** — implement only once two things hold: a commit holding the approved plan, which follows the verdict that permitted proceeding, and the derived tests — or the stated exemption that excused them. Where either is absent, take the missing step rather than starting and noting the gap.
+**apply** — implement only once two things hold: a commit holding the approved plan, which follows the verdict that permitted proceeding, and the derived tests — or the stated exemption that excused them. Where either is absent, take the missing step rather than starting and noting the gap. Work too small to be a change skipped `plan` and has neither to hold.
 
 **verify** — run the verification relevant to the change: tests, type checking, linting, formatting, a build, whatever this project's conventions require. Do not report a change as complete without having run it.
 
@@ -83,7 +83,7 @@ _Claude Code binding:_ run `ai-toolkit:change-code-reviewer` over the change's d
 
 ## ship
 
-Nothing ships from a local machine. Never run the deploy command against production — a change reaches production by merging and by nothing else.
+Nothing ships from a local machine. Never run the deploy command against production — a change reaches production by merging and by nothing else. Local credentials for production, where they exist at all, are for reading — a plan, a status, a log — and not for applying.
 
 Every change reaches the trunk through pull requests, and takes at least two. Begin once verification passes on the branch head and `build`'s review has cleared.
 
@@ -93,14 +93,14 @@ Every change reaches the trunk through pull requests, and takes at least two. Be
 
 Two classes cannot answer that gate and are waivable. Say so plainly, name the class, and wait for the operator to waive it; record the waiver in the change's own artifacts — the record is archived on the strength of it, and waiving your own gate is not the confirmation this step exists to obtain. Where a successor is intended, the waiver names its change-queue entry or the branch it was opened on:
 
-- a change with no observable effect — a refactor, a dependency bump, an internal cleanup;
+- no observation can actually be made — a refactor, a dependency bump or an internal cleanup with no externally observable effect, and equally an observation you proposed that turns out not to be performable;
 - a change that was the wrong change: its observation was made, its effect is absent, and it is not to be corrected in place.
 
 A recorded waiver completes **confirm**: `ship:confirmed` is true of a waived change.
 
-**archive** — once the effect is confirmed or the gate waived, bring the branch back to the freshly fetched trunk, commit the change's specification record there, and open a pull request for it: the last of the change's pull requests. The branch's commits are on the trunk by now, so this discards nothing and needs no force push.
+**archive** — once the effect is confirmed or the gate waived, bring the branch back to the freshly fetched trunk, commit the change's specification record there, and open a pull request for it: the last of the change's pull requests. The work is on the trunk by now, however it was merged, so bringing the branch back to it discards nothing.
 
-Two is a floor. Where the deploy is unhealthy, or the effect is absent through a defect, fix it and re-enter at `build`'s review gate; the fix takes a pull request of its own.
+Two is a floor. Where the deploy is unhealthy, or the effect is absent through a defect, the change is not delivered and its record is not written: fix it and re-enter at `build`'s review gate; the fix takes a pull request of its own.
 
 **then remove the branch and the working tree** — once the record has reached the trunk through its own pull request, every other pull request the change opened has merged, and nothing uncommitted or unpushed remains. **Read a merge from the pull request's state, not from branch ancestry** — a squash or rebase merge leaves no ancestry to read.
 
@@ -121,7 +121,7 @@ While applying, the derived tests fail by design until the implementation is com
 - Where the change in progress **depends** on it: record the dependency and the wait in the current change's own artifacts, then at most open the identified change and recommend it be continued in a separate session.
 - Where it **does not**: record it in `docs/change-queue.md`, creating that file if absent, or open the identified change.
 
-*Opening* one means a branch of its own and a `handoff.md` at its root, with no proposal — why the change was identified, what bears on it, and what it must not undo. The session that takes it up writes the proposal. Propose committing that branch at once; where the commit is declined, say that the handoff is unsaved.
+*Opening* one means a branch of its own and a `handoff.md` at its root, with no proposal — why the change was identified, what bears on it, and what it must not undo. The session that takes it up writes the proposal. Propose committing that branch at once; where the commit is declined, say that the handoff is unsaved and stop, rather than continuing and leaving it to be lost.
 
 Such a branch is created and left: it takes no working tree and does not become the branch this session works on.
 

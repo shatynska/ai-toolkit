@@ -31,8 +31,9 @@ The reason is not the circularity that excused the first use — this suite has
 a real test command and a real test-path glob now. It is that the agent's own
 dispatch contract requires a change that "has passed review and is ready for
 implementation", and this change had no such verdict: its review returned
-`FIX REQUIRED` on its third round and implementation proceeded on the
-maintainer's explicit direction instead. Dispatching a test author against a
+`CHANGES REQUIRED` on its third round — the verdict set of the day, quoted as
+it was recorded — and implementation proceeded on the maintainer's explicit
+direction instead. Dispatching a test author against a
 plan no verdict had cleared is the precondition failure the workflow rules
 this very change introduces forbid. The exemption is therefore narrower than
 the first: it does not say test authoring was impossible, only that its

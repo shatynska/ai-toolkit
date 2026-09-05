@@ -84,7 +84,7 @@ examples, and what was rejected. A rule that reads as optional detail but
 changes what a session does is the failure this constraint exists to prevent.
 
 The material already exists: `consolidate-development-workflow`'s `design.md`
-holds eleven decisions with their rejected alternatives, and the archived
+holds twelve decisions with their rejected alternatives, and the archived
 `add-session-workflow-fragments` and `revise-development-workflow` hold more.
 The skill assembles what is written rather than inventing it.
 

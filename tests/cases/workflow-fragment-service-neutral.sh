@@ -27,9 +27,10 @@ assert_file "$fragment" "the fragment this case reads"
 assert_contains "$fragment" "namespace" "the fragment states the namespace obligation the binding binds"
 
 # Concrete engines and container runtimes. `container` itself is deliberately
-# absent from this list: the containment obligations name a container build
-# context as one of the recursive tools that must be scoped, and that is not
-# a service the fragment prescribes.
+# absent from this list: it is not a service the fragment prescribes, and the
+# side that matters — that the binding fragment names a container where this
+# one must not — is asserted by
+# `database-fragment-affordance-before-obligation.sh` rather than here.
 offenders="$(grep -n -i -E 'postgres|postgresql|mysql|mariadb|sqlite|mongo|redis|psql|docker|podman|DATABASE_URL' "$fragment")"
 if [ -n "$offenders" ]; then
   echo "FAIL: $fragment names a concrete service — the binding fragment owns the service and the naming form" >&2

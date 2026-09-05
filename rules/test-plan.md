@@ -1,6 +1,6 @@
 ---
 kind: standing-constraint
-version: 1
+version: 2
 ---
 
 # Read the test plan before implementing
