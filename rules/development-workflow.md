@@ -31,11 +31,13 @@ Where this project binds these two rules to a particular service, the binding is
 
 ### Reporting where the change stands
 
-On entering a working tree, before anything else, and again as the last thing said before stopping, report:
+On entering a working tree, before anything else, and again as the last thing said before stopping, report the change's status as one line, in this exact form, with `|` as a plain-text field separator without header rows:
 
-| change | stage | task progress | commits |
+`| <change> | <stage> | <task progress> | <commits> |`
 
-The entering report carries one further cell, the verification result.
+For example: `| some-change | plan:explore | 0/0 | 1 |`
+
+Each field is a short value, not a sentence — nothing else belongs on that line.
 
 Derive the report from the repository where you can — the change's own artifacts, the commit log, the forge, and an actual run of the verification. Where a fact is in none of them, ask rather than assume it.
 
