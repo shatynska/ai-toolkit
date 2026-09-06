@@ -1,6 +1,6 @@
 ---
 kind: standing-constraint
-version: 4
+version: 3
 ---
 
 ## Development workflow
@@ -121,7 +121,7 @@ While applying, the derived tests fail by design until the implementation is com
 - Where the change in progress **depends** on it: record the dependency and the wait in the current change's own artifacts, then at most open the identified change and recommend it be continued in a separate session.
 - Where it **does not**: record it in `docs/change-queue.md`, creating that file if absent, or open the identified change.
 
-*Opening* one means a branch of its own and a `handoff.md` at its root, with no proposal — why the change was identified, what bears on it, and what it must not undo. The session that takes it up writes the proposal. Propose committing that branch at once; where the commit is declined, say that the handoff is unsaved and stop, rather than continuing and leaving it to be lost.
+*Opening* one means a branch of its own and a `handoff.md`, with no proposal — why the change was identified, what bears on it, and what it must not undo. Place it in the new change's own directory in this project's change-record layout — for OpenSpec, `openspec/changes/<name>/handoff.md`. The session that takes it up writes the proposal. Propose committing that branch at once; where the commit is declined, say that the handoff is unsaved and stop, rather than continuing and leaving it to be lost.
 
 Such a branch is created and left: it takes no working tree and does not become the branch this session works on.
 
