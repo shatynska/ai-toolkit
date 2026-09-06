@@ -1,9 +1,9 @@
 ---
 kind: standing-constraint
-version: 3
+version: 4
 ---
 
-# Development workflow
+## Development workflow
 
 The unit of work is a **change**: a feature, a modification, or a decision with design content, carried from proposal to record. These rules describe its life in three stages — `plan`, `build`, `ship` — and what holds throughout.
 
@@ -11,7 +11,7 @@ Work too small to be a change — a typo, a one-line correction with nothing to 
 
 These rules assume this project has a remote, pull requests, continuous integration, a deploy triggered by merging to the trunk, and OpenSpec for its change records, and that more than one session may work on it at once.
 
-## Your branch and working tree
+### Your branch and working tree
 
 A change gets one branch and one working tree and keeps both from proposal to record. Cut the branch from the freshly fetched trunk; put the working tree at `.worktrees/<name>`.
 
@@ -29,7 +29,7 @@ Provisioning is complete when every step this project names has been reached, no
 
 Where this project binds these two rules to a particular service, the binding is an adjacent section of this file; read it as part of them.
 
-## Reporting where the change stands
+### Reporting where the change stands
 
 On entering a working tree, before anything else, and again as the last thing said before stopping, report:
 
@@ -51,7 +51,7 @@ A state is `<family>:<transition>ing` while that transition runs and `<family>:<
 
 Always write the family prefix: `plan:reviewing` and `build:reviewing` dispatch different reviewers.
 
-## plan
+### plan
 
 **explore** — a change with no proposal yet. Auxiliary artifacts such as a handoff may exist.
 
@@ -69,7 +69,7 @@ A stated exemption applies where this project's rules name one for a class of ch
 
 _Claude Code binding:_ dispatch `ai-toolkit:change-test-writer` after the verdict permitted proceeding, any conditions were applied and the plan was committed — and before implementing.
 
-## build
+### build
 
 **apply** — implement only once two things hold: a commit holding the approved plan, which follows the verdict that permitted proceeding, and the derived tests — or the stated exemption that excused them. Where either is absent, take the missing step rather than starting and noting the gap. Work too small to be a change skipped `plan` and has neither to hold.
 
@@ -81,7 +81,7 @@ Dispatch against a diff that already passes verification. Re-review only where t
 
 _Claude Code binding:_ run `ai-toolkit:change-code-reviewer` over the change's diff.
 
-## ship
+### ship
 
 Nothing ships from a local machine. Never run the deploy command against production — a change reaches production by merging and by nothing else. Local credentials for production, where they exist at all, are for reading — a plan, a status, a log — and not for applying.
 
@@ -108,7 +108,7 @@ An abandonment recorded in the change's own artifacts, stating that the change i
 
 Remove the branch locally and on the remote, and the working tree from the repository's main working tree rather than from inside the tree being removed. Nothing here removes the namespace.
 
-## Throughout
+### Throughout
 
 **Commits.** Prefer small, focused commits over large ones bundling unrelated concerns. After a meaningful milestone, proactively suggest a commit rather than waiting to be asked. Before committing: look at the diff, run the verification relevant to what changed, and check that no secret or unintended file is included. Suggest the commit; do not make it without confirmation.
 
