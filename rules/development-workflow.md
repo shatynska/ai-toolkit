@@ -63,7 +63,7 @@ Always write the family prefix: `plan:reviewing` and `build:reviewing` dispatch 
 
 _Claude Code binding:_ dispatch `ai-toolkit:change-plan-reviewer` once every artifact the change calls for is complete. Do not use `/code-review` for this gate — it reads a diff, and at this point there is none. On `FIX REQUIRED` fix and re-dispatch; on `CONDITIONALLY APPROVED` apply the `[MINOR]` fixes and continue; on `APPROVED` continue; on `REJECTED` stop and raise it.
 
-**commit** — suggest committing the approved plan before tests are derived from it; the tests map to that baseline. Where the commit is declined, report that the next step is blocked on it and stop there, rather than proceeding without it.
+**commit** — commit the approved plan before tests are derived from it; the tests map to that baseline.
 
 **derive tests** — have an author other than whoever writes the implementation derive tests from the approved specification deltas, not from implementation code. That author needs this project's test command and test-path glob; both are in this project's own conventions.
 
@@ -112,7 +112,7 @@ Remove the branch locally and on the remote, and the working tree from the repos
 
 ### Throughout
 
-**Commits.** Prefer small, focused commits over large ones bundling unrelated concerns. After a meaningful milestone, proactively suggest a commit rather than waiting to be asked. Before committing: look at the diff, run the verification relevant to what changed, and check that no secret or unintended file is included. Suggest the commit; do not make it without confirmation.
+**Commits.** Prefer small, focused commits over large ones bundling unrelated concerns. After a meaningful milestone, proactively create a commit rather than waiting to be asked. Before committing: look at the diff, run the verification relevant to what changed, and check that no secret or unintended file is included.
 
 While applying, the derived tests fail by design until the implementation is complete, so the verification above cannot pass and a hook running it blocks the commit. Commit with `--no-verify`, and read that failure as expected rather than as a defect. It suspends the pre-commit check, not the gate: `verify` still runs before any completion claim.
 
@@ -123,7 +123,7 @@ While applying, the derived tests fail by design until the implementation is com
 - Where the change in progress **depends** on it: record the dependency and the wait in the current change's own artifacts, then at most open the identified change and recommend it be continued in a separate session.
 - Where it **does not**: record it in `docs/change-queue.md`, creating that file if absent, or open the identified change.
 
-*Opening* one means a branch of its own and a `handoff.md`, with no proposal — why the change was identified, what bears on it, and what it must not undo. Place it in the new change's own directory in this project's change-record layout — for OpenSpec, `openspec/changes/<name>/handoff.md`. The session that takes it up writes the proposal. Propose committing that branch at once; where the commit is declined, say that the handoff is unsaved and stop, rather than continuing and leaving it to be lost.
+*Opening* one means a branch of its own and a `handoff.md`, with no proposal — why the change was identified, what bears on it, and what it must not undo. Place it in the new change's own directory in this project's change-record layout — for OpenSpec, `openspec/changes/<name>/handoff.md`. The session that takes it up writes the proposal. Commit that branch at once: the session that opened it is not returning to it, so no later commit of its own will carry the handoff.
 
 Such a branch is created and left: it takes no working tree and does not become the branch this session works on.
 
@@ -134,3 +134,5 @@ Both sit outside the change that recorded them, because a note kept inside one i
 **Assumptions.** Do not silently invent a requirement that was not stated and cannot reasonably be inferred; where an important decision cannot be inferred, ask rather than guess. Record significant decisions in this project's own artifacts rather than in conversation history alone.
 
 **The repository is the source of truth.** Do not rely on earlier conversation context for information the repository itself can supply. Prefer reading a file, a spec or a commit over recalling what a previous exchange said about it.
+
+**Markdown prose.** Do not hard-wrap prose. Keep each paragraph on a single line whatever its length. Use a line break only where Markdown's own structure requires one.

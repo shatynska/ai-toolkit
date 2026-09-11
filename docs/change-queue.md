@@ -90,6 +90,21 @@ So the change is: evaluate adopting or forking a schema, not adding files. Decid
 
 **Depends on**: nothing, but best after `consolidate-development-workflow` lands, since it would reshape the artifacts that change is defining.
 
+## `reconcile-commit-rule-with-spec`
+
+`rules/development-workflow.md` now directs a session to create commits rather than propose them: `plan`'s **commit**, the handoff-branch commit and the `Throughout` commit rule all lost their "suggest" wording and their declined-commit paths. `openspec/specs/session-workflow/spec.md` still records the behaviour that was removed, so the fragment is out of conformance with its own recorded specification in two places:
+
+- the requirement at *A second change surfacing* — "**The fragment SHALL direct proposing a commit on that branch as soon as it is opened**, and SHALL state what happens where that commit is declined: report that the handoff is unsaved and stop, as the plan-commit rule does" — names a declined path the fragment no longer states, and closes "It is proposed rather than made, per the fragment's commit rule", a justification that now points at the opposite rule;
+- its scenario "A handoff is not left uncommitted on a branch the session leaves", whose **THEN** is "it has proposed a commit on that branch already".
+
+The change amends both to require committing rather than proposing, and drops the declined-commit handling the fragment no longer carries. The stated reason survives the amendment unchanged — the session that opened the branch is not returning to it, so no later commit of its own carries the handoff — only the act it justifies changes.
+
+While there, decide whether the fragment's new `**Markdown prose.**` rule wants a requirement of its own. The spec enumerates no `Throughout` item today, so the rule is unrecorded rather than contradicted, and recording it is a choice rather than a repair.
+
+**Argued in**: the operator's direct instruction that agents commit without stopping, applied to the fragment as a fix. No change argued it, because the fix was made without one — which is why the spec was left behind and this entry exists.
+
+**Depends on**: nothing. `tests/cases/workflow-fragment-names-handoff.sh` asserts neither behaviour, so the suite is green either way and stays green after the amendment.
+
 ## The suite's own gaps
 
 Three questions the test-writing pass raised and did not resolve, recorded here because each is a change rather than a deferral:
