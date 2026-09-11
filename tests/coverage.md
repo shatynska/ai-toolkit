@@ -1,6 +1,6 @@
 # Scenario coverage
 
-Accounts for every `#### Scenario:` in the delta specs of the changes that have shaped this suite — `add-project-workflow`, which established it, `revise-development-workflow`, which added 13 scenarios across two capabilities, and `consolidate-development-workflow`, which replaced the `session-workflow` accounting entirely — per `change-test-authoring`'s counting form: covered by a named case, or uncovered with a reason. See `README.md` for why this suite is written directly rather than through `change-test-writer`, and for the second, narrower exemption `revise-development-workflow` records there.
+Accounts for every `#### Scenario:` in the delta specs of the changes that have shaped this suite — `add-project-workflow`, which established it, `revise-development-workflow`, which added 13 scenarios across two capabilities, `consolidate-development-workflow`, which replaced the `session-workflow` accounting entirely, and `state-the-committed-artifact-situation`, which added 14 scenarios to `testing-practice` and carried 8 through unchanged — per `change-test-authoring`'s counting form: covered by a named case, or uncovered with a reason. See `README.md` for why this suite is written directly rather than through `change-test-writer`, and for the second, narrower exemption `revise-development-workflow` records there.
 
 Most scenarios this suite cannot cover are of one kind, and it is worth naming once rather than repeating per row: the harness exercises `scripts/project-init`'s runtime behavior, while several requirements constrain the *prose* of a fragment the script copies without interpreting. A property of that prose is not observable by running the script, so it is verified by reading — except where it can be made mechanical, which `fragment-role-before-tool.sh` does for the role-before-tool constraint. That is a stated limit of what this harness can reach, not an omission.
 
@@ -123,3 +123,18 @@ A note on what a case here may assert, learned by writing one that failed: the *
 **Three covered in part** by `test-plan-artifact-name.sh`, which asserts that a `rules/` fragment and an `agents/` contract each name `test-plan.md` and that no shipped asset still names the superseded file. It caught three survivals in a recorded fixture.
 
 **Seven uncovered**, describing what the agent does with the artifact rather than what the artifact is called.
+
+## specs/testing-practice/spec.md (22 delta scenarios)
+
+`state-the-committed-artifact-situation` renames one requirement and modifies three: *The Skill States the Situations It Can Be Entered In* (13 scenarios), *Failure States Are Defined by What They Establish, Not by the Machinery That Produced Them* (5), and *Asserted Behavior Is Separated into Specified, Derived, and Deliberately Untested* (4).
+
+**Ten covered, with a stated limit.** Mutation shows each case establishes its check can fail on the one property its attribution names, and 9 of the 13 scans across the four cases survive deletion undetected — so "covered" here means the scenario has a scan, not that the scan is itself discriminated. `docs/change-queue.md`'s `discriminate-every-scan-in-the-static-suite` carries the gap. The four cases each read `skills/testing/SKILL.md` under a root it is given and runs its own check twice — once over `$TOOLKIT_ROOT`, once over a fixture it writes that the check must reject, naming which scan the rejection has to come from:
+
+- `testing-skill-three-situations.sh` — the third situation, the separator, and the two-way phrasings it retires.
+- `testing-skill-discriminator-obligation-placement.sh` — the obligation and the term stated where the obligation is, and the negative result's outcome.
+- `testing-skill-failure-states-situation-conditioned.sh` — the enumeration conditioned on the situation rather than on the target's presence.
+- `testing-skill-discriminator-bound.sh` — the bound stated by what a case falsifies, and no quantity.
+
+**Twelve uncovered**, in two kinds. Six are scenarios the `MODIFIED` operation carries through verbatim — behaviour this change does not alter, and its scope clause owes no retrofit. Six are propositions the delta obliges without fixing any token to scan for; they are of the same kind this file names once above, a property of prose rather than of behaviour.
+
+Full scenario-to-test mapping, assertion provenance and the two disclosures that pass recorded are in `state-the-committed-artifact-situation`'s `test-plan.md`, which archives with the change; this section is what survives it.

@@ -28,14 +28,47 @@ Where a failure message or command appears below, it is an illustration of a dis
 
 ## Which situation you are in
 
-Two situations, and one central rule reads oppositely in them. Establish which one applies before anything else.
+Three situations, and one central rule reads differently in each. Establish which one applies before anything else.
 
 - **The target does not exist yet.** Tests are written against a stated requirement before there is any implementation to observe.
 - **The target already exists.** Tests are written for code that is already there, whether or not it was ever covered.
+- **The assertion does not execute the behaviour it asserts.** It is a static read: a configuration file, a workflow, a manifest, a document, the source of a program it never runs, or a module imported only so a constant can be read out of it. The assertion's subject is not something the check exercises, so a pass reports only that the target could be read.
 
-**A test that passes on its first run means opposite things in the two.** Where no implementation exists, nothing could have satisfied it, so a pass is an alarm — the test asserts nothing, or the behavior was already there. Where the code already exists, a pass is the expected result and establishes that the code currently behaves as asserted.
+**A test that passes on its first run means different things across the three.** Where no implementation exists, nothing could have satisfied it, so a pass is an alarm — the test asserts nothing, or the behavior was already there. Where the code already exists, a pass is the expected result and establishes that the code currently behaves as asserted. Where the assertion does not execute the behaviour it asserts, a pass establishes nothing at all: a check that read nothing would pass identically.
 
-Rules that presuppose an absent target — the absent-target rule below — bind only in the first situation. Everything else here binds in both: the baseline, the level rule, the specified/derived classification, and never weakening a test.
+### Telling the second situation from the third
+
+**One test, not two: whether the assertion executes the behaviour it asserts.** Where it does, a pass reports that behaviour and the second situation applies. Where it does not, the third does. Loading the target is not exercising the asserted behaviour — a module imported so a constant can be read out of it runs on import and exercises nothing the assertion is about. Committedness is not the test in either direction: code that already exists is committed and stays in the second situation, and that same code's source, read statically by an assertion that never calls it, sits in the third.
+
+The three situations read one test at one moment; they do not partition tests. A static check whose file does not exist yet is in the first situation while that holds — its failure establishes the file's absence and nothing about the assertions — and in the third once the file is present. Resolve by what is true when the question is asked, not by the test's history.
+
+### What the third situation obliges
+
+A check that is green — its target carrying the asserted property at the time the suite runs — passes without discriminating, so establishing that it can fail means running it over material the test itself supplies. A test that does this is a **fixture-driven discriminator**. It is what makes such a suite's green result mean anything, and it is not optional rigour. The mechanism the fixture belongs to is the project's: a temporary directory, a string, an in-memory map all serve.
+
+### Reading a discriminator's result
+
+**A discriminator that comes back negative establishes**, because that is the finding this mechanism exists to produce: where the check passes over material chosen to falsify it, the check asserts nothing. That is the fourth failure state's second branch, reached deliberately rather than stumbled on. Repair the check or report it; never leave it standing in the suite as coverage. Where it is reported rather than repaired, the author records the finding — inside the authoring pass, before it ends, wherever the project records the classification and its reasons — saying what was found and why the check was not repaired. A check known to assert nothing, reported only in conversation, is this mechanism's own finding lost at the last step.
+
+### What it assumes, and when it cannot be run
+
+**What the obligation assumes about the check**: that what it reads can be pointed at material the test supplies. Where a check already in scope — one being authored or modified — is not so written, its target path fixed and redirectable only by rewriting how it reads, redirecting it is part of modifying it. That is not a discriminator that could not be run, which is a different fact with a different remedy.
+
+**Where the discriminator can be written but not executed here**, the author records that — inside the authoring pass, before it ends — with the reason, in the form the baseline rule below defines for a baseline that cannot be taken. Neither treating it as discharged nor reporting a run that did not happen will do. Record it wherever the project records the classification and its reasons — not in the baseline: the baseline is about the suite before these tests were written, this is a fact about one test in this pass, and a reader sweeping for outstanding discriminator work does not look there.
+
+### Which checks it reaches
+
+**The obligation attaches to a check as it is authored or modified.** Modifying one means a change to what the check asserts, or to how it reads its target — never an edit to the file that contains it, so a rename, a reformat or an edit to a neighbouring check pulls nothing in. Where reading is delegated to shared machinery, editing that machinery brings a check into scope only where that check's own assertion or its own result changes: a shared edit does not sweep in every check that delegates, and extracting a read into a helper does not take one out of scope. Where an extraction changes neither the assertion nor the result, this sentence governs and the check stays out of scope. A check that predates the rule carries an undischarged obligation, not a violation; no suite is retrofitted.
+
+### Who discharges it
+
+A fixture-driven discriminator supplies its own material, so it does not depend on the target's state: it is written beside a check that is still red, in the same pass, by the same author. The fixture never waits for the check to go green — nothing re-dispatches a test author at that moment, and an obligation falling due after the pass has ended is owed by nobody.
+
+**What an observed failure establishes.** A check written against a property its target does not yet carry is red at authoring and goes green as the change lands, and that transition establishes that the check discriminates — on real content rather than on a fixture. The author records it, inside the authoring pass before it ends, on the surface named above and not in the baseline: that the check is red and on which property. No second record is owed once it goes green; the ordinary suite result is the confirmation, and the later green is read against that record. The fixture is still owed all the same, because the red run leaves nothing in the suite: nothing re-establishes the property afterwards, and a later edit can stop the check asserting with no result changing. Where tests are derived before implementation every check is red at authoring, so an exemption here would exempt every check in such a project.
+
+### Which rules bind where
+
+Rules that presuppose an absent target — the absent-target rule below — bind only in the first situation, and the fixture obligation above binds only in the third. These bind in all three: the baseline, the level rule, the specified/derived classification, and never weakening a test.
 
 None of this is an argument for writing tests first. It records what each situation does and does not establish; which one a project works in is not this skill's concern.
 
@@ -53,12 +86,14 @@ Record the baseline in the completion report, or alongside the tests, or whereve
 
 A failing test is not one thing. Four states, each defined by what it establishes — never by the phase, error class, or exit status that produced it, because those differ per language and some languages give no per-test granularity at all.
 
-The enumeration below is stated for the absent-target situation. Where the target already exists, the second and fourth states read differently, per *Which situation you are in*; the third is the same either way.
+The enumeration below is stated for the absent-target situation. In the second situation the second and fourth states read differently, per *Which situation you are in*; in the third situation the fourth state reads differently and the second cannot arise at all, there being no target to be absent. State 3 is the same in all three situations. The condition is the situation, not the target's presence — presence spans the second and third situations and reads differently in each.
 
 1. **The code ran and produced a wrong value.** The strongest state: the test executes *and* discriminates between correct and incorrect behavior.
 2. **The target does not exist yet.** It establishes that the target is absent and nothing more. The assertions never executed, so whether they are any good is still unverified. Do not report this as though the assertions had been exercised.
-3. **The test itself is broken.** The failure comes from a defect in the test rather than from the behavior it covers, so it establishes nothing about the code — in either situation. Repairing the defect does not turn it into evidence; it only moves the test into one of the other states, which is where its result first becomes readable. Reaching this state requires the rule below; it is never assigned on the bare fact that a test failed.
+3. **The test itself is broken.** The failure comes from a defect in the test rather than from the behavior it covers, so it establishes nothing about the code — in any situation. Repairing the defect does not turn it into evidence; it only moves the test into one of the other states, which is where its result first becomes readable. Reaching this state requires the rule below; it is never assigned on the bare fact that a test failed.
 4. **It passed on its first run, before any implementation existed.** An alarm, not a result: either the behavior already exists, or the test asserts nothing. Investigate it. Never record it as coverage.
+
+The fourth state reads differently where the assertion does not execute the behaviour it asserts. There is no implementation to arrive early: a check whose target already carries the asserted property passes on its first run for that reason alone, so the alarm fires on every such check — sound ones included — and discriminates among none of them. Answer the pass with the fixture obligation in *Which situation you are in*, not by investigating the pass itself. A check that is instead red at authoring does not raise the fourth state at all.
 
 ### Telling the first state from the third
 
@@ -102,6 +137,8 @@ Every assertion is one of three things, and which one is recorded, not left impl
 An unlabelled derived assertion obliges whoever implements the code to satisfy a constraint nobody agreed to. That is the test author quietly designing behavior. Labelling makes each invented assertion visible for review instead of indistinguishable from a stated requirement — and it is what makes the provenance rule above usable at all.
 
 An uncovered case is recorded with its reason rather than omitted, so that the absence of a test is distinguishable from the absence of the thought.
+
+**What a fixture-driven discriminator is for** — the term as *Which situation you are in* defines it — is what bounds how much of one is warranted. Its job is to establish that the check can fail, by falsifying it on the property the check exists to assert. It is not an enumeration of the check's input space. A case added because it is expressible rather than because it discriminates is a derived assertion like any other, and is labelled accordingly. There is no number here, no proportion and no size: the bound is what a case establishes, which is reviewable, rather than how many there are, which is not.
 
 Record these where the project records such things — the completion report, an annotation beside the tests, or an existing convention. The point is that the classification survives past the moment of writing.
 
