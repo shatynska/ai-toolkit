@@ -114,3 +114,29 @@ Three questions the test-writing pass raised and did not resolve, recorded here 
 - No convention records whether an obsolete case is **deleted or rewritten**. `consolidate-development-workflow` deleted six and said so; nothing makes that the rule.
 
 **Argued in**: `consolidate-development-workflow`'s `test-plan.md`, under *Unresolved project questions*.
+
+## `share-a-suites-test-arrangement`
+
+`testing` gains the second half of the volume problem: a suite's shared test arrangement — where its fixture builders live, when a new bespoke one is warranted, how a keep is recorded, and how a pointer to a shared type is spelled so a later sweep can match it structurally rather than by phrase. Bundled as `skills/testing/references/`, which that skill does not yet have, for the migration-sweep material a session reads only after deciding to run a sweep.
+
+`commerce-ops` has already built and proved this body: a `tests/support/` package 241 of its 371 test files import, twenty standing rules in a project-local skill, and `docs/test-harness-sweeps.md` recording what each proof instrument can and cannot establish. Nine of the twenty are project-agnostic and are what this entry promotes; six are Python-specific and belong in `python/references/testing.md`; five are genuinely that project's own.
+
+Two things this change must settle rather than inherit. **Where the consolidation happens**: `change-test-authoring`'s additive-only guarantee means a test author can never migrate a declaration onto a shared one, so the rule is *a keep is recorded* and *resolving keeps is its own change* — the shape `commerce-ops` reached by doing all thirteen consolidations as their own changes. **Whether the veto asymmetry generalises**: *a source comparison can only veto a migrate; execution can only veto a keep* was derived entirely from AST-diffing Python helpers, and whether it survives contact with a YAML or Markdown fixture builder is untested.
+
+The keep-recording rule has three independent derivations, which is why it is promoted rather than merely borrowed: `commerce-ops`'s twenty rules, and — in `infrastructure` — both `GateBodyMixin` and `ScenarioTextFixtureMixin` in `.github/tests`, each recording in its own docstring why it does not import the sibling beside it.
+
+**Argued in**: `state-the-committed-artifact-situation` (proposal, *Non-Goals*; and design decision 3, which settles that this material folds into `testing` rather than becoming a skill of its own).
+
+**Depends on**: `state-the-committed-artifact-situation` having landed the third situation, since the fixture obligation is what a shared arrangement serves.
+
+## `record-the-discriminator-obligation-in-the-manifest`
+
+`change-test-authoring`'s manifest gains what `state-the-committed-artifact-situation` deferred: an entry for what a fixture-driven discriminator falsifies, one for a check the pass leaves without a discriminator, one for a discriminator written but not executable in the authoring environment, and a repeat pass's carry-forward of entries still outstanding. The floor states all four obligations already; what is missing is the surface a reader sees.
+
+It is a change of its own because it is not a one-requirement change, which six review rounds established rather than assumed. The carry-forward needs the earlier `test-plan.md`, and that path is an **optional** dispatch input the agent is forbidden to go looking for — so the clause is either unperformable on an ordinary repeat dispatch, or it reaches *The Change Is Supplied by Dispatch, Not Discovered* and *What the Agent May Read Is Bounded* to become performable. Conditioning it instead was tried and weakens the guarantee to "carried forward, or its possible existence recorded", which is defensible only alongside a dispatcher-facing signal that the input now decides whether recorded debt survives — and the agent's description, the one surface a dispatcher reads in time, does not name the input at all.
+
+Two further findings from that review, worth not rediscovering: the exception must be keyed to the **check's state** rather than to how the pass produced it, since a green check discriminating on nothing is the case that announces itself least and a red-at-authoring trigger leaves it silent; and the unrunnable-discriminator record does not belong inside the baseline entry, whose specified content is the baseline or the reason none was taken.
+
+**Argued in**: `state-the-committed-artifact-situation` (proposal, *Non-Goals*; and design decision 4, which records what was removed and why).
+
+**Depends on**: `state-the-committed-artifact-situation` having landed the floor obligations this would give a surface to.
