@@ -9,6 +9,12 @@
 # bars repository tooling.
 
 trigger_check:
+  status: >-
+    INVALIDATED. Owed. The description was edited to name the change's
+    committed diff as the default review target, in place of the working
+    tree's own diff, so the routing surface these fixtures ran against no
+    longer exists. The fixtures below are unchanged and are what a re-run
+    uses; nothing about the plan/diff boundary they probe was touched.
   evaluator: >-
     A fresh context holding the candidate prompt and the name and description of
     every library asset (skills/*/SKILL.md, agents/*.md) plus every asset
